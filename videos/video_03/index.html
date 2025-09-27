@@ -137,10 +137,46 @@ node lodash.mjs         // ES Modules
     </section>
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Up Next</h1>
-        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-6 text-center">Modules & NPM</h2>
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Managing Scripts</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Project Package Management</h2>
         <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
-            <li>Event Loop & Async Basics</li>
+            <li><a href="https://docs.npmjs.com/cli/v8/using-npm/scripts" target="_blank" class="text-yellow-400 underline hover:text-yellow-300">Documentation</a></li>
+        </ul>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// package.json
+  "scripts": {
+    "run_app": "node app.js",
+    "start": "node lodash.mjs",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+        </code></pre>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// terminal in the project directory
+npm start
+npm test
+npm run_app
+npm run run_app
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Uninstalling Packages</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Project Package Management</h2>
+        <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
+            <li><code>npm uninstall</code> to install packages.</li>
+        </ul>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// terminal in the project directory
+npm uninstall lodash              // uninstalls as project level production dependency
+npm uninstall lodash --save-dev   // uninstalls as project level dev dependency
+npm uninstall -g lodash           // uninstalls globally (available outside project)
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Up Next</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-6 text-center">Event Loop & Async Basics</h2>
+        <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
             <li>Single-Threaded Nature</li>
             <li>Callbacks vs Promises</li>
         </ul>
