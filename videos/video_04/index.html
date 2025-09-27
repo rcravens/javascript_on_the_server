@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Loop & Async Basics | Node.js Fundamentals</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/themes/prism-tomorrow.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/prism.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/components/prism-javascript.min.js"></script>
+    <style>
+        html, body {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white">
+
+<!-- Sticky Header -->
+<header class="sticky top-0 z-50 bg-gray-900 bg-opacity-90 backdrop-blur-md p-4 flex justify-between items-center shadow-md">
+    <!-- Video Title -->
+    <div class="text-left">
+      <span class="bg-yellow-400 text-gray-900 text-xs md:text-sm font-semibold px-2 py-1 rounded-full uppercase tracking-wide">
+        Video
+      </span>
+        <h3 class="mt-1 text-lg md:text-2xl font-bold text-yellow-400">Event Loop & Async Basics</h3>
+    </div>
+
+    <!-- Module Title -->
+    <div class="text-right">
+      <span class="bg-indigo-400 text-gray-900 text-xs md:text-sm font-semibold px-2 py-1 rounded-full uppercase tracking-wide">
+        Module
+      </span>
+        <h3 class="mt-1 text-lg md:text-2xl font-bold text-indigo-400">Node.js Fundamentals</h3>
+    </div>
+</header>
+
+<!-- Scrollable Sections -->
+<main id="slides" class="bg-gradient-to-b from-gray-900 via-gray-800 to-gray-700">
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Single-Threaded / Non-Blocking</h1>
+        <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
+            <li>
+                <span class="underline">Single-threaded Event Loop:</span>
+                <span class="m-6 block text-lg">The main JavaScript execution happens on a single thread. This thread handles the call stack and the event loop, processing JavaScript code sequentially.</span>
+            </li>
+            <li>
+                <span class="underline">Blocking Threads for I/O:</span>
+                <span class="m-6 block text-lg">When an asynchronous operation (like reading a file or making an HTTP request) is initiated, the main thread offloads this task to a background thread from the libuv thread pool.</span>
+            </li>
+            <li>
+                <span class="underline">Non-blocking Execution:</span>
+                <span class="m-6 block text-lg">While the background thread is busy with the I/O operation, the main event loop is free to continue executing other JavaScript code. It does not wait for the I/O operation to complete.</span>
+            </li>
+            <li>
+                <span class="underline">Callbacks and Event Queue:</span>
+                <span class="m-6 block text-lg">Once the background operation finishes, its result is placed in the event queue. The event loop periodically checks this queue and, when the call stack is empty, pushes the callback function associated with the completed operation onto the call stack for execution on the main thread.</span>
+            </li>
+        </ul>
+        <blockquote class="text-4xl md:text-4xl font-semibold text-center italic text-yellow-400 max-w-6xl mb-6">
+            A waiter taking orders sending tasks to the kitchen, and returning when the food is ready &mdash; the waiter doesn't block waiting.
+        </blockquote>
+        <div class="flex flex-wrap justify-center gap-6">
+            <a href="https://nodejs.org/en/learn/asynchronous-work/overview-of-blocking-vs-non-blocking" target="_blank" class="px-6 py-3 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition">Learn More</a>
+        </div>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Callbacks</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Early Days</h2>
+        <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
+            <li>A callback is a function passed as an argument to another function, intended to be executed after the completion of an asynchronous operation.</li>
+            <li>The calling function initiates the async tasks and then passes control to the callback function when the task finishes.</li>
+            <li>Errors are typically handled by passing an <code>Error</code> object as the first argument to the callback function.</li>
+            <li>Deeply nested callbacks can lead to "callback hell" or "pyramid of doom", making code difficult to read, understand, and maintain, especially with multiple dependent async operations.</li>
+        </ul>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// callback_example.js
+
+const fs = require('fs');
+
+fs.readFile('file.txt', 'utf8', (err, data) => {
+    if (err) {
+        console.error('Error reading file:', err);
+        return;
+    }
+    console.log('File content:', data);
+});
+        </code></pre>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// terminal window
+node callback_example.js
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Promises</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Modern Alternative</h2>
+        <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
+            <li>A Promise is an object representing the eventual completion (or failure) of an async operation and its resulting value. It acts as a placeholder for a value that will be available in the future.</li>
+            <li>Promises allow for a more structured and linear flow using <code>.then()</code>, <code>.catch()</code>, and <code>.finally()</code> methods. Instead of passing a callback, the async function returns a Promise object, and subsequent operations are chained to it.</li>
+            <li>Promises provide a centralized error handling mechanism through the <code>.catch()</code> method, which can catch errors anywhere in the promise chain.</li>
+            <li>Promises improve readability and maintainability by flattening the code structure and avoiding deep nesting, especially when chaining multiple async operations.</li>
+        </ul>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// promise_example.js
+
+const fs = require('fs/promises'); // Using the promise-based fs module
+
+fs.readFile('file.txt', 'utf8')
+    .then(data => {
+        console.log('File content:', data);
+    })
+    .catch(err => {
+        console.error('Error reading file:', err);
+    });
+        </code></pre>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// terminal window
+node promise_example.js
+        </code></pre>
+        <div class="flex flex-wrap justify-center gap-6">
+            <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise" target="_blank" class="px-6 py-3 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition">Learn More</a>
+        </div>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Async / Await</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Syntactic Sugar</h2>
+        <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
+            <li><code>async/await</code> is syntactic sugar built on top of Promises, introduced in ES8, making async code appear and behave more like sync code.</li>
+            <li>An <code>async</code> function is a function that returns a Promise. The <code>await</code> keyword can only be used inside an <code>async</code> function and pauses the execution of the <code>async</code> function until the awaited Promise settles (resolves or rejects).</li>
+            <li>Significantly enhances readability and simplifies error handling using the standard <code>try..catch</code> blocks, making async code easier to reason about.</li>
+        </ul>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// async_await_example.js
+
+import fs from 'fs/promises'; // Using the promise-based fs module
+
+console.log('Start');
+
+try {
+    const data = await fs.readFile('file.txt', 'utf8');
+    console.log('File content:', data);
+} catch (err) {
+    console.error('Error reading file:', err);
+}
+
+console.log('End');
+        </code></pre>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// terminal window
+node async_await_example.js
+        </code></pre>
+        <div class="flex flex-wrap justify-center gap-6">
+            <a href="https://developer.mozilla.org/en-US/docs/Learn_web_development/Extensions/Async_JS/Promises" target="_blank" class="px-6 py-3 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition">Learn More</a>
+        </div>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Key Takeaways</h1>
+        <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
+            <li>Node never blocks the main thread fo I/O.</li>
+            <li>Understanding async patterns is crucial for building web servers.</li>
+            <li><code>Promises</code> and <code>async/await</code> are preferred over callbacks for modern code.</li>
+        </ul>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Up Next</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-6 text-center">The HTTP Module</h2>
+        <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
+            <li>Create a minimal web server.</li>
+            <li>Understand requests and responses.</li>
+        </ul>
+    </section>
+    
+</main>
+
+<!-- Keyboard Controls Script -->
+<script>
+    const slides = document.querySelectorAll('main > section');
+    let currentIndex = 0;
+
+    function goToSlide(index) {
+        if(index < 0) index = 0;
+        if(index >= slides.length) index = slides.length - 1;
+        slides[index].scrollIntoView({ behavior: 'smooth' });
+        currentIndex = index;
+    }
+
+    window.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight') {
+            goToSlide(currentIndex + 1);
+        } else if (e.key === 'ArrowLeft') {
+            goToSlide(currentIndex - 1);
+        }
+    });
+</script>
+<script>
+    console.log("Hello from the browser!");
+</script>
+</body>
+</html>
