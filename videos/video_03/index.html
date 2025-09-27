@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modules & NPM | Node.js Fundamentals</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/themes/prism-tomorrow.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/prism.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/components/prism-javascript.min.js"></script>
+    <style>
+        html, body {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white">
+
+<!-- Sticky Header -->
+<header class="sticky top-0 z-50 bg-gray-900 bg-opacity-90 backdrop-blur-md p-4 flex justify-between items-center shadow-md">
+    <!-- Video Title -->
+    <div class="text-left">
+      <span class="bg-yellow-400 text-gray-900 text-xs md:text-sm font-semibold px-2 py-1 rounded-full uppercase tracking-wide">
+        Video
+      </span>
+        <h3 class="mt-1 text-lg md:text-2xl font-bold text-yellow-400">Modules & NPM</h3>
+    </div>
+
+    <!-- Module Title -->
+    <div class="text-right">
+      <span class="bg-indigo-400 text-gray-900 text-xs md:text-sm font-semibold px-2 py-1 rounded-full uppercase tracking-wide">
+        Module
+      </span>
+        <h3 class="mt-1 text-lg md:text-2xl font-bold text-indigo-400">Node.js Fundamentals</h3>
+    </div>
+</header>
+
+<!-- Scrollable Sections -->
+<main id="slides" class="bg-gradient-to-b from-gray-900 via-gray-800 to-gray-700">
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Package Management</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Why Modules Matter</h2>
+        <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
+            <li>Code Organization & Maintainability</li>
+            <li>Preventing Global Scope Pollution</li>
+            <li>Code Reusability</li>
+            <li>Managing Dependencies</li>
+            <li>Improved Performance</li>
+            <li>Scalability</li>
+        </ul>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">CommonJS Modules</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Traditional Node.js</h2>
+        <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
+            <li><code>require()</code> to import</li>
+            <li><code>module.exports</code> to export</li>
+            <li><a href="https://nodejs.org/api/modules.html" target="_blank" class="text-yellow-400 underline hover:text-yellow-300">Documentation</a></li>
+            <li>Pros: widely supported in Node.js</li>
+            <li>Cons: not standard ES syntax</li>
+        </ul>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// math.js
+function add(a, b) { return a + b; }
+module.exports = { add };
+        </code></pre>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// app.js
+const math = require("./math");
+console.log(math.add(2, 3)); // 5
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">ES Modules</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Modern JavaScript</h2>
+        <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
+            <li><code>import</code> to import</li>
+            <li><code>export</code> to export</li>
+            <li><a href="https://nodejs.org/api/modules.html" target="_blank" class="text-yellow-400 underline hover:text-yellow-300">Documentation</a></li>
+            <li>Pros: aligns with modern JS, compatible with browser code</li>
+            <li>Cons: older Node.js modules may still use CommonJS</li>
+        </ul>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// math.mjs
+export function add(a, b) { return a + b; }
+        </code></pre>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// app.mjs
+import { add } from "./math.mjs";
+console.log(add(2, 3)); // 5
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">package.json</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Project Package Management</h2>
+        <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
+            <li>Every Node.js project typically has a package.json file.</li>
+            <li>Use <code>npm</code> commands to alter.</li>
+            <li>Project metadata (name, version, description).</li>
+            <li>Dependencies (packages your app needs).</li>
+            <li>Scripts (commands like start or test).</li>
+        </ul>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// terminal in the project directory
+npm init -y
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Installing Packages</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Project Package Management</h2>
+        <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
+            <li><a href="https://www.npmjs.com/" target="_blank" class="text-yellow-400 underline hover:text-yellow-300">Package search</a> to find packages.</li>
+            <li><code>npm install</code> to install packages.</li>
+            <li>Example: <a href="https://www.npmjs.com/package/lodash" target="_blank" class="text-yellow-400 underline hover:text-yellow-300">lodash</a>.</li>
+        </ul>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// terminal in the project directory
+npm install lodash              // installs as project level production dependency
+npm install lodash --save-dev   // installs as project level dev dependency
+npm install -g lodash           // installs globally (available outside project)
+        </code></pre>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// import lodash
+const _ = require("lodash");    // CommonJS
+import _ from "lodash";         // ES Modules
+        </code></pre>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// example code
+node lodash.js          // CommonJS
+node lodash.mjs         // ES Modules
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Up Next</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-6 text-center">Modules & NPM</h2>
+        <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
+            <li>Event Loop & Async Basics</li>
+            <li>Single-Threaded Nature</li>
+            <li>Callbacks vs Promises</li>
+        </ul>
+    </section>
+    
+</main>
+
+<!-- Keyboard Controls Script -->
+<script>
+    const slides = document.querySelectorAll('main > section');
+    let currentIndex = 0;
+
+    function goToSlide(index) {
+        if(index < 0) index = 0;
+        if(index >= slides.length) index = slides.length - 1;
+        slides[index].scrollIntoView({ behavior: 'smooth' });
+        currentIndex = index;
+    }
+
+    window.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight') {
+            goToSlide(currentIndex + 1);
+        } else if (e.key === 'ArrowLeft') {
+            goToSlide(currentIndex - 1);
+        }
+    });
+</script>
+<script>
+    console.log("Hello from the browser!");
+</script>
+</body>
+</html>

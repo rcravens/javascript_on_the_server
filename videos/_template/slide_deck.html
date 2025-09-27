@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video | Module</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/themes/prism-tomorrow.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/prism.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/components/prism-javascript.min.js"></script>
+    <style>
+        html, body {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white">
+
+<!-- Sticky Header -->
+<header class="sticky top-0 z-50 bg-gray-900 bg-opacity-90 backdrop-blur-md p-4 flex justify-between items-center shadow-md">
+    <!-- Video Title -->
+    <div class="text-left">
+      <span class="bg-yellow-400 text-gray-900 text-xs md:text-sm font-semibold px-2 py-1 rounded-full uppercase tracking-wide">
+        Video
+      </span>
+        <h3 class="mt-1 text-lg md:text-2xl font-bold text-yellow-400">Why JavaScript on the Server?</h3>
+    </div>
+
+    <!-- Module Title -->
+    <div class="text-right">
+      <span class="bg-indigo-400 text-gray-900 text-xs md:text-sm font-semibold px-2 py-1 rounded-full uppercase tracking-wide">
+        Module
+      </span>
+        <h3 class="mt-1 text-lg md:text-2xl font-bold text-indigo-400">Introduction to Server-Side JavaScript</h3>
+    </div>
+</header>
+
+<!-- Scrollable Sections -->
+<main id="slides" class="bg-gradient-to-b from-gray-900 via-gray-800 to-gray-700">
+    <!-- Slide 1: Title, subtitle, text, photo -->
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Welcome to Slide 1</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-6 text-center">Subtitle for Slide 1</h2>
+        <p class="text-xl md:text-2xl max-w-6xl text-center mb-8">
+            This is some introductory text for Slide 1. It explains the topic and gives context to the image below.
+        </p>
+        <img src="https://picsum.photos/600/400?random=1" alt="Slide Image" class="rounded-lg shadow-lg max-w-full h-auto">
+    </section>
+
+    <!-- Slide 2: Title, subtitle, bullet list -->
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Slide 2 Title</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-6 text-center">Slide 2 Subtitle</h2>
+        <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
+            <li>First key point in bullet list</li>
+            <li>Second important item to highlight</li>
+            <li>Third takeaway message for this slide</li>
+        </ul>
+    </section>
+
+    <!-- Slide 3: Title, subtitle, text with links -->
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Slide 3 Title</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-6 text-center">Slide 3 Subtitle</h2>
+        <p class="text-xl md:text-2xl max-w-6xl text-center mb-4">
+            Here is some text that references <a href="https://example.com" class="text-yellow-400 underline hover:text-yellow-300">Example Link 1</a> and also points to <a href="https://example.org" class="text-yellow-400 underline hover:text-yellow-300">Example Link 2</a>.
+            This content can be used to provide resources or references.
+        </p>
+        <p class="text-xl md:text-2xl max-w-6xl text-center">
+            Additional text can go here if you want to expand the explanation for the viewer.
+        </p>
+    </section>
+
+    <!-- Slide 4: Quotation -->
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <blockquote class="text-4xl md:text-6xl font-semibold text-center italic text-yellow-400 max-w-6xl mb-6">
+            “The only limit to our realization of tomorrow is our doubts of today.”
+        </blockquote>
+        <cite class="text-xl md:text-2xl text-indigo-300">— Franklin D. Roosevelt</cite>
+    </section>
+
+
+    <!-- Slide 5: Code Example -->
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Slide 5: Code Example</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-6 text-center">JavaScript Example</h2>
+
+        <pre class="rounded-lg shadow-lg max-w-6xl w-full overflow-x-auto">
+            <code class="language-javascript">
+// Simple function to greet a user
+function greet(name) {
+  console.log(`Hello, ${name}!`);
+}
+
+greet("World");
+            </code>
+        </pre>
+    </section>
+
+    <!-- Slide 6: Buttons Showcase -->
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Slide 6: Buttons</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Variety of Colors</h2>
+
+        <div class="flex flex-wrap justify-center gap-6">
+            <!-- Primary -->
+            <button class="px-6 py-3 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition">Primary</button>
+
+            <!-- Secondary -->
+            <button class="px-6 py-3 rounded-lg bg-gray-600 text-white font-semibold hover:bg-gray-700 transition">Secondary</button>
+
+            <!-- Success -->
+            <button class="px-6 py-3 rounded-lg bg-green-600 text-white font-semibold hover:bg-green-700 transition">Success</button>
+
+            <!-- Warning -->
+            <button class="px-6 py-3 rounded-lg bg-yellow-500 text-gray-900 font-semibold hover:bg-yellow-600 transition">Warning</button>
+
+            <!-- Danger -->
+            <button class="px-6 py-3 rounded-lg bg-red-600 text-white font-semibold hover:bg-red-700 transition">Danger</button>
+
+            <!-- Info -->
+            <button class="px-6 py-3 rounded-lg bg-indigo-500 text-white font-semibold hover:bg-indigo-600 transition">Info</button>
+
+            <!-- Outline -->
+            <button class="px-6 py-3 rounded-lg border-2 border-white text-white font-semibold hover:bg-white hover:text-gray-900 transition">Outline</button>
+        </div>
+    </section>
+</main>
+
+<!-- Keyboard Controls Script -->
+<script>
+    const slides = document.querySelectorAll('main > section');
+    let currentIndex = 0;
+
+    function goToSlide(index) {
+        if(index < 0) index = 0;
+        if(index >= slides.length) index = slides.length - 1;
+        slides[index].scrollIntoView({ behavior: 'smooth' });
+        currentIndex = index;
+    }
+
+    window.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight') {
+            goToSlide(currentIndex + 1);
+        } else if (e.key === 'ArrowLeft') {
+            goToSlide(currentIndex - 1);
+        }
+    });
+</script>
+
+</body>
+</html>

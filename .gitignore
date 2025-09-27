@@ -1,0 +1,13 @@
+.DS_Store
+javascript-on-the-server.txt
+/.fleet
+/.idea
+/.nova
+/.vscode
+/.zed
+/raw
+/edits
+/final
+/imgs
+node_modules/
+slides.key
