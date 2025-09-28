@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intro to Databases | Working with Data</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/themes/prism-tomorrow.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/prism.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/components/prism-javascript.min.js"></script>
+    <style>
+        html, body {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white">
+
+<!-- Sticky Header -->
+<header class="sticky top-0 z-50 bg-gray-900 bg-opacity-90 backdrop-blur-md p-4 flex justify-between items-center shadow-md">
+    <!-- Video Title -->
+    <div class="text-left">
+      <span class="bg-yellow-400 text-gray-900 text-xs md:text-sm font-semibold px-2 py-1 rounded-full uppercase tracking-wide">
+        Video
+      </span>
+        <h3 class="mt-1 text-lg md:text-2xl font-bold text-yellow-400">Intro to Databases</h3>
+    </div>
+
+    <!-- Module Title -->
+    <div class="text-right">
+      <span class="bg-indigo-400 text-gray-900 text-xs md:text-sm font-semibold px-2 py-1 rounded-full uppercase tracking-wide">
+        Module
+      </span>
+        <h3 class="mt-1 text-lg md:text-2xl font-bold text-indigo-400">Working with Data</h3>
+    </div>
+</header>
+
+<!-- Scrollable Sections -->
+<main id="slides" class="bg-gradient-to-b from-gray-900 via-gray-800 to-gray-700">
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Why use Databases?</h1>
+        <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
+            <li>File-based storage is simple but has limitations:
+                <ul class="ml-6 text-xl md:text-2xl max-w-6xl mb-8 list-none list-inside space-y-2">
+                    <li>👉 Not suitable for high concurrency.</li>
+                    <li>👉 File I/O can block if not handled asynchronously.</li>
+                    <li>👉 No indexing, transactions, or query language.</li>
+                </ul>
+            </li>
+            <li>Databases provide:
+                <ul class="ml-6 text-xl md:text-2xl max-w-6xl mb-8 list-none list-inside space-y-2">
+                    <li>👉 Structured data storage.</li>
+                    <li>👉 Query capabilities (SQL or NoSQL).</li>
+                    <li>👉 Atomicity, Consistency, Isolation, and Durability (ACID) guarantees for reliability.</li>
+                </ul>
+            </li>
+        </ul>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Types of Databases</h1>
+        <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
+            <li>SQLite (Relational, file-based) <a href="https://www.sqlite.org/index.html" target="_blank" class="text-yellow-400 underline hover:text-yellow-300">sqlite official</a> <a href="https://www.npmjs.com/package/sqlite3" target="_blank" class="text-yellow-400 underline hover:text-yellow-300">sqlite node</a>:
+                <ul class="ml-6 text-xl md:text-2xl max-w-6xl mb-8 list-none list-inside space-y-2">
+                    <li>👉 Lightweight, serverless, great for small projects or prototyping.</li>
+                    <li>👉 Supports standard SQL.</li>
+                </ul>
+            </li>
+            <li>PostgreSQL (Relational, server-based) <a href="https://www.postgresql.org/" target="_blank" class="text-yellow-400 underline hover:text-yellow-300">postgresql official</a>:
+                <ul class="ml-6 text-xl md:text-2xl max-w-6xl mb-8 list-none list-inside space-y-2">
+                    <li>👉 Full-featured relational DB.</li>
+                    <li>👉 Supports complex queries, transactions, indexing.</li>
+                </ul>
+            </li>
+            <li>MongoDB (NoSQL, document-based) <a href="https://www.mongodb.com/" target="_blank" class="text-yellow-400 underline hover:text-yellow-300">mongodb official</a>:
+                <ul class="ml-6 text-xl md:text-2xl max-w-6xl mb-8 list-none list-inside space-y-2">
+                    <li>👉 Stores JSON-like documents.</li>
+                    <li>👉 Flexible schema, good for dynamic or unstructured data.</li>
+                </ul>
+            </li>
+        </ul>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Install SQLite</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">SQLite Example</h2>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// terminal
+npm init -y             // initialize project
+
+npm install sqlite      // add dependency
+npm install sqlite3     // add dependency
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Create DB Table</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">SQLite Example</h2>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// Person.js (partial)
+import sqlite from "sqlite";
+import sqlite3 from "sqlite3";
+
+const DB_PATH = "people.db";
+
+let db;
+
+async function initDB() {
+  if (!db) {
+    db = await sqlite.open({
+      filename: DB_PATH,
+      driver: sqlite3.Database
+    });
+
+    // Migration: create the persons table if it doesn't exist
+    await db.run(`
+      CREATE TABLE IF NOT EXISTS persons (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        first_name TEXT NOT NULL,
+        last_name TEXT NOT NULL,
+        email TEXT NOT NULL UNIQUE
+      )
+    `);
+  }
+  return db;
+}
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Create</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">CRUD Operations</h2>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// Person.js (partial)
+
+// ------ Create: insert new, fail if already exists
+static async create(first_name, last_name, email) {
+    const db = await initDB();
+
+    try {
+        await db.run(
+            `INSERT INTO persons (first_name, last_name, email) VALUES (?, ?, ?)`,
+            first_name,
+            last_name,
+            email
+        );
+        return new Person(first_name, last_name, email);
+    } catch (err) {
+        if (err.message.includes("UNIQUE constraint failed")) return null;
+        throw err;
+    }
+}
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Read</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">CRUD Operations</h2>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// Person.js (partial)
+
+// ------ Read: find by email
+static async read(email) {
+    const db = await initDB();
+    const row = await db.get(`SELECT * FROM persons WHERE email = ?`, email);
+    return row ? new Person(row.first_name, row.last_name, row.email) : null;
+}
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Update</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">CRUD Operations</h2>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// Person.js (partial)
+
+// ------ Update: update first/last name by email
+static async update(first_name, last_name, email) {
+    const db = await initDB();
+    const result = await db.run(
+        `UPDATE persons SET first_name = ?, last_name = ? WHERE email = ?`,
+        first_name,
+        last_name,
+        email
+    );
+
+    if (result.changes === 0) return null;
+    return new Person(first_name, last_name, email);
+}
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Delete</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">CRUD Operations</h2>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// Person.js (partial)
+
+// ------ Delete: remove by email
+static async delete(email) {
+    const db = await initDB();
+    const person = await Person.read(email);
+    if (!person) return null;
+
+    await db.run(`DELETE FROM persons WHERE email = ?`, email);
+    return person;
+}
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">CRUD Example</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">CRUD Operations</h2>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// crud.js
+import Person from "./Person.js";
+import { seed_db } from "./seed.js";
+
+// Seed the database from JSON
+await seed_db();
+
+// Example usage
+const new_person = await Person.create("Bob", "Cravens", "bcravens@example.com");
+console.log("Create:", new_person);
+
+const person_read = await Person.read("bcravens@example.com");
+console.log("Read:", person_read);
+
+const person_updated = await Person.update("Robert", "Cravens", "bcravens@example.com");
+console.log("Update:", person_updated);
+
+const person_deleted = await Person.delete("bcravens@example.com");
+console.log("Delete:", person_deleted);
+        </code></pre>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// terminal
+node crud.js
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Key Takeaways</h1>
+        <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
+            <li>Choosing a database depends on project size, complexity, and concurrency needs.</li>
+            <li>SQLite is simple and file-based but supports SQL queries.</li>
+            <li>MongoDB is flexible but requires learning NoSQL concepts.</li>
+            <li>PostgreSQL is robust for production systems.</li>
+        </ul>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Up Next</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-6 text-center">Server Side Rendering (SSR) Intro</h2>
+        <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
+            <li>Use templates to generate dynamic HTML on the server.</li>
+            <li>Prepare for using templating engines like EJS.</li>
+        </ul>
+    </section>
+    
+</main>
+
+<!-- Keyboard Controls Script -->
+<script>
+    const slides = document.querySelectorAll('main > section');
+    let currentIndex = 0;
+
+    function goToSlide(index) {
+        if(index < 0) index = 0;
+        if(index >= slides.length) index = slides.length - 1;
+        slides[index].scrollIntoView({ behavior: 'smooth' });
+        currentIndex = index;
+    }
+
+    window.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight') {
+            goToSlide(currentIndex + 1);
+        } else if (e.key === 'ArrowLeft') {
+            goToSlide(currentIndex - 1);
+        }
+    });
+</script>
+<script>
+    console.log("Hello from the browser!");
+</script>
+</body>
+</html>
