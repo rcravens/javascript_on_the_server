@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The HTTP Module | Building a Basic Web Server</title>
+    <title>Serving HTML & Static Files | Building a Basic Web Server</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/themes/prism-tomorrow.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/prism.min.js"></script>
@@ -23,7 +23,7 @@
       <span class="bg-yellow-400 text-gray-900 text-xs md:text-sm font-semibold px-2 py-1 rounded-full uppercase tracking-wide">
         Video
       </span>
-        <h3 class="mt-1 text-lg md:text-2xl font-bold text-yellow-400">The HTTP Module</h3>
+        <h3 class="mt-1 text-lg md:text-2xl font-bold text-yellow-400">Serving HTML & Static Files</h3>
     </div>
 
     <!-- Module Title -->
@@ -39,40 +39,35 @@
 <main id="slides" class="bg-gradient-to-b from-gray-900 via-gray-800 to-gray-700">
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Why the HTTP Module?</h1>
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Why Server Static Files?</h1>
         <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
-            <li>Node provides the core HTTP module - no extra packages needed.</li>
-            <li>Allows you to listen for incoming requests and respond with data.</li>
-            <li>Foundation for building web servers, APIs, and dynamic websites.</li>
+            <li>Users expect styled web pages, not plain text.</li>
+            <li>HTML provides structure, CSS provides style, JS provides interactivity.</li>
+            <li>Node can server any file type (text, image, JSON, etc.) using the <code>fs</code> module.</li>
         </ul>
         <div class="flex flex-wrap justify-center gap-6">
-            <a href="https://nodejs.org/api/http.html" target="_blank" class="px-6 py-3 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition">Learn More</a>
+            <a href="https://nodejs.org/api/fs.html" target="_blank" class="px-6 py-3 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition">Learn More</a>
         </div>
     </section>
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Minimal HTTP Server</h1>
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Basic File Server</h1>
         <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Using the HTTP Module</h2>
         <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
-// http_min.js
+// http_static.js (partial)
 
-const http = require("http"); // CommonJS
-
-const server = http.createServer((req, res) => {
-  res.statusCode = 200;
-  res.setHeader("Content-Type", "text/plain");
-  res.end("Hello World\n");
-});
-
-server.listen(3000, () => {
-  console.log("Server running at http://localhost:3000/");
-});
+http.createServer(async (req, res) => {
+        const file = await prepareFile(req.url);
+        const statusCode = file.found ? 200 : 404;
+        const mimeType = MIME_TYPES[file.ext] || MIME_TYPES.default;
+        res.writeHead(statusCode, { "Content-Type": mimeType });
+        file.stream.pipe(res);
+        console.log(`${req.method} ${req.url} ${statusCode}`);
+    });
         </code></pre>
         <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
 // terminal window
-> node http_min.js
-> Server running at http://localhost:3000/
-> ^C
+node http_static.js
         </code></pre>
     </section>
 
