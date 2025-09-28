@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The HTTP Module | Building a Basic Web Server</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/themes/prism-tomorrow.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/prism.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/components/prism-javascript.min.js"></script>
+    <style>
+        html, body {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white">
+
+<!-- Sticky Header -->
+<header class="sticky top-0 z-50 bg-gray-900 bg-opacity-90 backdrop-blur-md p-4 flex justify-between items-center shadow-md">
+    <!-- Video Title -->
+    <div class="text-left">
+      <span class="bg-yellow-400 text-gray-900 text-xs md:text-sm font-semibold px-2 py-1 rounded-full uppercase tracking-wide">
+        Video
+      </span>
+        <h3 class="mt-1 text-lg md:text-2xl font-bold text-yellow-400">The HTTP Module</h3>
+    </div>
+
+    <!-- Module Title -->
+    <div class="text-right">
+      <span class="bg-indigo-400 text-gray-900 text-xs md:text-sm font-semibold px-2 py-1 rounded-full uppercase tracking-wide">
+        Module
+      </span>
+        <h3 class="mt-1 text-lg md:text-2xl font-bold text-indigo-400">Building a Basic Web Server</h3>
+    </div>
+</header>
+
+<!-- Scrollable Sections -->
+<main id="slides" class="bg-gradient-to-b from-gray-900 via-gray-800 to-gray-700">
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Why the HTTP Module?</h1>
+        <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
+            <li>Node provides the core HTTP module - no extra packages needed.</li>
+            <li>Allows you to listen for incoming requests and respond with data.</li>
+            <li>Foundation for building web servers, APIs, and dynamic websites.</li>
+        </ul>
+        <div class="flex flex-wrap justify-center gap-6">
+            <a href="https://nodejs.org/api/http.html" target="_blank" class="px-6 py-3 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition">Learn More</a>
+        </div>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Minimal HTTP Server</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Using the HTTP Module</h2>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// http_min.js
+
+const http = require("http"); // CommonJS
+
+const server = http.createServer((req, res) => {
+  res.statusCode = 200;
+  res.setHeader("Content-Type", "text/plain");
+  res.end("Hello World\n");
+});
+
+server.listen(3000, () => {
+  console.log("Server running at http://localhost:3000/");
+});
+        </code></pre>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// terminal window
+> node http_min.js
+> Server running at http://localhost:3000/
+> ^C
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">The Request</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Deeper Look</h2>
+        <p class="text-xl md:text-2xl max-w-6xl text-center mb-8">
+            <code>http.IncomingMessage</code> object (i.e.  <code>req</code>) contains the request info.
+        </p>
+        <div class="flex flex-wrap justify-center gap-6">
+            <a href="https://www.w3schools.com/nodejs/nodejs_http.asp" target="_blank" class="px-6 py-3 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition">Learn More</a>
+        </div>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// terminal window
+node http_min.js
+        </code></pre>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// most used
+req.url                     // /api/v1/users
+req.method                  // GET, POST
+req.headers                 // object with **ALL** headers
+req.headers['user-agent']   // value of a single header
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">The Response</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Deeper Look</h2>
+        <p class="text-xl md:text-2xl max-w-6xl text-center mb-8">
+            <code>http.ServerResponse</code> object (i.e.  <code>res</code>) contains methods to set the response headers and body.
+        </p>
+        <div class="flex flex-wrap justify-center gap-6">
+            <a href="https://www.w3schools.com/nodejs/obj_http_serverresponse.asp" target="_blank" class="px-6 py-3 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition">Learn More</a>
+        </div>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// most used
+res.statusCode = val            // set the response HTTP status code (e.g., 200, 404)
+res.setHeader(key, val)         // set the specified header
+res.writeHead(status, object)   // sends status & response headers to client
+res.write(data)                 // sends text, stream, or chunk to the client
+res.end(data)                   // sends final text, and signals that the response is complete
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Static Web Server</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Another Look</h2>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// terminal window
+node http_static.js
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Key Takeaways</h1>
+        <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
+            <li>The HTTP module is minimal but powerful.</li>
+            <li>Even without frameworks, you can serve static or dynamic content.</li>
+            <li>Sets the stage for routing, serving HTML, and building web apps.</li>
+        </ul>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Up Next</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-6 text-center">Routing Basics</h2>
+        <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
+            <li>Understand basic routing.</li>
+            <li>Serve different content based on requested path.</li>
+        </ul>
+    </section>
+    
+</main>
+
+<!-- Keyboard Controls Script -->
+<script>
+    const slides = document.querySelectorAll('main > section');
+    let currentIndex = 0;
+
+    function goToSlide(index) {
+        if(index < 0) index = 0;
+        if(index >= slides.length) index = slides.length - 1;
+        slides[index].scrollIntoView({ behavior: 'smooth' });
+        currentIndex = index;
+    }
+
+    window.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight') {
+            goToSlide(currentIndex + 1);
+        } else if (e.key === 'ArrowLeft') {
+            goToSlide(currentIndex - 1);
+        }
+    });
+</script>
+<script>
+    console.log("Hello from the browser!");
+</script>
+</body>
+</html>
