@@ -39,7 +39,7 @@
 <main id="slides" class="bg-gradient-to-b from-gray-900 via-gray-800 to-gray-700">
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Why Server Static Files?</h1>
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Why Serve Static Files?</h1>
         <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
             <li>Users expect styled web pages, not plain text.</li>
             <li>HTML provides structure, CSS provides style, JS provides interactivity.</li>
@@ -72,70 +72,20 @@ node http_static.js
     </section>
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">The Request</h1>
-        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Deeper Look</h2>
-        <p class="text-xl md:text-2xl max-w-6xl text-center mb-8">
-            <code>http.IncomingMessage</code> object (i.e.  <code>req</code>) contains the request info.
-        </p>
-        <div class="flex flex-wrap justify-center gap-6">
-            <a href="https://www.w3schools.com/nodejs/nodejs_http.asp" target="_blank" class="px-6 py-3 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition">Learn More</a>
-        </div>
-        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
-// terminal window
-node http_min.js
-        </code></pre>
-        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
-// most used
-req.url                     // /api/v1/users
-req.method                  // GET, POST
-req.headers                 // object with **ALL** headers
-req.headers['user-agent']   // value of a single header
-        </code></pre>
-    </section>
-
-    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">The Response</h1>
-        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Deeper Look</h2>
-        <p class="text-xl md:text-2xl max-w-6xl text-center mb-8">
-            <code>http.ServerResponse</code> object (i.e.  <code>res</code>) contains methods to set the response headers and body.
-        </p>
-        <div class="flex flex-wrap justify-center gap-6">
-            <a href="https://www.w3schools.com/nodejs/obj_http_serverresponse.asp" target="_blank" class="px-6 py-3 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition">Learn More</a>
-        </div>
-        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
-// most used
-res.statusCode = val            // set the response HTTP status code (e.g., 200, 404)
-res.setHeader(key, val)         // set the specified header
-res.writeHead(status, object)   // sends status & response headers to client
-res.write(data)                 // sends text, stream, or chunk to the client
-res.end(data)                   // sends final text, and signals that the response is complete
-        </code></pre>
-    </section>
-
-    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Static Web Server</h1>
-        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Another Look</h2>
-        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
-// terminal window
-node http_static.js
-        </code></pre>
-    </section>
-
-    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
         <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Key Takeaways</h1>
         <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
-            <li>The HTTP module is minimal but powerful.</li>
-            <li>Even without frameworks, you can serve static or dynamic content.</li>
-            <li>Sets the stage for routing, serving HTML, and building web apps.</li>
+            <li>Node can server any file type with the correct Content-Type header.</li>
+            <li>Async file reading ensures the server doesn't block while sending files.</li>
+            <li>This is a stepping stone for templating and dynamic content.</li>
         </ul>
     </section>
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
         <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Up Next</h1>
-        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-6 text-center">Routing Basics</h2>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-6 text-center">Working with Data</h2>
         <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
-            <li>Understand basic routing.</li>
-            <li>Serve different content based on requested path.</li>
+            <li>Understand Content-Type headers.</li>
+            <li>JSON APIs.</li>
         </ul>
     </section>
     
