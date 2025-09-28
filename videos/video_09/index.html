@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File-Based Storage | Working with Data</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/themes/prism-tomorrow.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/prism.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/components/prism-javascript.min.js"></script>
+    <style>
+        html, body {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white">
+
+<!-- Sticky Header -->
+<header class="sticky top-0 z-50 bg-gray-900 bg-opacity-90 backdrop-blur-md p-4 flex justify-between items-center shadow-md">
+    <!-- Video Title -->
+    <div class="text-left">
+      <span class="bg-yellow-400 text-gray-900 text-xs md:text-sm font-semibold px-2 py-1 rounded-full uppercase tracking-wide">
+        Video
+      </span>
+        <h3 class="mt-1 text-lg md:text-2xl font-bold text-yellow-400">File-Based Storage</h3>
+    </div>
+
+    <!-- Module Title -->
+    <div class="text-right">
+      <span class="bg-indigo-400 text-gray-900 text-xs md:text-sm font-semibold px-2 py-1 rounded-full uppercase tracking-wide">
+        Module
+      </span>
+        <h3 class="mt-1 text-lg md:text-2xl font-bold text-indigo-400">Working with Data</h3>
+    </div>
+</header>
+
+<!-- Scrollable Sections -->
+<main id="slides" class="bg-gradient-to-b from-gray-900 via-gray-800 to-gray-700">
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Why File-Based Storage?</h1>
+        <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
+            <li>Simple way to persist data between server restarts.</li>
+            <li>Useful for small projects or prototypes.</li>
+            <li>Avoids complexity of setting up a database.</li>
+            <li>Limitations:
+            <ul class="ml-6 text-xl md:text-2xl max-w-6xl mb-8 list-none list-inside space-y-2">
+                <li>👉 Not suitable for high concurrency.</li>
+                <li>👉 File I/O can block if not handled asynchronously.</li>
+                <li>👉 No indexing, transactions, or query language.</li>
+            </ul>
+            </li>
+        </ul>
+        <div class="flex flex-wrap justify-center gap-6">
+            <a href="https://nodejs.org/en/learn/manipulating-files/reading-files-with-nodejs" target="_blank" class="px-6 py-3 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition">Reading Files</a>
+            <a href="https://nodejs.org/en/learn/manipulating-files/writing-files-with-nodejs" target="_blank" class="px-6 py-3 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition">Writing Files</a>
+        </div>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Example JSON Data</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Simple Example</h2>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// people.json
+[
+  {
+    "first_name": "John",
+    "last_name": "Doe",
+    "email": "john.doe@example.com"
+  },
+  {
+    "first_name": "Jane",
+    "last_name": "Smith",
+    "email": "jane.smith@example.com"
+  },
+  ...
+  {
+    "first_name": "Jessica",
+    "last_name": "Taylor",
+    "email": "jessica.taylor@example.com"
+  }
+]
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Reading JSON Data</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Simple Example</h2>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// read_file.js
+import fs from "fs/promises";
+
+async function read_json(path) {
+
+    try {
+        const data = await fs.readFile(path, "utf-8");
+        return JSON.parse(data);
+    } catch (err) {
+        console.error("Error reading file:", err);
+    }
+}
+
+const data_path = "people.json";
+
+let people = await read_json(data_path);
+
+console.log(people);
+console.log(people[0]);
+console.log(people[0].email);
+        </code></pre>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// terminal window
+node read_file.js
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Writing JSON Data</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Simple Example</h2>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// write_file.js
+import fs from "fs/promises";
+
+async function write_json(path, data) {
+    try {
+        await fs.writeFile(path, JSON.stringify(data, null, 2));
+        console.log("Data saved!");
+    } catch (err) {
+        console.error("Error writing file:", err);
+    }
+}
+
+const data_path = "people2.json";
+
+let people = [];
+const bob = {
+    "first": "Bob",
+    "last": "Cravens",
+    "email": "bcravens@example.com"
+}
+people.push(bob);
+
+await write_json(data_path, people);
+        </code></pre>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// terminal window
+node write_file.js
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Create / Read / Update / Delete</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Data Operations</h2>
+        <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
+            <li>Assume <code>email</code> field is unique and primary key.</li>
+            <li>Create - Insert new record. Fail if already exists.</li>
+            <li>Read - Find a person. Return <code>null</code> if not found.</li>
+            <li>Update - Find person and update. Fail if not found.</li>
+            <li>Delete - Find person and delete. Fail if not found.</li>
+        </ul>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Create</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">CRUD Operations</h2>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// Person.js (partial)
+
+// ------ Create: insert new, fail if already exists
+static async create(first_name, last_name, email) {
+    const people = await read_json(data_path);
+    const exists = people.find((person) => person.email === email);
+    if (exists) return null;
+
+    const person = new Person(first_name, last_name, email);
+    people.push(person);
+    await write_json(data_path, people);
+    return person;
+}
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Read</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">CRUD Operations</h2>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// Person.js (partial)
+
+// ------ Read: find by email
+static async read(email) {
+    const people = await read_json(data_path);
+    const person = people.find((p) => p.email === email);
+    return person || null;
+}
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Update</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">CRUD Operations</h2>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// Person.js (partial)
+
+// ------ Update: update first/last name by email
+static async update(first_name, last_name, email) {
+    const people = await read_json(data_path);
+    const index = people.findIndex((p) => p.email === email);
+    if (index === -1) return null;
+
+    people[index].first_name = first_name;
+    people[index].last_name = last_name;
+
+    await write_json(data_path, people);
+    return people[index];
+}
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Delete</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">CRUD Operations</h2>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// Person.js (partial)
+
+// ------ Delete: remove by email
+static async delete(email) {
+    const people = await read_json(data_path);
+    const index = people.findIndex((p) => p.email === email);
+    if (index === -1) return null;
+
+    const [removed_person] = people.splice(index, 1);
+    await write_json(data_path, people);
+    return removed_person;
+}
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">CRUD Example</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">CRUD Operations</h2>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// crud.js
+import Person from "./Person.js";
+
+// Example usage
+const new_person = await Person.create("Bob", "Cravens", "bcravens@example.com");
+console.log("Create:", new_person);
+
+const person_read = await Person.read("bcravens@example.com");
+console.log("Read:", person_read);
+
+const person_updated = await Person.update("Robert", "Cravens", "bcravens@example.com");
+console.log("Update:", person_updated);
+
+const person_deleted = await Person.delete("bcravens@example.com");
+console.log("Delete:", person_deleted);
+        </code></pre>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// terminal
+node crud.js
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Key Takeaways</h1>
+        <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
+            <li>Works well for prototypes or small apps.</li>
+            <li>Avoid simultaneous writes in production; can cause race conditions.</li>
+            <li>Provides a stepping stone before using a proper database.</li>
+        </ul>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Up Next</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-6 text-center">Intro to Databases</h2>
+        <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
+            <li>Types of databases commonly used with Node.</li>
+            <li>Minimal SQLite example.</li>
+        </ul>
+    </section>
+    
+</main>
+
+<!-- Keyboard Controls Script -->
+<script>
+    const slides = document.querySelectorAll('main > section');
+    let currentIndex = 0;
+
+    function goToSlide(index) {
+        if(index < 0) index = 0;
+        if(index >= slides.length) index = slides.length - 1;
+        slides[index].scrollIntoView({ behavior: 'smooth' });
+        currentIndex = index;
+    }
+
+    window.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight') {
+            goToSlide(currentIndex + 1);
+        } else if (e.key === 'ArrowLeft') {
+            goToSlide(currentIndex - 1);
+        }
+    });
+</script>
+<script>
+    console.log("Hello from the browser!");
+</script>
+</body>
+</html>
