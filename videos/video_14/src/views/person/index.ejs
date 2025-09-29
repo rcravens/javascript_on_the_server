@@ -1,25 +1,26 @@
-<h1 style="text-align:center;">People</h1>
-
-<p style="text-align:center;">
-    <a href="/people/new">New Person</a>
-</p>
-<table>
-    <tr>
-        <th>First Name</th>
-        <th>Last Name</th>
-        <th>Email</th>
-        <th></th>
-    </tr>
-    <% people.forEach(person => { %>
+<div class="max-w-4xl mx-auto bg-gray-800 p-6 rounded-lg shadow-lg overflow-x-auto">
+    <table class="w-full text-gray-100 table-auto">
+        <thead class="bg-gray-700">
         <tr>
-            <td><%= person.first_name %></td>
-            <td><%= person.last_name %></td>
-            <td><%= person.email %></td>
-            <td>
-                <a href="/people/<%= person.email %>">View</a> |
-                <a href="/people/<%= person.email %>/edit">Edit</a> |
-                <a href="/people/<%= person.email %>/delete">Delete</a>
-            </td>
+            <th class="px-4 py-2 text-left">First Name</th>
+            <th class="px-4 py-2 text-left">Last Name</th>
+            <th class="px-4 py-2 text-left">Email</th>
+            <th class="px-4 py-2 text-left">Actions</th>
         </tr>
-    <% }) %>
-</table>
+        </thead>
+        <tbody>
+        <% people.forEach(person => { %>
+            <tr class="border-b border-gray-700 hover:bg-gray-700">
+                <td class="px-4 py-2"><%= person.first_name %></td>
+                <td class="px-4 py-2"><%= person.last_name %></td>
+                <td class="px-4 py-2"><%= person.email %></td>
+                <td class="px-4 py-2 space-x-2">
+                    <a href="/people/<%= person.email %>" class="text-green-400 hover:underline">View</a> |
+                    <a href="/people/<%= person.email %>/edit" class="text-blue-400 hover:underline">Edit</a> |
+                    <a href="/people/<%= person.email %>/delete" class="text-red-400 hover:underline">Delete</a>
+                </td>
+            </tr>
+        <% }) %>
+        </tbody>
+    </table>
+</div>

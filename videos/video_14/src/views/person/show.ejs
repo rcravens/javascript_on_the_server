@@ -1,10 +1,26 @@
-<h1 style="text-align:center;">Person Details</h1>
-<table>
-    <tr><th>First Name</th><td><%= person.first_name %></td></tr>
-    <tr><th>Last Name</th><td><%= person.last_name %></td></tr>
-    <tr><th>Email</th><td><%= person.email %></td></tr>
-</table>
+<h1 class="text-3xl font-bold text-center mb-6">Person Details</h1>
 
-<p style="text-align:center;">
-    <a href="/people">Back to People</a>
-</p>
+<div class="max-w-md mx-auto bg-gray-800 p-6 rounded-lg shadow-lg">
+    <table class="w-full text-gray-100">
+        <tbody>
+        <tr class="border-b border-gray-700">
+            <th class="text-left px-4 py-2 font-semibold">First Name</th>
+            <td class="px-4 py-2"><%= person.first_name %></td>
+        </tr>
+        <tr class="border-b border-gray-700">
+            <th class="text-left px-4 py-2 font-semibold">Last Name</th>
+            <td class="px-4 py-2"><%= person.last_name %></td>
+        </tr>
+        <tr>
+            <th class="text-left px-4 py-2 font-semibold">Email</th>
+            <td class="px-4 py-2"><%= person.email %></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div class="mt-6 text-center">
+        <a href="/people" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded">
+            Back to People
+        </a>
+    </div>
+</div>

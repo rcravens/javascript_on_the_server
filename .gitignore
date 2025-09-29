@@ -10,4 +10,5 @@ javascript-on-the-server.txt
 /final
 /imgs
 node_modules/
+data/sessions/
 slides.key
