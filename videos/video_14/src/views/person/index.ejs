@@ -1,0 +1,25 @@
+<h1 style="text-align:center;">People</h1>
+
+<p style="text-align:center;">
+    <a href="/people/new">New Person</a>
+</p>
+<table>
+    <tr>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Email</th>
+        <th></th>
+    </tr>
+    <% people.forEach(person => { %>
+        <tr>
+            <td><%= person.first_name %></td>
+            <td><%= person.last_name %></td>
+            <td><%= person.email %></td>
+            <td>
+                <a href="/people/<%= person.email %>">View</a> |
+                <a href="/people/<%= person.email %>/edit">Edit</a> |
+                <a href="/people/<%= person.email %>/delete">Delete</a>
+            </td>
+        </tr>
+    <% }) %>
+</table>

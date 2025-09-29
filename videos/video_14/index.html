@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Handling Forms & POST Requests | Adding Interactivity & State</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/themes/prism-tomorrow.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/prism.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/components/prism-javascript.min.js"></script>
+    <style>
+        html, body {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white">
+
+<!-- Sticky Header -->
+<header class="sticky top-0 z-50 bg-gray-900 bg-opacity-90 backdrop-blur-md p-4 flex justify-between items-center shadow-md">
+    <!-- Video Title -->
+    <div class="text-left">
+      <span class="bg-yellow-400 text-gray-900 text-xs md:text-sm font-semibold px-2 py-1 rounded-full uppercase tracking-wide">
+        Video
+      </span>
+        <h3 class="mt-1 text-lg md:text-2xl font-bold text-yellow-400">Handling Forms & POST Requests</h3>
+    </div>
+
+    <!-- Module Title -->
+    <div class="text-right">
+      <span class="bg-indigo-400 text-gray-900 text-xs md:text-sm font-semibold px-2 py-1 rounded-full uppercase tracking-wide">
+        Module
+      </span>
+        <h3 class="mt-1 text-lg md:text-2xl font-bold text-indigo-400">Adding Interactivity & State</h3>
+    </div>
+</header>
+
+<!-- Scrollable Sections -->
+<main id="slides" class="bg-gradient-to-b from-gray-900 via-gray-800 to-gray-700">
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">HTML Forms</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Visitors Send Data To Server</h2>
+        <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
+            <li>Client Side - HTML Form:
+                <ul class="ml-6 text-xl md:text-2xl max-w-6xl mb-8 list-none list-inside space-y-2">
+                    <li>👉 Forms allow user to enter and submit data to the server.</li>
+                    <li>👉 Set the HTTP verb / method: <code>method="POST"</code>.</li>
+                    <li>👉 Set the end-point: <code>action="/people"</code>.</li>
+                    <li>👉 Provide <code>input</code>, <code>textarea</code>, and other elements for data entry.</li>
+                    <li>👉 Data is included in the request data submitted to the server.</li>
+                </ul>
+            </li>
+            <li>Server Side - Request / Response:
+                <ul class="ml-6 text-xl md:text-2xl max-w-6xl mb-8 list-none list-inside space-y-2">
+                    <li>👉 Node streams incoming data as part of the request.</li>
+                    <li>👉 Parse data into a usable form.</li>
+                    <li>👉 List for "data" and "end" events.</li>
+                </ul>
+            </li>
+        </ul>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Client Side - HTML Form</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Visitors Send Data To Server</h2>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// views/person/new.ejs
+
+&lt;h1 style="text-align:center;">Add New Person&lt;/h1>
+&lt;form method="POST" action="/people" style="width:300px; margin:auto;">
+    &lt;label>First Name:&lt;/label>&lt;br>
+    &lt;input type="text" name="first_name" required>&lt;br>&lt;br>
+
+    &lt;label>Last Name:&lt;/label>&lt;br>
+    &lt;input type="text" name="last_name" required>&lt;br>&lt;br>
+
+    &lt;label>Email:&lt;/label>&lt;br>
+    &lt;input type="email" name="email" required>&lt;br>&lt;br>
+
+    &lt;button type="submit">Create&lt;/button>
+&lt;/form>
+
+&lt;p style="text-align:center;">
+    &lt;a href="/people">Back to People&lt;/a>
+&lt;/p>
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Server Side - Routing</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Visitors Send Data To Server</h2>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// server.js (partial)
+
+const router = new Router();
+registerRoutes(router);
+
+const server = http.createServer(async (req, res) => {
+    const url = new URL(req.url, `http://${req.headers.host}`);
+    const parts = url.pathname.split("/").filter(Boolean);
+
+    // Handle _method override
+    const method = req.method === "POST" && url.searchParams.get("_method")
+            ? url.searchParams.get("_method").toUpperCase()
+            : req.method;
+
+    try {
+        await router.handle(req, res, method, parts);
+    } catch (err) {
+        console.error("Error handling request:", err);
+        res.writeHead(500, { "Content-Type": "text/plain" });
+        res.end("Internal Server Error");
+    }
+});
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Server Side - Routes</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Visitors Send Data To Server</h2>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// routes.js (partial)
+
+import { PersonController } from "./controllers/PersonController.js";
+
+export default function registerRoutes(router) {
+    // Show the form
+    router.register("GET", "/people/new", PersonController, "new");
+
+    // Process the data
+    router.register("POST", "/people", PersonController, "create");
+
+    ... OTHER ROUTES NOT SHOWN ...
+}
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Server Side - Route Matching</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Visitors Send Data To Server</h2>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// Router.js (partial)
+
+export default class Router {
+    async handle(req, res, method, urlParts) {
+        for (const route of this.routes) {
+            if (route.method !== method) continue;
+            if (route.parts.length !== urlParts.length) continue;
+
+            const params = {};
+            let matched = true;
+
+            for (let i = 0; i < route.parts.length; i++) {
+                if (route.parts[i].startsWith(":")) {
+                    params[route.parts[i].substring(1)] = urlParts[i];
+                } else if (route.parts[i] !== urlParts[i]) {
+                    matched = false;
+                    break;
+                }
+            }
+
+            if (!matched) continue;
+
+            ... BODY PARSING & HANDLER NOT SHOWN ...
+        }
+
+        res.writeHead(404, { "Content-Type": "text/plain" });
+        res.end("Not Found");
+    }
+}
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Server Side - Handler</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Visitors Send Data To Server</h2>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// Router.js (partial)
+
+export default class Router {
+    async handle(req, res, method, urlParts) {
+        for (const route of this.routes) {
+            ... MATCHING CODE ...
+
+            const controller = new route.controllerClass();
+            if (!controller[route.handlerName])
+                throw new Error(`Handler "${route.handlerName}" not found on controller`);
+
+            let body = {};
+            if (["POST", "PUT", "PATCH"].includes(method)) {
+                body = await Router.parseBody(req);
+            }
+
+            return controller[route.handlerName](req, res, params, body);
+        }
+    }
+}
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Server Side - Parsing</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Visitors Send Data To Server</h2>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// Router.js (partial)
+
+export default class Router {
+
+    static parseBody(req) {
+        return new Promise((resolve, reject) => {
+            let data = '';
+            req.on('data', chunk => data += chunk);
+            req.on('end', () => {
+                try {
+                    const contentType = req.headers['content-type'] || '';
+                    if (contentType.includes('application/json')) {
+                        resolve(JSON.parse(data || '{}'));
+                    } else if (contentType.includes('application/x-www-form-urlencoded')) {
+                        const params = new URLSearchParams(data);
+                        resolve(Object.fromEntries(params.entries()));
+                    } else {
+                        resolve({});
+                    }
+                } catch (err) {
+                    reject(err);
+                }
+            });
+        });
+    }
+}
+        </code></pre>
+    </section>
+
+
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Other Considerations</h1>
+        <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
+            <li>Sanitization:
+                <ul class="ml-6 text-xl md:text-2xl max-w-6xl mb-8 list-none list-inside space-y-2">
+                    <li>👉 Performed at "point of use".</li>
+                    <li>👉 Prevents XSS and injection attacks.</li>
+                    <li>👉 EJS example: <code>&lt;%= variable %></code> performs HTML sanitization, <code>&lt;%- variable %></code> DOES NOT.</li>
+                    <li>👉 SQL: use "parameterized queries" to sanitize variables used in queries.</li>
+                </ul>
+            </li>
+            <li>Validation:
+                <ul class="ml-6 text-xl md:text-2xl max-w-6xl mb-8 list-none list-inside space-y-2">
+                    <li>👉 Performed immediately...before storing or using any data.</li>
+                    <li>👉 Inspection to ensure data conforms to predefined rules (length, min/max, email...).</li>
+                    <li>👉 Data that fails inspection should be sent back to browser for the user to edit.</li>
+                </ul>
+            </li>
+        </ul>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Key Takeaways</h1>
+        <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
+            <li>Listen for "data" and "end" to parse POST body.</li>
+            <li>Forms are the foundation for user input in web apps.</li>
+            <li>Validation should be performed immediately.</li>
+            <li>Sanitization should be performed at point-of-use.</li>
+        </ul>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Up Next</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-6 text-center">Sessions & Cookies</h2>
+        <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
+            <li>Store state between HTTP requests.</li>
+            <li>Simple example.</li>
+        </ul>
+    </section>
+    
+</main>
+
+<!-- Keyboard Controls Script -->
+<script>
+    const slides = document.querySelectorAll('main > section');
+    let currentIndex = 0;
+
+    function goToSlide(index) {
+        if(index < 0) index = 0;
+        if(index >= slides.length) index = slides.length - 1;
+        slides[index].scrollIntoView({ behavior: 'smooth' });
+        currentIndex = index;
+    }
+
+    window.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight') {
+            goToSlide(currentIndex + 1);
+        } else if (e.key === 'ArrowLeft') {
+            goToSlide(currentIndex - 1);
+        }
+    });
+</script>
+<script>
+    console.log("Hello from the browser!");
+</script>
+</body>
+</html>
