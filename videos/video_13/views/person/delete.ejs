@@ -1,0 +1,7 @@
+<h1 style="text-align:center;">Delete Person</h1>
+<p style="text-align:center;">Are you sure you want to delete <strong><%= person.first_name %> <%= person.last_name %></strong>?</p>
+
+<form method="POST" action="/people/<%= person.email %>?_method=DELETE" style="text-align:center;">
+    <button type="submit">Yes, Delete</button>
+    <a href="/people">Cancel</a>
+</form>
