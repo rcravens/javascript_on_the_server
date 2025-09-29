@@ -33,7 +33,7 @@ export class BaseController {
         res.end();
     }
 
-    static error(res, statusCode, message) {
+    error(res, statusCode, message) {
         res.writeHead(statusCode, { "Content-Type": "text/plain" });
         res.end(message);
     }

@@ -39,196 +39,349 @@
 <main id="slides" class="bg-gradient-to-b from-gray-900 via-gray-800 to-gray-700">
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">What is EJS</h1>
-        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">EJS = Embedded JavaScript</h2>
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">What is MVC?</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">MVC = Model View Controller</h2>
         <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
-            <li>Templating engine that allows embedding JavaScript into HTML.</li>
-            <li>Server-side rendering of HTML with dynamic data.</li>
-            <li>Separates layout and data logic, improving maintainability.</li>
+            <li>Architectural pattern.</li>
+            <li>Model: manages data and business logic.</li>
+            <li>View: handles presentation, typically HTML templates (EJS).</li>
+            <li>Controller: coordinates data retrieval and response rendering.</li>
+            <li>Benefits:
+                <ul class="ml-6 text-xl md:text-2xl max-w-6xl mb-8 list-none list-inside space-y-2">
+                    <li>👉 Convention drives architecture / simplifies codebase.</li>
+                    <li>👉 Separation of concerns.</li>
+                    <li>👉 Easier to maintain and scale.</li>
+                    <li>👉 Reusable components across pages.</li>
+                </ul>
+            </li>
         </ul>
     </section>
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Installing EJS</h1>
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Typical Folder Structure</h1>
         <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
-// terminal window
-
-npm init -y             // initialize project
-
-npm install ejs         // install dependency
+src/
+├── controllers/
+│   └── home.js
+├── models/
+│   └── data.js
+├── views/
+│   └── home.ejs
+├── public/
+│   └── styles.css
+├── package.json
+├── router.js
+└── server.js
         </code></pre>
     </section>
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">EJS Syntax</h1>
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">RESTful Routes</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">REST = Representational State Transfer</h2>
+        <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
+            <li>Every piece of data is a resource.</li>
+            <li>Requests are routed using the HTTP verb (GET, POST, etc).</li>
+            <li>Controllers have actions for each route.</li>
+        </ul>
         <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
-<%= person.last_name %>             --> outputs escaped value (HTML-escaped)
-<%- person.last_name %>             --> outputs unescaped raw HTML
-<% people.forEach(person => { %>    --> executes JS without output (for loops, conditionals...)
+// controllers/PersonController.js (partial)
+
+export class PersonController extends BaseController {
+    // verb: GET, route: /people
+    async index(req, res) { ... }
+
+    // verb: GET, route: /people/:email
+    async show(req, res, params) { ... }
+
+    // verb: GET, route: /people/new
+    async new(req, res) { ... }
+
+    // verb: GET, route: /people/:email/edit
+    async edit(req, res, params) { ... }
+
+    // verb: GET, route: /people/:email/delete
+    async delete(req, res, params) { ... }
+
+    // verb: POST, route: /people
+    async create(req, res, params, body) { ... }
+
+    // verb: PUT, route: /people/:email
+    async update(req, res, params, body) { ... }
+
+    // verb: DELETE, route: /people/:email
+    async destroy(req, res, params) { ... }
+}
         </code></pre>
     </section>
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">EJS Rendering</h1>
-        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Full Page Example</h2>
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Controller Example</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Conventions --> Generic Code</h2>
         <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
-// views/people.ejs
+// controllers/PersonController.js (partial)
 
-&lt;!DOCTYPE html>
-&lt;html lang="en">
-&lt;head>
-    &lt;title>People&lt;/title>
-    &lt;style>
-        table { border-collapse: collapse; width: 50%; margin: 20px auto; }
-        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
-        th { background-color: #f4f4f4; }
-    &lt;/style>
-&lt;/head>
-&lt;body>
-&lt;h1 style="text-align:center;">People&lt;/h1>
-&lt;table>
-    &lt;tr>
-        &lt;th>First Name&lt;/th>
-        &lt;th>Last Name&lt;/th>
-        &lt;th>Email&lt;/th>
-    &lt;/tr>
-    &lt;% people.forEach(person => { %>
-        &lt;tr>
-            &lt;td>&lt;%= person.first_name %>&lt;/td>
-            &lt;td>&lt;%= person.last_name %>&lt;/td>
-            &lt;td>&lt;%= person.email %>&lt;/td>
-        &lt;/tr>
-    &lt;% }) %>
-&lt;/table>
-&lt;/body>
-&lt;/html>
-        </code></pre>
-    </section>
+import Person from "../models/Person.js";
+import {BaseController} from "./BaseController.js";
 
-    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Router</h1>
-        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Full Page Example</h2>
-        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
-// server.js (partial)
-
-const server = http.createServer(async (req, res) => {
-    if (req.url === "/people") {
+export class PersonController extends BaseController {
+    async index(req, res) {
         const people = await Person.all();
+        return this.view(res, "person/index", { people });
+    }
 
+    async edit(req, res, params) {
+        const person = await Person.find(params.email);
+        return this.view(res, "person/edit", { person });
+    }
+
+    async update(req, res, params, body) {
+        await Person.update(params.email, body);
+        return this.redirect(res, `/people/${params.email}/edit`);
+    }
+
+    ... OTHER ACTIONS ...
+}
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Controller Base Class</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Conventions --> Generic Code</h2>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// controllers/BaseController.js (partial)
+
+export class BaseController {
+
+    async view(res, shortPath, data = {}) {
+        // Convert "person/index" → /views/person/index.ejs
+        const viewPath = join(views_root, `${shortPath}.ejs`);
         try {
-            const html = await ejs.renderFile("views/people.ejs", {people});
-            res.writeHead(200, {"Content-Type": "text/html"});
+            const content = await ejs.renderFile(viewPath, data);
+            const html = await ejs.renderFile(layout_template, { body: content });
+
+            res.writeHead(200, { "Content-Type": "text/html" });
             res.end(html);
         } catch (err) {
-            res.writeHead(500, {"Content-Type": "text/plain"});
-            res.end("Error rendering template");
-            console.error("EJS render error:", err);
+            console.error("Render error:", err);
+            this.error(res, 500, "Error rendering page");
         }
     }
-});
-        </code></pre>
-        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
-// terminal
-node server.js
-        </code></pre>
-        <a href="http://localhost:3000/people" target="_blank" class="text-yellow-400 underline hover:text-yellow-300">http://localhost:3000/people</a>
-    </section>
 
-    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">EJS Layouts & Partials</h1>
-        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Layout Example</h2>
-        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
-// layout.js (layout)
+    redirect(res, path) {
+        res.writeHead(302, { Location: path });
+        res.end();
+    }
 
-&lt;!DOCTYPE html>
-&lt;html lang="en">
-&lt;%- include("_head") %>
-&lt;body>
-  &lt;%- body %>
-&lt;/body>
-&lt;/html>
-        </code></pre>
-        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
-// _head.js (partial)
-
-&lt;head>
-    &lt;title>People&lt;/title>
-    &lt;style>
-        table { border-collapse: collapse; width: 50%; margin: 20px auto; }
-        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
-        th { background-color: #f4f4f4; }
-    &lt;/style>
-&lt;/head>
+    error(res, statusCode, message) {
+        res.writeHead(statusCode, { "Content-Type": "text/plain" });
+        res.end(message);
+    }
+}
         </code></pre>
     </section>
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">EJS Rendering</h1>
-        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Layout Example</h2>
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Model Example</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Conventions --> Generic Code</h2>
         <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
-// views/people2.ejs
+// models/Person.js
 
-&lt;h1 style="text-align:center;">People&lt;/h1>
-&lt;table>
-    &lt;tr>
-        &lt;th>First Name&lt;/th>
-        &lt;th>Last Name&lt;/th>
-        &lt;th>Email&lt;/th>
-    &lt;/tr>
-    &lt;% people.forEach(person => { %>
-        &lt;tr>
-            &lt;td>&lt;%= person.first_name %>&lt;/td>
-            &lt;td>&lt;%= person.last_name %>&lt;/td>
-            &lt;td>&lt;%= person.email %>&lt;/td>
-        &lt;/tr>
-    &lt;% }) %>
-&lt;/table>
+import { BaseModel } from "./BaseModel.js";
+
+export default class Person extends BaseModel {
+    static fileName = "people.json"; // JSON file inside /data
+    static keyField = "email";       // unique identifier
+
+    constructor(first_name, last_name, email) {
+        super();
+        this.first_name = first_name;
+        this.last_name = last_name;
+        this.email = email;
+    }
+}
         </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Model Base Class</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Conventions --> Generic Code</h2>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// models/BaseModel.js (partial)
+
+async function read_json(filePath) { ... READ JSON DATA ... }
+
+async function write_json(filePath, data) { ... WRITE JSON DATA ... }
+
+export class BaseModel {
+    static fileName = null; // e.g. "people.json"
+    static keyField = "id"; // default key field
+
+    static get filePath() {
+        return path.join(dataDir, this.fileName);
+    }
+
+    // ------ All: fetch all records
+    static async all() {
+        return await read_json(this.filePath);
+    }
+
+    // ------ Find: by key
+    static async find(key) {
+        const records = await read_json(this.filePath);
+        return records.find((r) => r[this.keyField] === key) || null;
+    }
+
+    // ------ Create: fail if exists
+    static async create(attrs) {
+        const records = await read_json(this.filePath);
+        const exists = records.find((r) => r[this.keyField] === attrs[this.keyField]);
+        if (exists) return null;
+
+        records.push(attrs);
+        await write_json(this.filePath, records);
+        return attrs;
+    }
+
+    // ------ Update: overwrite existing record
+    static async update(key, attrs) {
+        const records = await read_json(this.filePath);
+        const index = records.findIndex((r) => r[this.keyField] === key);
+        if (index === -1) return null;
+
+        records[index] = { ...records[index], ...attrs };
+        await write_json(this.filePath, records);
+        return records[index];
+    }
+
+    // ------ Delete: by key
+    static async delete(key) {
+        const records = await read_json(this.filePath);
+        const index = records.findIndex((r) => r[this.keyField] === key);
+        if (index === -1) return null;
+
+        const [removed] = records.splice(index, 1);
+        await write_json(this.filePath, records);
+        return removed;
+    }
+}
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">View Per Model</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Conventions --> Generic Code</h2>
+        <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
+            <li>Views per model in directory named after model.</li>
+            <li>Try to follow a convention on naming.</li>
+            <li>Use layouts and partials for reusable HTML.</li>
+        </ul>
     </section>
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
         <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Router</h1>
-        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Layout Example</h2>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Conventions --> Generic Code</h2>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// Router.js (partial)
+
+export default class Router {
+    constructor() {
+        this.routes = [];
+    }
+
+    register(method, path, controllerClass, handlerName) {
+        const parts = path.split("/").filter(Boolean);
+        this.routes.push({ method, parts, controllerClass, handlerName });
+    }
+
+    async handle(req, res, method, urlParts) {
+        ... MATCH ROUTE, CALL CONTROLLER / ACTION ...
+    }
+
+    static parseBody(req) {
+        ... PARSE REQUEST BODY ...
+    }
+}
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Routes</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Conventions --> Generic Code</h2>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// routes.js
+
+// routes.js
+import { PersonController } from "./controllers/PersonController.js";
+
+export default function registerRoutes(router) {
+    router.register("GET", "/people", PersonController, "index");
+    router.register("GET", "/people/new", PersonController, "new");
+    router.register("GET", "/people/:email", PersonController, "show");
+    router.register("GET", "/people/:email/edit", PersonController, "edit");
+    router.register("GET", "/people/:email/delete", PersonController, "delete");
+    router.register("POST", "/people", PersonController, "create");
+    router.register("PUT", "/people/:email", PersonController, "update");
+    router.register("DELETE", "/people/:email", PersonController, "destroy");
+}
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">HTTP Server</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Conventions --> Generic Code</h2>
         <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
 // server.js (partial)
 
+import registerRoutes from "./routes.js";
+
+const router = new Router();
+
+registerRoutes(router);
+
 const server = http.createServer(async (req, res) => {
-    if(req.url === "/people2") {
-        const people = await Person.all();
+    const url = new URL(req.url, `http://${req.headers.host}`);
+    const parts = url.pathname.split("/").filter(Boolean);
 
-        // Render page content
-        const content = await ejs.renderFile("views/people2.ejs", { people });
+    // Handle _method override
+    const method = req.method === "POST" && url.searchParams.get("_method")
+            ? url.searchParams.get("_method").toUpperCase()
+            : req.method;
 
-        // Render layout with content injected as `body`
-        const html = await ejs.renderFile("views/layouts/layout.ejs", { body: content });
-
-        res.writeHead(200, { "Content-Type": "text/html" });
-        res.end(html);
+    try {
+        await router.handle(req, res, method, parts);
+    } catch (err) {
+        console.error("Error handling request:", err);
+        res.writeHead(500, { "Content-Type": "text/plain" });
+        res.end("Internal Server Error");
     }
+});
+
+server.listen(3000, () => {
+    console.log("Server running at http://localhost:3000/people");
 });
         </code></pre>
         <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
 // terminal
 node server.js
         </code></pre>
-        <a href="http://localhost:3000/people2" target="_blank" class="text-yellow-400 underline hover:text-yellow-300">http://localhost:3000/people2</a>
     </section>
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
         <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Key Takeaways</h1>
         <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
-            <li>EJS simplifies dynamic HTML generation.</li>
-            <li>Avoid manual string concatenation for readability and maintainability.</li>
-            <li>Build reusable layouts and partials.</li>
+            <li>MVC separates responsibilities: controllers (logic), models (data), views (presentation).</li>
+            <li>Folder structure improves organization and scalability.</li>
+            <li>Convention allows base class implementation with generic code.</li>
         </ul>
     </section>
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
         <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Up Next</h1>
-        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-6 text-center">Minimal MVC Structure</h2>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-6 text-center">Closer Look At Forms</h2>
         <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
-            <li>Why Model-View-Controller (MVC)?</li>
-            <li>Minimal architecture.</li>
+            <li>Parse POST request data.</li>
+            <li>Implement basic sanitization to prevent injection attacks.</li>
+            <li>Save submitted data.</li>
         </ul>
     </section>
     
