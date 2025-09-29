@@ -232,8 +232,6 @@ export default class Router {
         </code></pre>
     </section>
 
-
-
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
         <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Other Considerations</h1>
         <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
@@ -253,6 +251,106 @@ export default class Router {
                 </ul>
             </li>
         </ul>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Validation Rules</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Simple Validation</h2>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// models/Person.js
+
+import { BaseModel } from "./BaseModel.js";
+
+export default class Person extends BaseModel {
+    static fileName = "people.json"; // JSON file inside /data
+    static keyField = "email";       // unique identifier
+
+    static rules = {
+        first_name: { required: true, type: "string", min: 2, max: 50 },
+        last_name:  { required: true, type: "string", min: 2, max: 50 },
+        email:      { required: true, type: "string", pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/ }
+    };
+
+    constructor(first_name, last_name, email) {
+        super();
+        this.first_name = first_name;
+        this.last_name = last_name;
+        this.email = email;
+    }
+}
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Validator</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Simple Validation</h2>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// Validator.js (partial)
+
+export default class Validator {
+    static validate(rules, data) {
+        const errors = {};
+
+        for (const [field, rule] of Object.entries(rules)) {
+            const value = data[field];
+
+            // Check required
+            if (rule.required && (value === undefined || value === null || value === "")) {
+                errors[field] = `${field} is required`;
+                continue;
+            }
+
+            if (value == null) continue; // skip further checks if value is optional & missing
+
+            // Min length
+            if (rule.min && typeof value === "string" && value.length < rule.min) {
+                errors[field] = `${field} must be at least ${rule.min} characters`;
+            }
+
+            ... OTHER VALIDATION CHECKS ...
+        }
+
+        return {
+            valid: Object.keys(errors).length === 0,
+            errors,
+        };
+    }
+}
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Validation Usage</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Simple Validation</h2>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// controllers/PersonController.js (partial)
+
+export class PersonController extends BaseController {
+
+    async new(req, res) {
+        return this.view(res, "person/new");
+    }
+
+    async create(req, res, params, body) {
+        const { valid, errors} = Validator.validate(Person.rules, body);
+        if (!valid) {
+            // TODO: This is not great user experience!
+            res.writeHead(400, { "Content-Type": "application/json" });
+            res.end(JSON.stringify({ success: false, errors }));
+            return;
+        }
+
+        const person = await Person.create(body);
+        return this.redirect(res, "/people");
+    }
+
+    ... OTHER ACTION METHODS ...
+}
+        </code></pre>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// terminal
+node server.js
+        </code></pre>
     </section>
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
