@@ -6,12 +6,12 @@ import Validator from "../app/Validator.js";
 export class PersonController extends BaseController {
     async index(req, res) {
         const people = await Person.all();
-        return this.view(res, "person/index", { people });
+        return this.view(res, "person/index", {people});
     }
 
     async show(req, res, params) {
         const person = await Person.find(params.email);
-        return this.view(res, "person/show", { person });
+        return this.view(res, "person/show", {person});
     }
 
     async new(req, res) {
@@ -20,7 +20,7 @@ export class PersonController extends BaseController {
 
     async edit(req, res, params) {
         const person = await Person.find(params.email);
-        return this.view(res, "person/edit", { person }, req);
+        return this.view(res, "person/edit", {person}, req);
     }
 
     async delete(req, res, params) {
@@ -29,16 +29,9 @@ export class PersonController extends BaseController {
     }
 
     async create(req, res, params, body) {
-        const { valid, errors} = Validator.validate(Person.rules, body);
+        const {valid, errors} = Validator.validate(Person.rules, body);
         if (!valid) {
-            // Store errors and previous input in flash
-            req.flash.set("errors", errors);
-            req.flash.set("body", body);
-
-            // Redirect back to the new-person form
-            res.writeHead(302, { Location: "/people/new" });
-            res.end();
-            return;
+            return this.back(req, res, {errors, body});
         }
 
         const person = await Person.create(body);
@@ -46,6 +39,11 @@ export class PersonController extends BaseController {
     }
 
     async update(req, res, params, body) {
+        const {valid, errors} = Validator.validate(Person.rules, body);
+        if (!valid) {
+            return this.back(req, res, {errors, body});
+        }
+
         await Person.update(params.email, body);
         return this.redirect(res, `/people/${params.email}/edit`);
     }
