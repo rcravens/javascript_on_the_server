@@ -1,13 +1,13 @@
 import http from "http";
 import ejs from "ejs";
-import Person from "./Person.js";
+import User from "./User.js";
 
 const server = http.createServer(async (req, res) => {
-    if (req.url === "/people") {
-        const people = await Person.all();
+    if (req.url === "/users") {
+        const people = await User.all();
 
         try {
-            const html = await ejs.renderFile("views/people.ejs", {people});
+            const html = await ejs.renderFile("views/users.ejs", {people});
             res.writeHead(200, {"Content-Type": "text/html"});
             res.end(html);
         } catch (err) {
@@ -15,24 +15,24 @@ const server = http.createServer(async (req, res) => {
             res.end("Error rendering template");
             console.error("EJS render error:", err);
         }
-    } else if(req.url === "/people2") {
-        const people = await Person.all();
+    } else if (req.url === "/users2") {
+        const people = await User.all();
 
         // Render page content
-        const content = await ejs.renderFile("views/people2.ejs", { people });
+        const content = await ejs.renderFile("views/users2.ejs", {people});
 
         // Render layout with content injected as `body`
-        const html = await ejs.renderFile("views/layouts/layout.ejs", { body: content });
+        const html = await ejs.renderFile("views/layouts/layout.ejs", {body: content});
 
-        res.writeHead(200, { "Content-Type": "text/html" });
+        res.writeHead(200, {"Content-Type": "text/html"});
         res.end(html);
     } else {
-        res.writeHead(404, { "Content-Type": "text/plain" });
+        res.writeHead(404, {"Content-Type": "text/plain"});
         res.end("Not Found");
     }
 });
 
 const PORT = 3000;
 server.listen(PORT, () => {
-    console.log(`Server running at http://localhost:${PORT}/people`);
+    console.log(`Server running at http://localhost:${PORT}/users`);
 });
