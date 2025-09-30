@@ -1,7 +1,7 @@
 import {open} from "sqlite";
 import sqlite3 from "sqlite3";
 
-const DB_PATH = "people.db";
+const DB_PATH = "app.db";
 
 let db;
 
@@ -12,20 +12,21 @@ async function initDB() {
             driver: sqlite3.Database
         });
 
-        // Migration: create the persons table if it doesn't exist
+        // Migration: create the users table if it doesn't exist
         await db.run(`
-      CREATE TABLE IF NOT EXISTS persons (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        first_name TEXT NOT NULL,
-        last_name TEXT NOT NULL,
-        email TEXT NOT NULL UNIQUE
-      )
-    `);
+            CREATE TABLE IF NOT EXISTS users
+            (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                first_name TEXT NOT NULL,
+                last_name TEXT NOTvNULL,
+                email TEXT NOT NULL UNIQUE
+            )
+        `);
     }
     return db;
 }
 
-export default class Person {
+export default class User {
     constructor(first_name, last_name, email) {
         this.first_name = first_name;
         this.last_name = last_name;
@@ -38,12 +39,13 @@ export default class Person {
 
         try {
             await db.run(
-                `INSERT INTO persons (first_name, last_name, email) VALUES (?, ?, ?)`,
+                `INSERT INTO users (first_name, last_name, email)
+                 VALUES (?, ?, ?)`,
                 first_name,
                 last_name,
                 email
             );
-            return new Person(first_name, last_name, email);
+            return new User(first_name, last_name, email);
         } catch (err) {
             if (err.message.includes("UNIQUE constraint failed")) return null;
             throw err;
@@ -53,31 +55,38 @@ export default class Person {
     // ------ Read: find by email
     static async read(email) {
         const db = await initDB();
-        const row = await db.get(`SELECT * FROM persons WHERE email = ?`, email);
-        return row ? new Person(row.first_name, row.last_name, row.email) : null;
+        const row = await db.get(`SELECT *
+                                  FROM users
+                                  WHERE email = ?`, email);
+        return row ? new User(row.first_name, row.last_name, row.email) : null;
     }
 
     // ------ Update: update first/last name by email
     static async update(first_name, last_name, email) {
         const db = await initDB();
         const result = await db.run(
-            `UPDATE persons SET first_name = ?, last_name = ? WHERE email = ?`,
+            `UPDATE users
+             SET first_name = ?,
+                 last_name  = ?
+             WHERE email = ?`,
             first_name,
             last_name,
             email
         );
 
         if (result.changes === 0) return null;
-        return new Person(first_name, last_name, email);
+        return new User(first_name, last_name, email);
     }
 
     // ------ Delete: remove by email
     static async delete(email) {
         const db = await initDB();
-        const person = await Person.read(email);
-        if (!person) return null;
+        const user = await User.read(email);
+        if (!user) return null;
 
-        await db.run(`DELETE FROM persons WHERE email = ?`, email);
-        return person;
+        await db.run(`DELETE
+                      FROM users
+                      WHERE email = ?`, email);
+        return user;
     }
 }

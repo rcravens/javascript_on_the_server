@@ -1,7 +1,7 @@
 import fs from "fs/promises";
-import Person from "./Person.js";
+import User from "./User.js";
 
-const data_path = "people.json";
+const data_path = "users.json";
 
 async function read_json(path) {
     try {
@@ -14,11 +14,11 @@ async function read_json(path) {
 }
 
 export async function seed_db() {
-    const people = await read_json(data_path);
+    const users = await read_json(data_path);
 
-    for (const p of people) {
-        await Person.create(p.first_name, p.last_name, p.email);
+    for (const user of users) {
+        await User.create(user.first_name, user.last_name, user.email);
     }
 
-    console.log(`Seeded ${people.length} people from ${data_path}`);
+    console.log(`Seeded ${users.length} users from ${data_path}`);
 }
