@@ -1,6 +1,6 @@
 import fs from "fs/promises";
 
-const data_path = "people.json";
+const data_path = "users.json";
 
 async function read_json(path) {
     try {
@@ -24,7 +24,7 @@ async function write_json(path, data) {
     }
 }
 
-export default class Person {
+export default class User {
     constructor(first_name, last_name, email) {
         this.first_name = first_name;
         this.last_name = last_name;
@@ -32,51 +32,51 @@ export default class Person {
     }
 
     // ------ All: fetch an array of all people
-    static async all(){
+    static async all() {
         return await read_json(data_path);
     }
 
 
     // ------ Create: insert new, fail if already exists
     static async create(first_name, last_name, email) {
-        const people = await read_json(data_path);
-        const exists = people.find((person) => person.email === email);
+        const users = await read_json(data_path);
+        const exists = users.find((u) => u.email === email);
         if (exists) return null;
 
-        const person = new Person(first_name, last_name, email);
-        people.push(person);
-        await write_json(data_path, people);
+        const person = new User(first_name, last_name, email);
+        users.push(person);
+        await write_json(data_path, users);
         return person;
     }
 
     // ------ Read: find by email
     static async read(email) {
-        const people = await read_json(data_path);
-        const person = people.find((p) => p.email === email);
-        return person || null;
+        const users = await read_json(data_path);
+        const user = users.find((u) => u.email === email);
+        return user || null;
     }
 
     // ------ Update: update first/last name by email
     static async update(first_name, last_name, email) {
-        const people = await read_json(data_path);
-        const index = people.findIndex((p) => p.email === email);
+        const users = await read_json(data_path);
+        const index = users.findIndex((u) => u.email === email);
         if (index === -1) return null;
 
-        people[index].first_name = first_name;
-        people[index].last_name = last_name;
+        users[index].first_name = first_name;
+        users[index].last_name = last_name;
 
-        await write_json(data_path, people);
-        return people[index];
+        await write_json(data_path, users);
+        return users[index];
     }
 
     // ------ Delete: remove by email
     static async delete(email) {
-        const people = await read_json(data_path);
-        const index = people.findIndex((p) => p.email === email);
+        const users = await read_json(data_path);
+        const index = users.findIndex((u) => u.email === email);
         if (index === -1) return null;
 
-        const [removed_person] = people.splice(index, 1);
-        await write_json(data_path, people);
-        return removed_person;
+        const [removed_user] = users.splice(index, 1);
+        await write_json(data_path, users);
+        return removed_user;
     }
 }

@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <title>Why Templates? | Dynamic Web Pages (SSR with Templates)</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/themes/prism-tomorrow.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/themes/prism-tomorrow.css" rel="stylesheet"/>
     <script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/prism.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/components/prism-javascript.min.js"></script>
     <style>
@@ -36,7 +36,7 @@
 </header>
 
 <!-- Scrollable Sections -->
-<main id="slides" class="bg-gradient-to-b from-gray-900 via-gray-800 to-gray-700">
+<main class="bg-gradient-to-b from-gray-900 via-gray-800 to-gray-700" id="slides">
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
         <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Why Templates?</h1>
@@ -77,17 +77,17 @@ function render_page(people) {
 &lt;html lang="en">
   &lt;head>...HEAD CONTENT...&lt;/head>
   &lt;body>
-    &lt;h1 style="text-align:center;">People&lt;/h1>
+    &lt;h1 style="text-align:center;">Users&lt;/h1>
     &lt;table>
       &lt;tr>&lt;th>First Name&lt;/th>&lt;th>Last Name&lt;/th>&lt;th>Email&lt;/th>&lt;/tr>
   `;
 
-    for (const person of people) {
+    for (const user of users) {
       table += `
         &lt;tr>
-          &lt;td>${person.first_name}&lt;/td>
-          &lt;td>${person.last_name}&lt;/td>
-          &lt;td>${person.email}&lt;/td>
+          &lt;td>${user.first_name}&lt;/td>
+          &lt;td>${user.last_name}&lt;/td>
+          &lt;td>${user.email}&lt;/td>
         &lt;/tr>
     `;
     }
@@ -111,9 +111,9 @@ function render_page(people) {
 
 // Create HTTP server
 const server = http.createServer(async (req, res) => {
-    if (req.url === "/people") {
-        const people = await Person.all();
-        const html = render_page(people);
+    if (req.url === "/users") {
+        const users = await User.all();
+        const html = render_page(users);
 
         res.writeHead(200, { "Content-Type": "text/html" });
         res.end(html);
@@ -126,7 +126,7 @@ const server = http.createServer(async (req, res) => {
 // Start server
 const PORT = 3000;
 server.listen(PORT, () => {
-    console.log(`Server running at http://localhost:${PORT}/people`);
+    console.log(`Server running at http://localhost:${PORT}/users`);
 });
         </code></pre>
         <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
@@ -162,7 +162,7 @@ node server.js
             <li>Layouts and partials.</li>
         </ul>
     </section>
-    
+
 </main>
 
 <!-- Keyboard Controls Script -->
@@ -171,9 +171,9 @@ node server.js
     let currentIndex = 0;
 
     function goToSlide(index) {
-        if(index < 0) index = 0;
-        if(index >= slides.length) index = slides.length - 1;
-        slides[index].scrollIntoView({ behavior: 'smooth' });
+        if (index < 0) index = 0;
+        if (index >= slides.length) index = slides.length - 1;
+        slides[index].scrollIntoView({behavior: 'smooth'});
         currentIndex = index;
     }
 
