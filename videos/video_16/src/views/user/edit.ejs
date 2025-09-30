@@ -1,77 +1,92 @@
 <h1 class="text-3xl font-bold text-center mb-6">Edit Person</h1>
 
-<div class="max-w-md mx-auto bg-gray-800 p-6 rounded-lg shadow-lg">
-    <form method="POST" action="/people/<%= person.email %>?_method=PUT" class="space-y-4">
+<div class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
+    <!-- Profile Update Form -->
+    <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
+        <h2 class="text-xl font-semibold mb-4">Profile Information</h2>
+        <form method="POST" action="/users/<%= user.email %>?_method=PUT" class="space-y-4">
+            <div>
+                <label class="block mb-1 font-semibold" for="first_name">First Name:</label>
+                <input
+                        class="w-full px-3 py-2 rounded bg-gray-700 text-gray-100 border border-gray-600"
+                        type="text"
+                        name="first_name"
+                        value="<%= old('first_name', user.first_name) %>"
+                        required>
+                <% if (error('first_name')) { %>
+                    <div class="text-red-500 text-sm mt-1"><%= error('first_name') %></div>
+                <% } %>
+            </div>
 
-        <div>
-            <label class="block mb-1 font-semibold" for="first_name">First Name:</label>
-            <input
-                    class="w-full px-3 py-2 rounded bg-gray-700 text-gray-100 border border-gray-600"
-                    type="text"
-                    name="first_name"
-                    value="<%= old('first_name', person.first_name) %>"
-                    required>
-            <% if (error('first_name')) { %>
-                <div class="text-red-500 text-sm mt-1"><%= error('first_name') %></div>
-            <% } %>
-        </div>
+            <div>
+                <label class="block mb-1 font-semibold" for="last_name">Last Name:</label>
+                <input
+                        class="w-full px-3 py-2 rounded bg-gray-700 text-gray-100 border border-gray-600"
+                        type="text"
+                        name="last_name"
+                        value="<%= old('last_name', user.last_name) %>"
+                        required>
+                <% if (error('last_name')) { %>
+                    <div class="text-red-500 text-sm mt-1"><%= error('last_name') %></div>
+                <% } %>
+            </div>
 
-        <div>
-            <label class="block mb-1 font-semibold" for="last_name">Last Name:</label>
-            <input
-                    class="w-full px-3 py-2 rounded bg-gray-700 text-gray-100 border border-gray-600"
-                    type="text"
-                    name="last_name"
-                    value="<%= old('last_name', person.last_name) %>"
-                    required>
-            <% if (error('last_name')) { %>
-                <div class="text-red-500 text-sm mt-1"><%= error('last_name') %></div>
-            <% } %>
-        </div>
+            <div>
+                <label class="block mb-1 font-semibold" for="email">Email:</label>
+                <input
+                        class="w-full px-3 py-2 rounded bg-gray-700 text-gray-100 border border-gray-600"
+                        type="email"
+                        name="email"
+                        value="<%= old('email', user.email) %>"
+                        required>
+                <% if (error('email')) { %>
+                    <div class="text-red-500 text-sm mt-1"><%= error('email') %></div>
+                <% } %>
+            </div>
 
-        <div>
-            <label class="block mb-1 font-semibold" for="email">Email:</label>
-            <input
-                    class="w-full px-3 py-2 rounded bg-gray-700 text-gray-100 border border-gray-600"
-                    type="email"
-                    name="email"
-                    value="<%= old('email', person.email) %>"
-                    required>
-            <% if (error('email')) { %>
-                <div class="text-red-500 text-sm mt-1"><%= error('email') %></div>
-            <% } %>
-        </div>
-
-        <div>
-            <label class="block mb-1 font-semibold" for="password">New Password (leave blank to keep current):</label>
-            <input
-                    class="w-full px-3 py-2 rounded bg-gray-700 text-gray-100 border border-gray-600"
-                    type="password"
-                    name="password">
-            <% if (error('password')) { %>
-                <div class="text-red-500 text-sm mt-1"><%= error('password') %></div>
-            <% } %>
-        </div>
-
-        <div>
-            <label class="block mb-1 font-semibold" for="confirm_password">Confirm New Password:</label>
-            <input
-                    class="w-full px-3 py-2 rounded bg-gray-700 text-gray-100 border border-gray-600"
-                    type="password"
-                    name="confirm_password">
-            <% if (error('confirm_password')) { %>
-                <div class="text-red-500 text-sm mt-1"><%= error('confirm_password') %></div>
-            <% } %>
-        </div>
-
-        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded">
-            Update
-        </button>
-    </form>
-
-    <div class="mt-6 text-center">
-        <a href="/people" class="inline-block bg-gray-700 hover:bg-gray-600 text-gray-100 font-semibold px-4 py-2 rounded">
-            Back to People
-        </a>
+            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded">
+                Update Profile
+            </button>
+        </form>
     </div>
+
+    <!-- Password Update Form -->
+    <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
+        <h2 class="text-xl font-semibold mb-4">Change Password</h2>
+        <form method="POST" action="/users/<%= user.email %>/password?_method=PUT" class="space-y-4">
+            <div>
+                <label class="block mb-1 font-semibold" for="password">New Password:</label>
+                <input
+                        class="w-full px-3 py-2 rounded bg-gray-700 text-gray-100 border border-gray-600"
+                        type="password"
+                        name="password"
+                        required>
+                <% if (error('password')) { %>
+                    <div class="text-red-500 text-sm mt-1"><%= error('password') %></div>
+                <% } %>
+            </div>
+
+            <div>
+                <label class="block mb-1 font-semibold" for="confirm_password">Confirm New Password:</label>
+                <input
+                        class="w-full px-3 py-2 rounded bg-gray-700 text-gray-100 border border-gray-600"
+                        type="password"
+                        name="confirm_password"
+                        required>
+                <% if (error('confirm_password')) { %>
+                    <div class="text-red-500 text-sm mt-1"><%= error('confirm_password') %></div>
+                <% } %>
+            </div>
+
+            <button type="submit" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 rounded">
+                Update Password
+            </button>
+        </form>
+    </div>
+</div>
+
+<div class="mt-6 text-center">
+    <a href="/users" class="inline-block bg-gray-700 hover:bg-gray-600 text-gray-100 font-semibold px-4 py-2 rounded">
+        Back to Users
+    </a>
 </div>

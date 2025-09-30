@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt";
 import {BaseController} from "./BaseController.js";
 import User from "../models/User.js";
+import {sessionManager} from "../app/SessionManager.js";
 
 export class AuthController extends BaseController {
 
@@ -35,8 +36,10 @@ export class AuthController extends BaseController {
     }
 
     async logout(req, res) {
-        req.session.user = null; // clear user session
-        req.flash.set("success", "You have been logged out.");
-        return this.redirect(res, "/login");
+        sessionManager.destroySession(req, res); // clear user session
+
+        sessionManager.attach(req, res);    // Create a new session (not logged in)
+        req.alert.success("You have been logged out.", "Success");
+        return this.redirect(res, "/users");
     }
 }

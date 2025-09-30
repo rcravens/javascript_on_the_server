@@ -2,7 +2,7 @@ import {BaseModel} from "./BaseModel.js";
 import bcrypt from "bcrypt";
 
 export default class User extends BaseModel {
-    static fileName = "people.json"; // JSON file inside /data
+    static fileName = "users.json"; // JSON file inside /data
     static keyField = "email";       // unique identifier
 
     static rules = {
@@ -33,15 +33,5 @@ export default class User extends BaseModel {
     async checkPassword(plainPassword) {
         if (!this.password) return false;
         return bcrypt.compare(plainPassword, this.password);
-    }
-
-    toJSON() {
-        return {
-            first_name: this.first_name,
-            last_name: this.last_name,
-            email: this.email,
-            password: this.password,   // include hashed password
-            is_admin: this.is_admin
-        };
     }
 }

@@ -19,10 +19,10 @@ export default class UserSeeder {
             const passwordHash = await User.hashPassword(password);
             const is_admin = false;
 
-            const person = new User(firstName, lastName, email, passwordHash, is_admin);
+            const user = new User(firstName, lastName, email, passwordHash, is_admin);
 
             // Save to people.json
-            await User.create(person);
+            await User.create(user);
 
             // Log credentials
             console.log(`Created user: ${email} | Password: ${password}`);

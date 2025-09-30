@@ -33,7 +33,9 @@ export class BaseController {
             data.old = (field, defaultValue = '') => flashBody[field] || defaultValue;
             data.error = (field) => flashErrors[field] || '';
             data.success = flashSuccess;
-            data.user = req.user ? req.user.get() : null;
+            data.auth = {
+                user: req.auth.user ? req.auth.user.get() : null
+            }
             data.alert = flashAlert;
         }
 
@@ -64,5 +66,13 @@ export class BaseController {
     error(res, statusCode, message) {
         res.writeHead(statusCode, {"Content-Type": "text/plain"});
         res.end(message);
+    }
+
+    pickRules(rules, fields) {
+        const subset = {};
+        fields.forEach(field => {
+            if (rules[field]) subset[field] = rules[field];
+        });
+        return subset;
     }
 }

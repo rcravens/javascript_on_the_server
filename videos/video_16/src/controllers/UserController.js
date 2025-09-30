@@ -5,13 +5,13 @@ import Validator from "../app/Validator.js";
 
 export class UserController extends BaseController {
     async index(req, res) {
-        const people = await User.all();
-        return this.view(res, "user/index", {people}, req);
+        const users = await User.all();
+        return this.view(res, "user/index", {users}, req);
     }
 
     async show(req, res, params) {
-        const person = await User.find(params.email);
-        return this.view(res, "user/show", {person}, req);
+        const user = await User.find(params.email);
+        return this.view(res, "user/show", {user}, req);
     }
 
     async new(req, res) {
@@ -19,16 +19,25 @@ export class UserController extends BaseController {
     }
 
     async edit(req, res, params) {
-        const person = await User.find(params.email);
-        return this.view(res, "user/edit", {person}, req);
+        const user = await User.find(params.email);
+        return this.view(res, "user/edit", {user}, req);
     }
 
     async delete(req, res, params) {
-        const person = await User.find(params.email);
-        return this.view(res, "user/delete", {person}, req);
+        const user = await User.find(params.email);
+        return this.view(res, "user/delete", {user}, req);
     }
 
     async create(req, res, params, body) {
+        // If changing email, ensure it does not already exist
+        if (body.email !== params.email) {
+            const other_user = User.find(body.email);
+            if (other_user) {
+                req.alert.error("Email is already taken.", "Validation Failed");
+                return this.back(req, res, {body});
+            }
+        }
+
         const {valid, errors} = Validator.validate(User.rules, body);
         if (!valid) {
             req.alert.error("Please fix the form errors.", "Validation Failed");
@@ -49,7 +58,7 @@ export class UserController extends BaseController {
 
         const person = await User.create(personData);
         if (person) {
-            req.alert.success("Person added.");
+            req.alert.success("User added.");
 
             // Automatically log in the new user
             req.session.user = person;
@@ -59,8 +68,19 @@ export class UserController extends BaseController {
     }
 
     async update(req, res, params, body) {
-        body = {...body, email: params.email};
-        const {valid, errors} = Validator.validate(User.rules, body);
+
+        // If changing email, ensure it does not already exist
+        if (body.email !== params.email) {
+            const other_user = User.find(body.email);
+            if (other_user) {
+                req.alert.error("Email is already taken.", "Validation Failed");
+                return this.back(req, res, {body});
+            }
+        }
+
+        // Validate the fields
+        const rules = this.pickRules(User.rules, ["first_name", "last_name", "email"]);
+        const {valid, errors} = Validator.validate(rules, body);
         if (!valid) {
             req.alert.error("Please fix the form errors.", "Validation Failed");
             return this.back(req, res, {errors, body});
@@ -73,14 +93,33 @@ export class UserController extends BaseController {
             email: body.email
         };
 
-        // Only update password if a new one was provided
-        if (body.password) {
-            updateData.password = await User.hashPassword(body.password);
+        const user = await User.update(params.email, updateData);
+
+        // Refresh session if the updated user is the currently logged-in user
+        if (req.auth.user.get() && req.auth.user.get().email === params.email) {
+            req.auth.user.set(user);
         }
 
-        await User.update(params.email, updateData);
+        req.alert.success("User updated.");
 
-        req.alert.success("Person updated.");
+        return this.redirect(res, `/users/${body.email}/edit`);
+    }
+
+    async updatePassword(req, res, params, body) {
+        const rules = this.pickRules(User.rules, ["password"]);
+        const {valid, errors} = Validator.validate(rules, body);
+
+        if (!valid) {
+            req.alert.error("Please fix the form errors.", "Validation Failed");
+            return this.back(req, res, {errors, body});
+        }
+
+        // Hash the new password
+        const hashedPassword = await User.hashPassword(body.password);
+
+        await User.update(params.email, {password: hashedPassword});
+
+        req.alert.success("Password updated.");
 
         return this.redirect(res, `/users/${params.email}/edit`);
     }
@@ -88,7 +127,7 @@ export class UserController extends BaseController {
     async destroy(req, res, params) {
         await User.delete(params.email);
 
-        req.alert.success("Person deleted.");
+        req.alert.success("User deleted.");
 
         return this.redirect(res, "/users");
     }

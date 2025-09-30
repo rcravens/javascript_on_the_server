@@ -1,4 +1,4 @@
-export default class BelongsToMeMiddleware {
+export default class CanEdit {
     async handle(req, res, params) {
         const email = params.email;
         if (req.session.user?.email !== email && !req.session.user?.is_admin) {

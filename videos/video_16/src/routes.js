@@ -1,8 +1,8 @@
 // routes.js
 import {UserController} from "./controllers/UserController.js";
 import {AuthController} from "./controllers/AuthController.js";
-import AuthMiddleware from "./middleware/AuthMiddleware.js";
-import BelongsToMeOrAdminMiddleware from "./middleware/BelongsToMeOrAdminMiddleware.js";
+import HasAuthenticated from "./middleware/HasAuthenticated.js";
+import CanEdit from "./middleware/CanEdit.js";
 
 export default function registerRoutes(router) {
 
@@ -14,12 +14,13 @@ export default function registerRoutes(router) {
     router.post("/login", AuthController, "login");
 
     // authenticated routes
-    router.group([AuthMiddleware], () => {
+    router.group([HasAuthenticated], () => {
         router.get("/users/:email", UserController, "show");
         router.get("/users/:email/edit", UserController, "edit", []);
-        router.get("/users/:email/delete", UserController, "delete", [BelongsToMeOrAdminMiddleware]);
-        router.put("/users/:email", UserController, "update", [BelongsToMeOrAdminMiddleware]);
-        router.delete("/users/:email", UserController, "destroy", [BelongsToMeOrAdminMiddleware]);
+        router.get("/users/:email/delete", UserController, "delete", [CanEdit]);
+        router.put("/users/:email", UserController, "update", [CanEdit]);
+        router.put("/users/:email/password", UserController, "updatePassword", [CanEdit]);
+        router.delete("/users/:email", UserController, "destroy", [CanEdit]);
 
         router.get("/logout", AuthController, "logout");
     });
