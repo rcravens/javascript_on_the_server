@@ -26,31 +26,29 @@ export default class Router {
         });
     }
 
-    #register(method, path, controllerClass, handlerName, middlewares = []) {
-        const combinedMiddleware = [...this._currentGroupMiddleware, ...middlewares];
-
+    #register(method, path, controllerClass, handlerName) {
         const parts = path.split("/").filter(Boolean);
-        this.routes.push({method, parts, controllerClass, handlerName, middlewares: combinedMiddleware});
+        this.routes.push({method, parts, controllerClass, handlerName});
     }
 
-    get(path, controllerClass, handlerName, middlewares = []) {
-        this.#register("GET", path, controllerClass, handlerName, middlewares);
+    get(path, controllerClass, handlerName) {
+        this.#register("GET", path, controllerClass, handlerName);
     }
 
-    post(path, controllerClass, handlerName, middlewares = []) {
-        this.#register("POST", path, controllerClass, handlerName, middlewares);
+    post(path, controllerClass, handlerName) {
+        this.#register("POST", path, controllerClass, handlerName);
     }
 
-    put(path, controllerClass, handlerName, middlewares = []) {
-        this.#register("PUT", path, controllerClass, handlerName, middlewares);
+    put(path, controllerClass, handlerName) {
+        this.#register("PUT", path, controllerClass, handlerName);
     }
 
-    patch(path, controllerClass, handlerName, middlewares = []) {
-        this.#register("PATCH", path, controllerClass, handlerName, middlewares);
+    patch(path, controllerClass, handlerName) {
+        this.#register("PATCH", path, controllerClass, handlerName);
     }
 
-    delete(path, controllerClass, handlerName, middlewares = []) {
-        this.#register("DELETE", path, controllerClass, handlerName, middlewares);
+    delete(path, controllerClass, handlerName) {
+        this.#register("DELETE", path, controllerClass, handlerName);
     }
 
     group(middleware = [], callback) {
@@ -78,14 +76,7 @@ export default class Router {
             }
 
             if (!matched) continue;
-
-            // Run middlewares in order
-            for (const MiddlewareClass of route.middlewares) {
-                const middleware = new MiddlewareClass();
-                const result = await middleware.handle(req, res, params);
-                if (result === false) return; // stop chain if middleware blocks
-            }
-
+            
             const controller = new route.controllerClass();
             if (!controller[route.handlerName])
                 throw new Error(`Handler "${route.handlerName}" not found on controller`);
