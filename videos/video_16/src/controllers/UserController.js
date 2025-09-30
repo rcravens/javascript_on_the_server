@@ -29,13 +29,10 @@ export class UserController extends BaseController {
     }
 
     async create(req, res, params, body) {
-        // If changing email, ensure it does not already exist
-        if (body.email !== params.email) {
-            const other_user = User.find(body.email);
-            if (other_user) {
-                req.alert.error("Email is already taken.", "Validation Failed");
-                return this.back(req, res, {body});
-            }
+        const other_user = await User.find(body.email);
+        if (other_user) {
+            req.alert.error("Email is already taken.", "Validation Failed");
+            return this.back(req, res, {body});
         }
 
         const {valid, errors} = Validator.validate(User.rules, body);
@@ -59,9 +56,6 @@ export class UserController extends BaseController {
         const person = await User.create(personData);
         if (person) {
             req.alert.success("User added.");
-
-            // Automatically log in the new user
-            req.session.user = person;
         }
 
         return this.redirect(res, "/users");
@@ -93,12 +87,7 @@ export class UserController extends BaseController {
             email: body.email
         };
 
-        const user = await User.update(params.email, updateData);
-
-        // Refresh session if the updated user is the currently logged-in user
-        if (req.auth.user.get() && req.auth.user.get().email === params.email) {
-            req.auth.user.set(user);
-        }
+        await User.update(params.email, updateData);
 
         req.alert.success("User updated.");
 
