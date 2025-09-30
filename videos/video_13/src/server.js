@@ -1,5 +1,5 @@
 import http from "http";
-import { URL } from "url";
+import {URL} from "url";
 import Router from "./Router.js";
 import registerRoutes from "./routes.js";
 
@@ -22,11 +22,11 @@ const server = http.createServer(async (req, res) => {
         await router.handle(req, res, method, parts);
     } catch (err) {
         console.error("Error handling request:", err);
-        res.writeHead(500, { "Content-Type": "text/plain" });
+        res.writeHead(500, {"Content-Type": "text/plain"});
         res.end("Internal Server Error");
     }
 });
 
 server.listen(3000, () => {
-    console.log("Server running at http://localhost:3000/people");
+    console.log("Server running at http://localhost:3000/users");
 });
