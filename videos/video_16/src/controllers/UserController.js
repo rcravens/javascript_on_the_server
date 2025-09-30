@@ -59,6 +59,7 @@ export class UserController extends BaseController {
     }
 
     async update(req, res, params, body) {
+        body = {...body, email: params.email};
         const {valid, errors} = Validator.validate(User.rules, body);
         if (!valid) {
             req.alert.error("Please fix the form errors.", "Validation Failed");
