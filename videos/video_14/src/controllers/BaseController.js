@@ -1,6 +1,6 @@
 import ejs from "ejs";
-import { fileURLToPath } from "url";
-import { dirname, join } from "path";
+import {fileURLToPath} from "url";
+import {dirname, join} from "path";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -12,9 +12,9 @@ export class BaseController {
     async render(res, viewPath, data = {}) {
         try {
             const content = await ejs.renderFile(viewPath, data);
-            const html = await ejs.renderFile(layout_template, { body: content });
+            const html = await ejs.renderFile(layout_template, {body: content});
 
-            res.writeHead(200, { "Content-Type": "text/html" });
+            res.writeHead(200, {"Content-Type": "text/html"});
             res.end(html);
         } catch (err) {
             console.error("Render error:", err);
@@ -28,13 +28,13 @@ export class BaseController {
         return this.render(res, viewPath, data);
     }
 
-    redirect(res, path) {
-        res.writeHead(302, { Location: path });
+    redirect(res, route) {
+        res.writeHead(302, {Location: route});
         res.end();
     }
 
     error(res, statusCode, message) {
-        res.writeHead(statusCode, { "Content-Type": "text/plain" });
+        res.writeHead(statusCode, {"Content-Type": "text/plain"});
         res.end(message);
     }
 }

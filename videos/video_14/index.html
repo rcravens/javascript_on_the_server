@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <title>Handling Forms & POST Requests | Adding Interactivity & State</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/themes/prism-tomorrow.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/themes/prism-tomorrow.css" rel="stylesheet"/>
     <script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/prism.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/components/prism-javascript.min.js"></script>
     <style>
@@ -36,7 +36,7 @@
 </header>
 
 <!-- Scrollable Sections -->
-<main id="slides" class="bg-gradient-to-b from-gray-900 via-gray-800 to-gray-700">
+<main class="bg-gradient-to-b from-gray-900 via-gray-800 to-gray-700" id="slides">
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
         <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">HTML Forms</h1>
@@ -46,7 +46,7 @@
                 <ul class="ml-6 text-xl md:text-2xl max-w-6xl mb-8 list-none list-inside space-y-2">
                     <li>👉 Forms allow user to enter and submit data to the server.</li>
                     <li>👉 Set the HTTP verb / method: <code>method="POST"</code>.</li>
-                    <li>👉 Set the end-point: <code>action="/people"</code>.</li>
+                    <li>👉 Set the end-point: <code>action="/users"</code>.</li>
                     <li>👉 Provide <code>input</code>, <code>textarea</code>, and other elements for data entry.</li>
                     <li>👉 Data is included in the request data submitted to the server.</li>
                 </ul>
@@ -65,10 +65,10 @@
         <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Client Side - HTML Form</h1>
         <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Visitors Send Data To Server</h2>
         <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
-// views/person/new.ejs
+// views/user/new.ejs
 
-&lt;h1 style="text-align:center;">Add New Person&lt;/h1>
-&lt;form method="POST" action="/people" style="width:300px; margin:auto;">
+&lt;h1 style="text-align:center;">Add New User&lt;/h1>
+&lt;form method="POST" action="/users" style="width:300px; margin:auto;">
     &lt;label>First Name:&lt;/label>&lt;br>
     &lt;input type="text" name="first_name" required>&lt;br>&lt;br>
 
@@ -82,7 +82,7 @@
 &lt;/form>
 
 &lt;p style="text-align:center;">
-    &lt;a href="/people">Back to People&lt;/a>
+    &lt;a href="/users">Back to Users&lt;/a>
 &lt;/p>
         </code></pre>
     </section>
@@ -122,14 +122,14 @@ const server = http.createServer(async (req, res) => {
         <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
 // routes.js (partial)
 
-import { PersonController } from "./controllers/PersonController.js";
+import { UserController } from "./controllers/UserController.js";
 
 export default function registerRoutes(router) {
     // Show the form
-    router.register("GET", "/people/new", PersonController, "new");
+    router.register("GET", "/users/new", UserController, "new");
 
     // Process the data
-    router.register("POST", "/people", PersonController, "create");
+    router.register("POST", "/users", UserController, "create");
 
     ... OTHER ROUTES NOT SHOWN ...
 }
@@ -257,12 +257,12 @@ export default class Router {
         <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Validation Rules</h1>
         <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Simple Validation</h2>
         <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
-// models/Person.js
+// models/User.js
 
 import { BaseModel } from "./BaseModel.js";
 
-export default class Person extends BaseModel {
-    static fileName = "people.json"; // JSON file inside /data
+export default class User extends BaseModel {
+    static fileName = "users.json";  // JSON file inside /data
     static keyField = "email";       // unique identifier
 
     static rules = {
@@ -323,25 +323,25 @@ export default class Validator {
         <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Validation Usage</h1>
         <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Simple Validation</h2>
         <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
-// controllers/PersonController.js (partial)
+// controllers/UserController.js (partial)
 
-export class PersonController extends BaseController {
+export class UserController extends BaseController {
 
     async new(req, res) {
-        return this.view(res, "person/new");
+        return this.view(res, "user/new");
     }
 
     async create(req, res, params, body) {
-        const { valid, errors} = Validator.validate(Person.rules, body);
+        const { valid, errors} = Validator.validate(User.rules, body);
         if (!valid) {
-            // TODO: This is not great user experience!
+            // TODO: This is not great user experience...addressed in upcoming video!
             res.writeHead(400, { "Content-Type": "application/json" });
             res.end(JSON.stringify({ success: false, errors }));
             return;
         }
 
-        const person = await Person.create(body);
-        return this.redirect(res, "/people");
+        const user = await User.create(body);
+        return this.redirect(res, "/users");
     }
 
     ... OTHER ACTION METHODS ...
@@ -371,7 +371,7 @@ node server.js
             <li>Simple example.</li>
         </ul>
     </section>
-    
+
 </main>
 
 <!-- Keyboard Controls Script -->
@@ -380,9 +380,9 @@ node server.js
     let currentIndex = 0;
 
     function goToSlide(index) {
-        if(index < 0) index = 0;
-        if(index >= slides.length) index = slides.length - 1;
-        slides[index].scrollIntoView({ behavior: 'smooth' });
+        if (index < 0) index = 0;
+        if (index >= slides.length) index = slides.length - 1;
+        slides[index].scrollIntoView({behavior: 'smooth'});
         currentIndex = index;
     }
 
