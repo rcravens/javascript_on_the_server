@@ -4,7 +4,7 @@ export default class CanEdit {
         if (req.session.user?.email !== email && !req.session.user?.is_admin) {
             req.alert.warn("You can only modify your own profile.");
 
-            res.writeHead(302, {"Location": "/people"});
+            res.writeHead(302, {"Location": "/users"});
             res.end();
             return false;
         }
