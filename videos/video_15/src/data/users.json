@@ -48,10 +48,5 @@
     "first_name": "Jessica",
     "last_name": "Taylor",
     "email": "jessica.taylor@example.com"
-  },
-  {
-    "first_name": "Bob",
-    "last_name": "Cravens",
-    "email": "bob.cravens@gmail.com"
   }
 ]

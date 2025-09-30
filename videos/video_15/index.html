@@ -217,25 +217,25 @@ const server = http.createServer(async (req, res) => {
     </section>
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">New Person Route</h1>
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">New User Route</h1>
         <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Form Validation Revisited</h2>
         <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
-// controllers/PersonController.js (partial)
+// controllers/UserController.js (partial)
 
-export class PersonController extends BaseController {
+export class UserController extends BaseController {
 
     async new(req, res) {
-        return this.view(res, "person/new", {}, req);
+        return this.view(res, "user/new", {}, req);
     }
 
     async create(req, res, params, body) {
-        const {valid, errors} = Validator.validate(Person.rules, body);
+        const {valid, errors} = Validator.validate(User.rules, body);
         if (!valid) {
             return this.back(req, res, {errors, body});
         }
 
-        const person = await Person.create(body);
-        return this.redirect(res, "/people");
+        const user = await User.create(body);
+        return this.redirect(res, "/users");
     }
 
     ... OTHER ACTION METHODS ...
@@ -274,9 +274,9 @@ export class BaseController {
         <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">HTML Form with Helpers</h1>
         <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Form Validation Revisited</h2>
         <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
-// views/person/new.ejs (partial)
+// views/user/new.ejs (partial)
 
-&lt;form method="POST" action="/people">
+&lt;form method="POST" action="/users">
     &lt;div>
         &lt;label for="first_name">First Name:&lt;/label>
         &lt;input type="text" name="first_name" value="<%= old('first_name') %>" required>
@@ -312,7 +312,7 @@ export class BaseController {
             data.success = () => flashSuccess || '';
         }
 
-        // Convert "person/index" → /views/person/index.ejs
+        // Convert "user/index" → /views/user/index.ejs
         const viewPath = join(views_root, `${shortPath}.ejs`);
         return this.render(res, viewPath, data);
     }

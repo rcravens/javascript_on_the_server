@@ -1,7 +1,7 @@
 // controllers/PersonController.js
 import User from "../models/User.js";
 import {BaseController} from "./BaseController.js";
-import Validator from "../Validator.js";
+import Validator from "../app/Validator.js";
 
 export class UserController extends BaseController {
     async index(req, res) {
@@ -15,12 +15,12 @@ export class UserController extends BaseController {
     }
 
     async new(req, res) {
-        return this.view(res, "user/new");
+        return this.view(res, "user/new", {}, req);
     }
 
     async edit(req, res, params) {
         const user = await User.find(params.email);
-        return this.view(res, "user/edit", {user});
+        return this.view(res, "user/edit", {user}, req);
     }
 
     async delete(req, res, params) {
@@ -31,12 +31,10 @@ export class UserController extends BaseController {
     async create(req, res, params, body) {
         const {valid, errors} = Validator.validate(User.rules, body);
         if (!valid) {
-            res.writeHead(400, {"Content-Type": "application/json"});
-            res.end(JSON.stringify({success: false, errors}));
-            return;
+            return this.back(req, res, {errors, body});
         }
 
-        await User.create(body);
+        const person = await User.create(body);
         return this.redirect(res, "/users");
     }
 
@@ -44,12 +42,10 @@ export class UserController extends BaseController {
         body = {...body, email: params.email};
         const {valid, errors} = Validator.validate(User.rules, body);
         if (!valid) {
-            res.writeHead(400, {"Content-Type": "application/json"});
-            res.end(JSON.stringify({success: false, errors}));
-            return;
+            return this.back(req, res, {errors, body});
         }
-        
-        await User.update(params.email, body);
+
+        const user = await User.update(params.email, body);
         return this.redirect(res, `/users/${params.email}/edit`);
     }
 
