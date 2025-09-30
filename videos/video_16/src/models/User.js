@@ -1,7 +1,7 @@
 import {BaseModel} from "./BaseModel.js";
 import bcrypt from "bcrypt";
 
-export default class Person extends BaseModel {
+export default class User extends BaseModel {
     static fileName = "people.json"; // JSON file inside /data
     static keyField = "email";       // unique identifier
 

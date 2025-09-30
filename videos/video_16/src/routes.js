@@ -1,5 +1,5 @@
 // routes.js
-import {PersonController} from "./controllers/PersonController.js";
+import {UserController} from "./controllers/UserController.js";
 import {AuthController} from "./controllers/AuthController.js";
 import AuthMiddleware from "./middleware/AuthMiddleware.js";
 import BelongsToMeOrAdminMiddleware from "./middleware/BelongsToMeOrAdminMiddleware.js";
@@ -7,19 +7,19 @@ import BelongsToMeOrAdminMiddleware from "./middleware/BelongsToMeOrAdminMiddlew
 export default function registerRoutes(router) {
 
     // public routes
-    router.get("/people", PersonController, "index");
-    router.get("/people/new", PersonController, "new");
-    router.post("/people", PersonController, "create");
+    router.get("/users", UserController, "index");
+    router.get("/register", UserController, "new");
+    router.post("/users", UserController, "create");
     router.get("/login", AuthController, "loginForm");
     router.post("/login", AuthController, "login");
 
     // authenticated routes
     router.group([AuthMiddleware], () => {
-        router.get("/people/:email", PersonController, "show");
-        router.get("/people/:email/edit", PersonController, "edit", []);
-        router.get("/people/:email/delete", PersonController, "delete", [BelongsToMeOrAdminMiddleware]);
-        router.put("/people/:email", PersonController, "update", [BelongsToMeOrAdminMiddleware]);
-        router.delete("/people/:email", PersonController, "destroy", [BelongsToMeOrAdminMiddleware]);
+        router.get("/users/:email", UserController, "show");
+        router.get("/users/:email/edit", UserController, "edit", []);
+        router.get("/users/:email/delete", UserController, "delete", [BelongsToMeOrAdminMiddleware]);
+        router.put("/users/:email", UserController, "update", [BelongsToMeOrAdminMiddleware]);
+        router.delete("/users/:email", UserController, "destroy", [BelongsToMeOrAdminMiddleware]);
 
         router.get("/logout", AuthController, "logout");
     });

@@ -42,8 +42,8 @@ export class BaseController {
         return this.render(res, viewPath, data);
     }
 
-    redirect(res, path) {
-        res.writeHead(302, {Location: path});
+    redirect(res, route) {
+        res.writeHead(302, {Location: route});
         res.end();
     }
 

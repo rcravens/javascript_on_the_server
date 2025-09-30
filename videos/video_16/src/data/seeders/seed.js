@@ -1,5 +1,5 @@
 // seed.js
-import PeopleSeeder from './PeopleSeeder.js';
+import UserSeeder from './UserSeeder.js';
 
 const args = process.argv.slice(2);
 const fresh = args.includes("--fresh");
@@ -20,10 +20,10 @@ if (countArg) {
 (async () => {
     try {
         if (fresh) {
-            await PeopleSeeder.clear();
+            await UserSeeder.clear();
         }
 
-        await PeopleSeeder.run(count);
+        await UserSeeder.run(count);
         process.exit(0);
     } catch (err) {
         console.error("Error during seeding:", err);

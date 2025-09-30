@@ -10,10 +10,10 @@ async function read_json(path) {
     }
 }
 
-const data_path = "people.json";
+const data_path = "users.json";
 
-let people = await read_json(data_path);
+let users = await read_json(data_path);
 
-console.log(people);
-console.log(people[0]);
-console.log(people[0].email);
+console.log(users);
+console.log(users[0]);
+console.log(users[0].email);

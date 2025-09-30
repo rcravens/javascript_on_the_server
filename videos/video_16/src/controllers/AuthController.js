@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 import {BaseController} from "./BaseController.js";
-import Person from "../models/Person.js";
+import User from "../models/User.js";
 
 export class AuthController extends BaseController {
 
@@ -12,7 +12,7 @@ export class AuthController extends BaseController {
         const {email, password} = body;
 
         // Lookup user by email
-        const user = await Person.find(email);
+        const user = await User.find(email);
         if (!user) {
             req.flash.set("errors", {email: "No account found with that email"});
             req.flash.set("body", body);
@@ -31,7 +31,7 @@ export class AuthController extends BaseController {
         req.session.user = user;
 
         // Redirect to people index after login
-        return this.redirect(res, "/people");
+        return this.redirect(res, "/users");
     }
 
     async logout(req, res) {

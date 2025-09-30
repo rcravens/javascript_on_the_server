@@ -1,42 +1,42 @@
 // controllers/PersonController.js
-import Person from "../models/Person.js";
+import User from "../models/User.js";
 import {BaseController} from "./BaseController.js";
 import Validator from "../app/Validator.js";
 
-export class PersonController extends BaseController {
+export class UserController extends BaseController {
     async index(req, res) {
-        const people = await Person.all();
-        return this.view(res, "person/index", {people}, req);
+        const people = await User.all();
+        return this.view(res, "user/index", {people}, req);
     }
 
     async show(req, res, params) {
-        const person = await Person.find(params.email);
-        return this.view(res, "person/show", {person}, req);
+        const person = await User.find(params.email);
+        return this.view(res, "user/show", {person}, req);
     }
 
     async new(req, res) {
-        return this.view(res, "person/new", {}, req);
+        return this.view(res, "user/new", {}, req);
     }
 
     async edit(req, res, params) {
-        const person = await Person.find(params.email);
-        return this.view(res, "person/edit", {person}, req);
+        const person = await User.find(params.email);
+        return this.view(res, "user/edit", {person}, req);
     }
 
     async delete(req, res, params) {
-        const person = await Person.find(params.email);
-        return this.view(res, "person/delete", {person}, req);
+        const person = await User.find(params.email);
+        return this.view(res, "user/delete", {person}, req);
     }
 
     async create(req, res, params, body) {
-        const {valid, errors} = Validator.validate(Person.rules, body);
+        const {valid, errors} = Validator.validate(User.rules, body);
         if (!valid) {
             req.alert.error("Please fix the form errors.", "Validation Failed");
             return this.back(req, res, {errors, body});
         }
 
         // Hash the password
-        const hashedPassword = await Person.hashPassword(body.password);
+        const hashedPassword = await User.hashPassword(body.password);
 
         // Create the person
         const personData = {
@@ -47,7 +47,7 @@ export class PersonController extends BaseController {
             is_admin: false
         };
 
-        const person = await Person.create(personData);
+        const person = await User.create(personData);
         if (person) {
             req.alert.success("Person added.");
 
@@ -55,11 +55,11 @@ export class PersonController extends BaseController {
             req.session.user = person;
         }
 
-        return this.redirect(res, "/people");
+        return this.redirect(res, "/users");
     }
 
     async update(req, res, params, body) {
-        const {valid, errors} = Validator.validate(Person.rules, body);
+        const {valid, errors} = Validator.validate(User.rules, body);
         if (!valid) {
             req.alert.error("Please fix the form errors.", "Validation Failed");
             return this.back(req, res, {errors, body});
@@ -74,21 +74,21 @@ export class PersonController extends BaseController {
 
         // Only update password if a new one was provided
         if (body.password) {
-            updateData.password = await Person.hashPassword(body.password);
+            updateData.password = await User.hashPassword(body.password);
         }
 
-        await Person.update(params.email, updateData);
+        await User.update(params.email, updateData);
 
         req.alert.success("Person updated.");
 
-        return this.redirect(res, `/people/${params.email}/edit`);
+        return this.redirect(res, `/users/${params.email}/edit`);
     }
 
     async destroy(req, res, params) {
-        await Person.delete(params.email);
+        await User.delete(params.email);
 
         req.alert.success("Person deleted.");
 
-        return this.redirect(res, "/people");
+        return this.redirect(res, "/users");
     }
 }

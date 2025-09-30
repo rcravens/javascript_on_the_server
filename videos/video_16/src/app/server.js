@@ -20,7 +20,7 @@ const server = http.createServer(async (req, res) => {
         req.method === "POST" && url.searchParams.get("_method")
             ? url.searchParams.get("_method").toUpperCase()
             : req.method;
-    
+
     try {
         await router.handle(req, res, method, parts);
     } catch (err) {
@@ -31,5 +31,5 @@ const server = http.createServer(async (req, res) => {
 });
 
 server.listen(3000, () => {
-    console.log("Server running at http://localhost:3000/people");
+    console.log("Server running at http://localhost:3000/users");
 });

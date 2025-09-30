@@ -9,14 +9,14 @@ async function write_json(path, data) {
     }
 }
 
-const data_path = "people2.json";
+const data_path = "users2.json";
 
-let people = [];
-const bob = {
+let users = [];
+const user = {
     "first_name": "Bob",
     "last_name": "Cravens",
     "email": "bcravens@example.com"
 }
-people.push(bob);
+users.push(user);
 
-await write_json(data_path, people);
+await write_json(data_path, users);

@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <title>File-Based Storage | Working with Data</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/themes/prism-tomorrow.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/themes/prism-tomorrow.css" rel="stylesheet"/>
     <script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/prism.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/components/prism-javascript.min.js"></script>
     <style>
@@ -36,7 +36,7 @@
 </header>
 
 <!-- Scrollable Sections -->
-<main id="slides" class="bg-gradient-to-b from-gray-900 via-gray-800 to-gray-700">
+<main class="bg-gradient-to-b from-gray-900 via-gray-800 to-gray-700" id="slides">
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
         <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Why File-Based Storage?</h1>
@@ -45,16 +45,16 @@
             <li>Useful for small projects or prototypes.</li>
             <li>Avoids complexity of setting up a database.</li>
             <li>Limitations:
-            <ul class="ml-6 text-xl md:text-2xl max-w-6xl mb-8 list-none list-inside space-y-2">
-                <li>👉 Not suitable for high concurrency.</li>
-                <li>👉 File I/O can block if not handled asynchronously.</li>
-                <li>👉 No indexing, transactions, or query language.</li>
-            </ul>
+                <ul class="ml-6 text-xl md:text-2xl max-w-6xl mb-8 list-none list-inside space-y-2">
+                    <li>👉 Not suitable for high concurrency.</li>
+                    <li>👉 File I/O can block if not handled asynchronously.</li>
+                    <li>👉 No indexing, transactions, or query language.</li>
+                </ul>
             </li>
         </ul>
         <div class="flex flex-wrap justify-center gap-6">
-            <a href="https://nodejs.org/en/learn/manipulating-files/reading-files-with-nodejs" target="_blank" class="px-6 py-3 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition">Reading Files</a>
-            <a href="https://nodejs.org/en/learn/manipulating-files/writing-files-with-nodejs" target="_blank" class="px-6 py-3 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition">Writing Files</a>
+            <a class="px-6 py-3 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition" href="https://nodejs.org/en/learn/manipulating-files/reading-files-with-nodejs" target="_blank">Reading Files</a>
+            <a class="px-6 py-3 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition" href="https://nodejs.org/en/learn/manipulating-files/writing-files-with-nodejs" target="_blank">Writing Files</a>
         </div>
     </section>
 
@@ -62,7 +62,7 @@
         <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Example JSON Data</h1>
         <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Simple Example</h2>
         <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
-// people.json
+// users.json
 [
   {
     "first_name": "John",
@@ -101,13 +101,13 @@ async function read_json(path) {
     }
 }
 
-const data_path = "people.json";
+const data_path = "users.json";
 
-let people = await read_json(data_path);
+let users = await read_json(data_path);
 
-console.log(people);
-console.log(people[0]);
-console.log(people[0].email);
+console.log(users);
+console.log(users[0]);
+console.log(users[0].email);
         </code></pre>
         <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
 // terminal window
@@ -131,17 +131,17 @@ async function write_json(path, data) {
     }
 }
 
-const data_path = "people2.json";
+const data_path = "users2.json";
 
-let people = [];
-const bob = {
+let users = [];
+const user = {
     "first": "Bob",
     "last": "Cravens",
     "email": "bcravens@example.com"
 }
-people.push(bob);
+users.push(user);
 
-await write_json(data_path, people);
+await write_json(data_path, users);
         </code></pre>
         <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
 // terminal window
@@ -165,18 +165,18 @@ node write_file.js
         <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Create</h1>
         <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">CRUD Operations</h2>
         <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
-// Person.js (partial)
+// User.js (partial)
 
 // ------ Create: insert new, fail if already exists
 static async create(first_name, last_name, email) {
-    const people = await read_json(data_path);
-    const exists = people.find((person) => person.email === email);
+    const users = await read_json(data_path);
+    const exists = users.find((user) => user.email === email);
     if (exists) return null;
 
-    const person = new Person(first_name, last_name, email);
-    people.push(person);
-    await write_json(data_path, people);
-    return person;
+    const user = new User(first_name, last_name, email);
+    users.push(user);
+    await write_json(data_path, user);
+    return user;
 }
         </code></pre>
     </section>
@@ -185,13 +185,13 @@ static async create(first_name, last_name, email) {
         <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Read</h1>
         <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">CRUD Operations</h2>
         <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
-// Person.js (partial)
+// User.js (partial)
 
 // ------ Read: find by email
 static async read(email) {
-    const people = await read_json(data_path);
-    const person = people.find((p) => p.email === email);
-    return person || null;
+    const users = await read_json(data_path);
+    const user = users.find((user) => user.email === email);
+    return user || null;
 }
         </code></pre>
     </section>
@@ -200,19 +200,19 @@ static async read(email) {
         <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Update</h1>
         <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">CRUD Operations</h2>
         <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
-// Person.js (partial)
+// User.js (partial)
 
 // ------ Update: update first/last name by email
 static async update(first_name, last_name, email) {
-    const people = await read_json(data_path);
-    const index = people.findIndex((p) => p.email === email);
+    const users = await read_json(data_path);
+    const index = users.findIndex((user) => user.email === email);
     if (index === -1) return null;
 
-    people[index].first_name = first_name;
-    people[index].last_name = last_name;
+    users[index].first_name = first_name;
+    users[index].last_name = last_name;
 
-    await write_json(data_path, people);
-    return people[index];
+    await write_json(data_path, users);
+    return users[index];
 }
         </code></pre>
     </section>
@@ -221,17 +221,17 @@ static async update(first_name, last_name, email) {
         <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Delete</h1>
         <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">CRUD Operations</h2>
         <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
-// Person.js (partial)
+// User.js (partial)
 
 // ------ Delete: remove by email
 static async delete(email) {
-    const people = await read_json(data_path);
-    const index = people.findIndex((p) => p.email === email);
+    const users = await read_json(data_path);
+    const index = users.findIndex((user) => user.email === email);
     if (index === -1) return null;
 
-    const [removed_person] = people.splice(index, 1);
-    await write_json(data_path, people);
-    return removed_person;
+    const [removed_user] = users.splice(index, 1);
+    await write_json(data_path, users);
+    return removed_user;
 }
         </code></pre>
     </section>
@@ -241,20 +241,20 @@ static async delete(email) {
         <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">CRUD Operations</h2>
         <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
 // crud.js
-import Person from "./Person.js";
+import User from "./User.js";
 
 // Example usage
-const new_person = await Person.create("Bob", "Cravens", "bcravens@example.com");
-console.log("Create:", new_person);
+const new_user = await User.create("Bob", "Cravens", "bcravens@example.com");
+console.log("Create:", new_user);
 
-const person_read = await Person.read("bcravens@example.com");
-console.log("Read:", person_read);
+const user_read = await User.read("bcravens@example.com");
+console.log("Read:", user_read);
 
-const person_updated = await Person.update("Robert", "Cravens", "bcravens@example.com");
-console.log("Update:", person_updated);
+const user_updated = await User.update("Robert", "Cravens", "bcravens@example.com");
+console.log("Update:", user_updated);
 
-const person_deleted = await Person.delete("bcravens@example.com");
-console.log("Delete:", person_deleted);
+const user_deleted = await User.delete("bcravens@example.com");
+console.log("Delete:", user_deleted);
         </code></pre>
         <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
 // terminal
@@ -279,7 +279,7 @@ node crud.js
             <li>Minimal SQLite example.</li>
         </ul>
     </section>
-    
+
 </main>
 
 <!-- Keyboard Controls Script -->
@@ -288,9 +288,9 @@ node crud.js
     let currentIndex = 0;
 
     function goToSlide(index) {
-        if(index < 0) index = 0;
-        if(index >= slides.length) index = slides.length - 1;
-        slides[index].scrollIntoView({ behavior: 'smooth' });
+        if (index < 0) index = 0;
+        if (index >= slides.length) index = slides.length - 1;
+        slides[index].scrollIntoView({behavior: 'smooth'});
         currentIndex = index;
     }
 

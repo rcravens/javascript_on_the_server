@@ -1,10 +1,10 @@
 import {faker} from '@faker-js/faker';
-import Person from '../../models/Person.js';
+import User from '../../models/User.js';
 
-export default class PeopleSeeder {
+export default class UserSeeder {
 
     static async clear() {
-        await Person.overwrite([]); // assuming BaseModel supports overwriting file
+        await User.overwrite([]); // assuming BaseModel supports overwriting file
         console.log("All existing people deleted.");
     }
 
@@ -16,13 +16,13 @@ export default class PeopleSeeder {
             const lastName = faker.person.lastName();
             const email = faker.internet.email({firstName, lastName}).toLowerCase();
             const password = faker.internet.password(8);
-            const passwordHash = await Person.hashPassword(password);
+            const passwordHash = await User.hashPassword(password);
             const is_admin = false;
 
-            const person = new Person(firstName, lastName, email, passwordHash, is_admin);
+            const person = new User(firstName, lastName, email, passwordHash, is_admin);
 
             // Save to people.json
-            await Person.create(person);
+            await User.create(person);
 
             // Log credentials
             console.log(`Created user: ${email} | Password: ${password}`);
