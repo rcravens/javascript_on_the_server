@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Authentication Basics | Adding Interactivity & State</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/themes/prism-tomorrow.css" rel="stylesheet"/>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/prism.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/components/prism-javascript.min.js"></script>
+    <style>
+        html, body {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white">
+
+<!-- Sticky Header -->
+<header class="sticky top-0 z-50 bg-gray-900 bg-opacity-90 backdrop-blur-md p-4 flex justify-between items-center shadow-md">
+    <!-- Video Title -->
+    <div class="text-left">
+      <span class="bg-yellow-400 text-gray-900 text-xs md:text-sm font-semibold px-2 py-1 rounded-full uppercase tracking-wide">
+        Video
+      </span>
+        <h3 class="mt-1 text-lg md:text-2xl font-bold text-yellow-400">Authentication Basics</h3>
+    </div>
+
+    <!-- Module Title -->
+    <div class="text-right">
+      <span class="bg-indigo-400 text-gray-900 text-xs md:text-sm font-semibold px-2 py-1 rounded-full uppercase tracking-wide">
+        Module
+      </span>
+        <h3 class="mt-1 text-lg md:text-2xl font-bold text-indigo-400">Adding Interactivity & State</h3>
+    </div>
+</header>
+
+<!-- Scrollable Sections -->
+<main class="bg-gradient-to-b from-gray-900 via-gray-800 to-gray-700" id="slides">
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Why Authentication?</h1>
+        <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
+            <li>Allows the server to verify user identity.</li>
+            <li>Restricts access to protected resources.</li>
+            <li>Forms the foundation for user accounts, profiles, and permissions.</li>
+        </ul>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Login Routes</h1>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// route.js (partial)
+
+export default function registerRoutes(router) {
+    router.get("/login", AuthController, "loginForm");
+    router.post("/login", AuthController, "login");
+    router.get("/logout", AuthController, "logout");
+
+    ... USER ROUTES ...
+}
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">AuthController.loginForm</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Authentication Flow</h2>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// controllers/AuthController.js (partial)
+
+export class AuthController extends BaseController {
+
+    async loginForm(req, res) {
+        return this.view(res, "auth/login", {}, req);
+    }
+}
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Login View</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Authentication Flow</h2>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// views/auth/login.ejs (partial)
+
+&lt;form method=&quot;POST&quot; action=&quot;/login&quot;&gt;
+
+    &lt;div&gt;
+        &lt;label for=&quot;email&quot;&gt;Email:&lt;/label&gt;
+        &lt;input type=&quot;email&quot; name=&quot;email&quot; value=&quot;&lt;%= old(&#39;email&#39;) %&gt;&quot; required&gt;
+        &lt;% if (error(&#39;email&#39;)) { %&gt;
+            &lt;div&gt;&lt;%= error(&#39;email&#39;) %&gt;&lt;/div&gt;
+        &lt;% } %&gt;
+    &lt;/div&gt;
+
+    &lt;div&gt;
+        &lt;label for=&quot;password&quot;&gt;Password:&lt;/label&gt;
+        &lt;input type=&quot;password&quot; name=&quot;password&quot; required&gt;
+        &lt;% if (error(&#39;password&#39;)) { %&gt;
+            &lt;div&gt;&lt;%= error(&#39;password&#39;) %&gt;&lt;/div&gt;
+        &lt;% } %&gt;
+    &lt;/div&gt;
+
+    &lt;button type=&quot;submit&quot;&gt;Login&lt;/button&gt;
+&lt;/form&gt;
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">AuthController.login</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Authentication Flow</h2>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// controllers/AuthController.js (partial)
+
+export class AuthController extends BaseController {
+
+    async login(req, res, params, body) {
+        const {email, password} = body;
+
+        // Lookup user by email
+        const user = await User.find(email);
+        if (!user) {
+            req.flash.set("errors", {email: "No account found with that email"});
+            req.flash.set("body", body);
+            return this.back(req, res);
+        }
+
+        // Verify password with bcrypt
+        const match = await bcrypt.compare(password, user.password);
+        if (!match) {
+            req.flash.set("errors", {password: "Invalid password"});
+            req.flash.set("body", body);
+            return this.back(req, res);
+        }
+
+        // Store user in session
+        req.auth.user.set( user );
+
+        // Redirect to people index after login
+        return this.redirect(res, "/users");
+    }
+}
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Session Manager</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Authentication Flow</h2>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// app/SessionManager.js (partial)
+
+class SessionManager {
+
+    destroySession(req, res) {
+        ...
+    }
+
+    attach(req, res) {
+        ...
+
+        // Helper for logged-in user
+        req.auth = {
+            user: {
+                get: () => req.session.user || null,
+                set: (userObj) => {
+                    req.session.user = userObj;
+                    if (this.storageDir) this.saveSessionToFile(sessionId);
+                },
+                clear: () => {
+                    this.destroySession(req, res);  // destroy current session
+                    this.attach(req, res);          // start a fresh session
+                }
+            }
+        };
+
+        ...
+    }
+}
+        </code></pre>
+    </section>
+
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">AuthController.logout</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Authentication Flow</h2>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// controllers/AuthController.js (partial)
+
+export class AuthController extends BaseController {
+    ...
+
+    async logout(req, res) {
+        req.auth.user.clear()/ // clear user session
+
+        sessionManager.attach(req, res);    // Create a new session (not logged in)
+        req.alert.success("You have been logged out.", "Success");
+        return this.redirect(res, "/users");
+    }
+}
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Session Manager</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Authentication Flow</h2>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// app/SessionManager.js (partial)
+
+class SessionManager {
+
+    destroySession(req, res) {
+        const cookies = this.parseCookies(req);
+        const sessionId = cookies["SID"];
+        if (!sessionId) return;
+
+        // Remove from in-memory store
+        delete this.sessions[sessionId];
+
+        // Remove from disk if using storageDir
+        if (this.storageDir) {
+            const filePath = path.join(this.storageDir, `${sessionId}.json`);
+            if (fs.existsSync(filePath)) {
+                fs.unlinkSync(filePath);
+            }
+        }
+
+        // Clear the cookie (set expiry in the past)
+        res.setHeader("Set-Cookie", "SID=; HttpOnly; Path=/; Max-Age=0");
+
+        // Clean up req
+        if (req.session) delete req.session;
+        if (req.user) delete req.user;
+        if (req.flash) delete req.flash;
+        if (req.alert) delete req.alert;
+    }
+
+    ...
+}
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Add Auth User To View Data</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">View Updates</h2>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// controllers/BaseController.js (partial)
+
+export class BaseController {
+
+    async view(res, shortPath, data = {}, req = null) {
+        if (req) {
+            // Add helpers
+            const flashErrors = req.flash.get("errors") || {};
+            const flashBody = req.flash.get("body") || {};
+            const flashSuccess = req.flash.get("success") || null;
+            const flashAlert = req.alert.get();
+
+            data.old = (field, defaultValue = '') => flashBody[field] || defaultValue;
+            data.error = (field) => flashErrors[field] || '';
+            data.success = flashSuccess;
+            data.auth = {
+                user: req.auth.user ? req.auth.user.get() : null
+            }
+            data.alert = flashAlert;
+        }
+
+        // Convert "person/index" → /views/person/index.ejs
+        const viewPath = join(views_root, `${shortPath}.ejs`);
+        return this.render(res, viewPath, data);
+    }
+}
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Navigation Bar</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">View Updates</h2>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// views/layouts/_nav.js (partial)
+
+&lt;header&gt;
+    &lt;div&gt;
+        &lt;!-- Site Title --&gt;
+        &lt;a href=&quot;/users&quot;&gt;User Manager&lt;/a&gt;
+
+        &lt;!-- Right-side navigation --&gt;
+        &lt;div&gt;
+            &lt;% if (auth.user) { %&gt;
+                &lt;a href=&quot;/logout&quot;&gt;Logout&lt;/a&gt;
+                &lt;span&gt;Hello, &lt;%= auth.user.first_name %&gt;&lt;/span&gt;
+            &lt;% } else { %&gt;
+                &lt;a href=&quot;/register&quot;&gt;Register&lt;/a&gt;
+                &lt;a href=&quot;/login&quot;&gt;Login&lt;/a&gt;
+            &lt;% } %&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/header&gt;
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">User List</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">View Updates</h2>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// views/user/index.js (partial)
+
+&lt;div&gt;
+    &lt;table&gt;
+        &lt;thead&gt;
+        &lt;tr&gt;
+            &lt;th&gt;First Name&lt;/th&gt;
+            &lt;th&gt;Last Name&lt;/th&gt;
+            &lt;th&gt;Email&lt;/th&gt;
+            &lt;th&gt;Actions&lt;/th&gt;
+        &lt;/tr&gt;
+        &lt;/thead&gt;
+        &lt;tbody&gt;
+        &lt;% users.forEach(u =&gt; { %&gt;
+            &lt;tr&gt;
+                &lt;td&gt;&lt;%= u.first_name %&gt;&lt;/td&gt;
+                &lt;td&gt;&lt;%= u.last_name %&gt;&lt;/td&gt;
+                &lt;td&gt;&lt;%= u.email %&gt;&lt;/td&gt;
+                &lt;td&gt;
+                    &lt;a href=&quot;/users/&lt;%= u.email %&gt;&quot;&gt;View&lt;/a&gt;
+                    &lt;% if (auth.user &amp;&amp; (auth.user.is_admin || auth.user.email === u.email) ) { %&gt;
+                        | &lt;a href=&quot;/users/&lt;%= u.email %&gt;/edit&quot;&gt;Edit&lt;/a&gt;
+                        | &lt;a href=&quot;/users/&lt;%= u.email %&gt;/delete&quot;&gt;Delete&lt;/a&gt;
+                    &lt;% } %&gt;
+                &lt;/td&gt;
+            &lt;/tr&gt;
+        &lt;% }) %&gt;
+        &lt;/tbody&gt;
+    &lt;/table&gt;
+&lt;/div&gt;
+        </code></pre>
+    </section>
+
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Try It Out</h1>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// terminal
+npm start
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Key Takeaways</h1>
+        <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
+            <li>Never store plaintext passwords; always hash.</li>
+            <li>Use <code>bcrypt</code> or similar library for hashing.</li>
+            <li>Sessions track logged-in users.</li>
+            <li>Dynamically provide content based on authentication status.</li>
+        </ul>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Up Next</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-6 text-center">Authorization & Access Control</h2>
+        <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
+            <li>We hid links from user, but they are still accessible.</li>
+            <li>Introduce the concept of middleware.</li>
+            <li>Restrict routes based on authentication status.</li>
+        </ul>
+    </section>
+
+</main>
+
+<!-- Keyboard Controls Script -->
+<script>
+    const slides = document.querySelectorAll('main > section');
+    let currentIndex = 0;
+
+    function goToSlide(index) {
+        if (index < 0) index = 0;
+        if (index >= slides.length) index = slides.length - 1;
+        slides[index].scrollIntoView({behavior: 'smooth'});
+        currentIndex = index;
+    }
+
+    window.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight') {
+            goToSlide(currentIndex + 1);
+        } else if (e.key === 'ArrowLeft') {
+            goToSlide(currentIndex - 1);
+        }
+    });
+</script>
+<script>
+    console.log("Hello from the browser!");
+</script>
+</body>
+</html>

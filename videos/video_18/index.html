@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Sessions & Cookies | Adding Interactivity & State</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/themes/prism-tomorrow.css" rel="stylesheet"/>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/prism.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/components/prism-javascript.min.js"></script>
+    <style>
+        html, body {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white">
+
+<!-- Sticky Header -->
+<header class="sticky top-0 z-50 bg-gray-900 bg-opacity-90 backdrop-blur-md p-4 flex justify-between items-center shadow-md">
+    <!-- Video Title -->
+    <div class="text-left">
+      <span class="bg-yellow-400 text-gray-900 text-xs md:text-sm font-semibold px-2 py-1 rounded-full uppercase tracking-wide">
+        Video
+      </span>
+        <h3 class="mt-1 text-lg md:text-2xl font-bold text-yellow-400">Sessions & Cookies</h3>
+    </div>
+
+    <!-- Module Title -->
+    <div class="text-right">
+      <span class="bg-indigo-400 text-gray-900 text-xs md:text-sm font-semibold px-2 py-1 rounded-full uppercase tracking-wide">
+        Module
+      </span>
+        <h3 class="mt-1 text-lg md:text-2xl font-bold text-indigo-400">Adding Interactivity & State</h3>
+    </div>
+</header>
+
+<!-- Scrollable Sections -->
+<main class="bg-gradient-to-b from-gray-900 via-gray-800 to-gray-700" id="slides">
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Why Sessions & Cookies?</h1>
+        <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
+            <li>HTTP is stateless: each request is independent.</li>
+            <li>Cookies:
+                <ul class="ml-6 text-xl md:text-2xl max-w-6xl mb-8 list-none list-inside space-y-2">
+                    <li>👉 Allow servers to remember clients across requests.</li>
+                    <li>👉 Can originate on the client (browser) or the server.</li>
+                    <li>👉 Travel in the request / response headers: server --> client --> server.</li>
+                    <li>👉 Small pieces of information.</li>
+                    <li>👉 Data is available on the client.</li>
+                    <li>👉 Usage: session ID, personalization, tracking/analytics...</li>
+                </ul>
+            </li>
+            <li>Sessions:
+                <ul class="ml-6 text-xl md:text-2xl max-w-6xl mb-8 list-none list-inside space-y-2">
+                    <li>👉 Track user-specific data on the server by associating it with a session ID stored in a cookie.</li>
+                    <li>👉 Data is not available on the client.</li>
+                    <li>👉 Session data should be persistent while user browses website.</li>
+                    <li>👉 Usage: flash message, form validation, cart management...</li>
+                </ul>
+            </li>
+        </ul>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Cookies</h1>
+        <img alt="Slide Image" class="rounded-lg shadow-lg max-w-full h-auto" src="cookies.png">
+
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// app/SessionManager.js (partial)
+
+parseCookies(req) {
+    const list = {};
+    const cookieHeader = req.headers.cookie || "";
+    cookieHeader.split(";").forEach(cookie => {
+        const parts = cookie.split("=");
+        if (parts.length === 2) list[parts[0].trim()] = decodeURIComponent(parts[1].trim());
+    });
+    return list;
+}
+
+attach(req, res) {
+    const cookies = this.parseCookies(req);
+    let sessionId = cookies["SID"];
+    let isNew = !sessionId;
+
+    ... SESSION RELATED CODE ...
+
+    if (isNew) {
+        res.setHeader("Set-Cookie", `SID=${sessionId}; HttpOnly; Path=/`);
+    }
+}
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Sessions</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Simple File-Based Manager</h2>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// app/SessionManager.js (partial)
+
+class SessionManager {
+    constructor({ storageDir = null } = {}) {
+        this.sessions = {};
+        this.storageDir = storageDir;
+        if (storageDir) fs.mkdirSync(storageDir, { recursive: true });
+    }
+
+    createSession() {
+        const id = randomBytes(16).toString("hex");
+        this.sessions[id] = { flash: {} }; // initialize flash container
+        if (this.storageDir) this.saveSessionToFile(id);
+        return id;
+    }
+
+    getSession(id) {
+        if (!id) return null;
+        if (this.sessions[id]) return this.sessions[id];
+        if (this.storageDir) {
+            const filePath = path.join(this.storageDir, `${id}.json`);
+            if (fs.existsSync(filePath)) {
+                const data = JSON.parse(fs.readFileSync(filePath));
+                this.sessions[id] = data;
+                if (!this.sessions[id].flash) this.sessions[id].flash = {};
+                return data;
+            }
+        }
+        return null;
+    }
+
+    saveSessionToFile(id) {
+        if (!this.storageDir || !this.sessions[id]) return;
+        const filePath = path.join(this.storageDir, `${id}.json`);
+        fs.writeFileSync(filePath, JSON.stringify(this.sessions[id], null, 2));
+    }
+}
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Attaching Session</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Simple File-Based Manager</h2>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// app/SessionManager.js (partial)
+
+class SessionManager {
+    ... SESSION MANAGER CODE ...
+
+    attach(req, res) {
+        const cookies = this.parseCookies(req);
+        let sessionId = cookies["SID"];
+        let isNew = false;
+
+        if (!sessionId || !this.getSession(sessionId)) {
+            sessionId = this.createSession();
+            isNew = true;
+        }
+
+        req.session = this.getSession(sessionId);
+
+        // Flash helper methods
+        req.flash = { ... FLASH HELPER CODE ... };
+
+        if (isNew) {
+            res.setHeader("Set-Cookie", `SID=${sessionId}; HttpOnly; Path=/`);
+        }
+    }
+}
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Flash Data</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Simple File-Based Manager</h2>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// app/SessionManager.js (partial)
+
+// Flash helper methods
+req.flash = {
+    set: (key, value) => {
+        req.session.flash[key] = value;
+        if (this.storageDir) this.saveSessionToFile(sessionId);
+    },
+    get: (key) => {
+        const value = req.session.flash[key];
+        delete req.session.flash[key];  // remove after reading
+        if (this.storageDir) this.saveSessionToFile(sessionId);
+        return value;
+    },
+    all: () => {
+        const value = { ...req.session.flash };
+        req.session.flash = {};  // clear all flash
+        if (this.storageDir) this.saveSessionToFile(sessionId);
+        return value;
+    }
+};
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Using Sessions</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Simple File-Based Manager</h2>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// app/server.js (partial)
+
+const server = http.createServer(async (req, res) => {
+    sessionManager.attach(req, res);
+
+    // Now session is attached to the request
+    const value = req.session['key'];           // value is stored until session ends
+    const req.flash.set('msg', 'Hello World!')  // msg is stored until it is read
+
+    ... OTHER SERVER CODE ...
+});
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">New Person Route</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Form Validation Revisited</h2>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// controllers/PersonController.js (partial)
+
+export class PersonController extends BaseController {
+
+    async new(req, res) {
+        return this.view(res, "person/new", {}, req);
+    }
+
+    async create(req, res, params, body) {
+        const {valid, errors} = Validator.validate(Person.rules, body);
+        if (!valid) {
+            return this.back(req, res, {errors, body});
+        }
+
+        const person = await Person.create(body);
+        return this.redirect(res, "/people");
+    }
+
+    ... OTHER ACTION METHODS ...
+}
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">BaseController Generic Method</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Form Validation Revisited</h2>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// controllers/BaseController.js (partial)
+
+export class BaseController {
+
+    back(req, res, flashData = {}) {
+        // Store flash data
+        if (req.flash) {
+            for (const key in flashData) {
+                req.flash.set(key, flashData[key]);
+            }
+        }
+
+        // Redirect to referer if present, else fallback to root
+        const redirectUrl = req.headers?.referer || "/";
+        res.writeHead(302, {Location: redirectUrl});
+        res.end();
+    }
+
+    ... OTHER BASE METHODS ...
+}
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">HTML Form with Helpers</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Form Validation Revisited</h2>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// views/person/new.ejs (partial)
+
+&lt;form method="POST" action="/people">
+    &lt;div>
+        &lt;label for="first_name">First Name:&lt;/label>
+        &lt;input type="text" name="first_name" value="<%= old('first_name') %>" required>
+        &lt;% if (error('first_name')) { %>
+            &lt;div><%= error('first_name') %>&lt;/div>
+        &lt;% } %>
+    &lt;/div>
+
+    ... OTHER FIELDS ...
+
+    &lt;button type="submit">Create&lt;/button>
+&lt;/form>
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">HTML Helpers</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Form Validation Revisited</h2>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// controllers/BaseController.js (partial)
+
+export class BaseController {
+
+    async view(res, shortPath, data = {}, req = null) {
+        if (req) {
+            // Add helpers
+            const flashErrors = req.flash.get("errors") || {};
+            const flashBody = req.flash.get("body") || {};
+            const flashSuccess = req.flash.get("success") || null;
+
+            data.old = (field, defaultValue = '') => flashBody[field] || defaultValue;
+            data.error = (field) => flashErrors[field] || '';
+            data.success = () => flashSuccess || '';
+        }
+
+        // Convert "person/index" → /views/person/index.ejs
+        const viewPath = join(views_root, `${shortPath}.ejs`);
+        return this.render(res, viewPath, data);
+    }
+
+    ... OTHER BASE METHODS ...
+}
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Give It A Try</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Form Validation Revisited</h2>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// terminal
+
+npm start
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Key Takeaways</h1>
+        <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
+            <li>Cookies store client-side data.</li>
+            <li>Sessions can store server-side data linked via a cookie (session ID).</li>
+            <li>Production Considerations:
+                <ul class="ml-6 text-xl md:text-2xl max-w-6xl mb-8 list-none list-inside space-y-2">
+                    <li>👉 Use signed/encrypted cookies.</li>
+                    <li>👉 Persistent, redundant, scalable storage solution (e.g., dedicated Redis server)</li>
+                    <li>👉 Consider server-side session storage with libraries like express-session.</li>
+                </ul>
+            </li>
+        </ul>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Up Next</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-6 text-center">Authentication Basics</h2>
+        <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
+            <li>Create a login form.</li>
+            <li>Use <code>bcrypt</code> for secure password hashing.</li>
+            <li>Implement session-based login to track authenticated users.</li>
+        </ul>
+    </section>
+
+</main>
+
+<!-- Keyboard Controls Script -->
+<script>
+    const slides = document.querySelectorAll('main > section');
+    let currentIndex = 0;
+
+    function goToSlide(index) {
+        if (index < 0) index = 0;
+        if (index >= slides.length) index = slides.length - 1;
+        slides[index].scrollIntoView({behavior: 'smooth'});
+        currentIndex = index;
+    }
+
+    window.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight') {
+            goToSlide(currentIndex + 1);
+        } else if (e.key === 'ArrowLeft') {
+            goToSlide(currentIndex - 1);
+        }
+    });
+</script>
+<script>
+    console.log("Hello from the browser!");
+</script>
+</body>
+</html>
