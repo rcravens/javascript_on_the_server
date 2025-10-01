@@ -12,3 +12,4 @@ javascript-on-the-server.txt
 node_modules/
 **/data/sessions/
 slides.key
+.env
