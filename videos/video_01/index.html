@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <title>Why JavaScript on the Server? | Introduction to Server-Side JavaScript</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/themes/prism-tomorrow.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/themes/prism-tomorrow.css" rel="stylesheet"/>
     <script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/prism.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/components/prism-javascript.min.js"></script>
     <style>
@@ -36,7 +36,7 @@
 </header>
 
 <!-- Scrollable Sections -->
-<main id="slides" class="bg-gradient-to-b from-gray-900 via-gray-800 to-gray-700">
+<main class="bg-gradient-to-b from-gray-900 via-gray-800 to-gray-700" id="slides">
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
         <blockquote class="text-4xl md:text-6xl font-semibold text-center italic text-yellow-400 max-w-6xl mb-6">
@@ -46,22 +46,22 @@
     </section>
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <img src="previous_series.png" alt="Slide Image" class="bg-white rounded-lg shadow-lg max-w-4xl p-6 h-auto">
+        <img alt="Slide Image" class="bg-white rounded-lg shadow-lg max-w-4xl p-6 h-auto" src="previous_series.png">
         <div class="mt-6 flex flex-wrap justify-center gap-6">
-            <a href="https://tekcasts.com/play/javascript-for-beginners-what-is-javascript" target="_blank" class="px-6 py-3 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition">Foundations</a>
-            <a href="https://tekcasts.com/play/javascript-in-the-browser-browser-runtime-environment" target="_blank" class="px-6 py-3 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition">Browser Runtime</a>
+            <a class="px-6 py-3 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition" href="https://tekcasts.com/play/javascript-for-beginners-what-is-javascript" target="_blank">Foundations</a>
+            <a class="px-6 py-3 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition" href="https://tekcasts.com/play/javascript-in-the-browser-browser-runtime-environment" target="_blank">Browser Runtime</a>
         </div>
     </section>
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
         <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">A Brief History</h1>
         <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
-            <li>JavaScript origins (1995, Netscape) - <a href="https://www.itmagination.com/blog/the-complete-history-of-javascript-typescript-and-node-js" target="_blank" class="text-yellow-400 underline hover:text-yellow-300">created</a> in just 10 days by Brendan Eich.</li>
+            <li>JavaScript origins (1995, Netscape) - <a class="text-yellow-400 underline hover:text-yellow-300" href="https://www.itmagination.com/blog/the-complete-history-of-javascript-typescript-and-node-js" target="_blank">created</a> in just 10 days by Brendan Eich.</li>
             <li>Originally only for front-end interactivity in browsers</li>
             <li>The browser wars --> standardization of ECMAScript.</li>
             <li>For years, JavaScript = front-end only.</li>
         </ul>
-        <img src="https://upload.wikimedia.org/wikipedia/commons/6/66/Netscape_logo.svg" alt="Slide Image" class="bg-white rounded-lg shadow-lg max-w-4xl p-6 h-auto">
+        <img alt="Slide Image" class="bg-white rounded-lg shadow-lg max-w-4xl p-6 h-auto" src="https://upload.wikimedia.org/wikipedia/commons/6/66/Netscape_logo.svg">
     </section>
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
@@ -69,7 +69,7 @@
             JS was like a band that only played "opening acts" until Node.js
             gave it a shot at "headlining the concert"!
         </blockquote>
-        <img src="https://upload.wikimedia.org/wikipedia/commons/d/d9/Node.js_logo.svg" alt="Slide Image" class="bg-white rounded-lg shadow-lg max-w-4xl p-6 h-auto">
+        <img alt="Slide Image" class="bg-white rounded-lg shadow-lg max-w-4xl p-6 h-auto" src="https://upload.wikimedia.org/wikipedia/commons/d/d9/Node.js_logo.svg">
     </section>
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
@@ -78,7 +78,7 @@
             <li>Created by Ryan Dahl.</li>
             <li>Key innovation: V8 engine (Google Chrome's JavaScript engine).</li>
             <li>Wrapped V8 with system bindings --> allowed JS to do file I/O, networking, etc.</li>
-            <li><a href="https://nodejs.org/en/about" target="_blank" class="text-yellow-400 underline hover:text-yellow-300">Event-driven, non-blocking</a> I/O model --> perfect for scalable network applications.</li>
+            <li><a class="text-yellow-400 underline hover:text-yellow-300" href="https://nodejs.org/en/about" target="_blank">Event-driven, non-blocking</a> I/O model --> perfect for scalable network applications.</li>
         </ul>
         <blockquote class="text-4xl md:text-6xl font-semibold text-center italic text-yellow-400 max-w-6xl mb-6">
             The language you used in the browser can run your backend too!
@@ -89,7 +89,7 @@
         <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Benefits of JavaScript on the Server</h1>
         <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
             <li>Single language, full stack: frontend + backend + even DB queries (MongoDB).</li>
-            <li>Massive ecosystem (<a href="https://www.npmjs.com/" target="_blank" class="text-yellow-400 underline hover:text-yellow-300">npm</a>): world's largest package registry.</li>
+            <li>Massive ecosystem (<a class="text-yellow-400 underline hover:text-yellow-300" href="https://www.npmjs.com/" target="_blank">npm</a>): world's largest package registry.</li>
             <li>Productivity & learning curve: one language across the stack reduces context-switching.</li>
             <li>Community & job market: widely adopted in startups and enterprises.</li>
         </ul>
@@ -98,12 +98,12 @@
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
         <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Use Cases</h1>
         <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
-            <li>APIs & web servers (<a href="https://expressjs.com/" target="_blank" class="text-yellow-400 underline hover:text-yellow-300">Express.js</a>, <a href="https://fastify.dev/" target="_blank" class="text-yellow-400 underline hover:text-yellow-300">Fastify</a>).</li>
-            <li>Dynamic websites (<a href="https://ejs.co/" target="_blank" class="text-yellow-400 underline hover:text-yellow-300">EJS</a>, <a href="https://nextjs.org/" target="_blank" class="text-yellow-400 underline hover:text-yellow-300">Next.js</a>, <a href="https://adonisjs.com/" target="_blank" class="text-yellow-400 underline hover:text-yellow-300">Adonis</a>).</li>
-            <li>Real-time apps (chat, games, live collaboration --> powered by  <a href="https://javascript.info/websocket" target="_blank" class="text-yellow-400 underline hover:text-yellow-300">WebSockets</a>).</li>
-            <li>Command-line tools (<a href="https://www.npmjs.com/" target="_blank" class="text-yellow-400 underline hover:text-yellow-300">npm CLI</a>, <a href="https://eslint.org/" target="_blank" class="text-yellow-400 underline hover:text-yellow-300">ESLint</a>, <a href="https://prettier.io/" target="_blank" class="text-yellow-400 underline hover:text-yellow-300">Prettier</a>) all built with Node.js.</li>
-            <li>Microservices and serverless (<a href="https://aws.amazon.com/pm/lambda/" target="_blank" class="text-yellow-400 underline hover:text-yellow-300">AWS Lambda</a>, <a href="https://vercel.com/" target="_blank" class="text-yellow-400 underline hover:text-yellow-300">Vercel</a>, <a href="https://www.netlify.com/" target="_blank" class="text-yellow-400 underline hover:text-yellow-300">Netlify</a>).</li>
-            <li>Even IoT & robotics (<a href="https://johnny-five.io/" target="_blank" class="text-yellow-400 underline hover:text-yellow-300">Johnny-Five</a>, <a href="https://nodered.org/" target="_blank" class="text-yellow-400 underline hover:text-yellow-300">Node-RED</a>).</li>
+            <li>APIs & web servers (<a class="text-yellow-400 underline hover:text-yellow-300" href="https://expressjs.com/" target="_blank">Express.js</a>, <a class="text-yellow-400 underline hover:text-yellow-300" href="https://fastify.dev/" target="_blank">Fastify</a>).</li>
+            <li>Dynamic websites (<a class="text-yellow-400 underline hover:text-yellow-300" href="https://ejs.co/" target="_blank">EJS</a>, <a class="text-yellow-400 underline hover:text-yellow-300" href="https://nextjs.org/" target="_blank">Next.js</a>, <a class="text-yellow-400 underline hover:text-yellow-300" href="https://adonisjs.com/" target="_blank">Adonis</a>).</li>
+            <li>Real-time apps (chat, games, live collaboration --> powered by <a class="text-yellow-400 underline hover:text-yellow-300" href="https://javascript.info/websocket" target="_blank">WebSockets</a>).</li>
+            <li>Command-line tools (<a class="text-yellow-400 underline hover:text-yellow-300" href="https://www.npmjs.com/" target="_blank">npm CLI</a>, <a class="text-yellow-400 underline hover:text-yellow-300" href="https://eslint.org/" target="_blank">ESLint</a>, <a class="text-yellow-400 underline hover:text-yellow-300" href="https://prettier.io/" target="_blank">Prettier</a>) all built with Node.js.</li>
+            <li>Microservices and serverless (<a class="text-yellow-400 underline hover:text-yellow-300" href="https://aws.amazon.com/pm/lambda/" target="_blank">AWS Lambda</a>, <a class="text-yellow-400 underline hover:text-yellow-300" href="https://vercel.com/" target="_blank">Vercel</a>, <a class="text-yellow-400 underline hover:text-yellow-300" href="https://www.netlify.com/" target="_blank">Netlify</a>).</li>
+            <li>Even IoT & robotics (<a class="text-yellow-400 underline hover:text-yellow-300" href="https://johnny-five.io/" target="_blank">Johnny-Five</a>, <a class="text-yellow-400 underline hover:text-yellow-300" href="https://nodered.org/" target="_blank">Node-RED</a>).</li>
         </ul>
     </section>
 
@@ -130,11 +130,11 @@ node -e "console.log('Hello from Node.js!')";
 const http = require(“http”);
 
 const server = http.createServer((req, res) => {
-res.end(“Hello from the server!”);
+    res.end(“Hello from the server!”);
 });
 
 server.listen(3000, () => {
-console.log(“Server running at http://localhost:3000”);
+    console.log(“Server running at http://localhost:3000”);
 });
         </code></pre>
 
@@ -161,9 +161,9 @@ node hello-server.js
     let currentIndex = 0;
 
     function goToSlide(index) {
-        if(index < 0) index = 0;
-        if(index >= slides.length) index = slides.length - 1;
-        slides[index].scrollIntoView({ behavior: 'smooth' });
+        if (index < 0) index = 0;
+        if (index >= slides.length) index = slides.length - 1;
+        slides[index].scrollIntoView({behavior: 'smooth'});
         currentIndex = index;
     }
 
