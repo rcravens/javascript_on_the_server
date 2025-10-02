@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <title>Event Loop & Async Basics | Node.js Fundamentals</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/themes/prism-tomorrow.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/themes/prism-tomorrow.css" rel="stylesheet"/>
     <script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/prism.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/components/prism-javascript.min.js"></script>
     <style>
@@ -36,7 +36,7 @@
 </header>
 
 <!-- Scrollable Sections -->
-<main id="slides" class="bg-gradient-to-b from-gray-900 via-gray-800 to-gray-700">
+<main class="bg-gradient-to-b from-gray-900 via-gray-800 to-gray-700" id="slides">
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
         <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Single-Threaded / Non-Blocking</h1>
@@ -47,7 +47,7 @@
             </li>
             <li>
                 <span class="underline">Blocking Threads for I/O:</span>
-                <span class="m-6 block text-lg">When an asynchronous operation (like reading a file or making an HTTP request) is initiated, the main thread offloads this task to a background thread from the libuv thread pool.</span>
+                <span class="m-6 block text-lg">When an asynchronous operation (like reading a file or making an HTTP request) is initiated, the main thread offloads this task to a background thread from the <a class="text-yellow-400 underline hover:text-yellow-300" href="https://zmushegh.medium.com/understanding-libuv-the-powerhouse-behind-node-js-b5349c8f0d75" target="_blank">libuv</a> thread pool.</span>
             </li>
             <li>
                 <span class="underline">Non-blocking Execution:</span>
@@ -62,16 +62,15 @@
             A waiter taking orders sending tasks to the kitchen, and returning when the food is ready &mdash; the waiter doesn't block waiting.
         </blockquote>
         <div class="flex flex-wrap justify-center gap-6">
-            <a href="https://nodejs.org/en/learn/asynchronous-work/overview-of-blocking-vs-non-blocking" target="_blank" class="px-6 py-3 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition">Learn More</a>
+            <a class="px-6 py-3 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition" href="https://nodejs.org/en/learn/asynchronous-work/overview-of-blocking-vs-non-blocking" target="_blank">Learn More</a>
         </div>
     </section>
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
         <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Callbacks</h1>
-        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Early Days</h2>
         <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
             <li>A callback is a function passed as an argument to another function, intended to be executed after the completion of an asynchronous operation.</li>
-            <li>The calling function initiates the async tasks and then passes control to the callback function when the task finishes.</li>
+            <li>The calling function initiates the async tasks and then passes control to the callback function when finished.</li>
             <li>Errors are typically handled by passing an <code>Error</code> object as the first argument to the callback function.</li>
             <li>Deeply nested callbacks can lead to "callback hell" or "pyramid of doom", making code difficult to read, understand, and maintain, especially with multiple dependent async operations.</li>
         </ul>
@@ -95,8 +94,7 @@ node callback_example.js
     </section>
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Promises</h1>
-        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Modern Alternative</h2>
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Promises - Modern Alternative</h1>
         <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
             <li>A Promise is an object representing the eventual completion (or failure) of an async operation and its resulting value. It acts as a placeholder for a value that will be available in the future.</li>
             <li>Promises allow for a more structured and linear flow using <code>.then()</code>, <code>.catch()</code>, and <code>.finally()</code> methods. Instead of passing a callback, the async function returns a Promise object, and subsequent operations are chained to it.</li>
@@ -121,7 +119,7 @@ fs.readFile('file.txt', 'utf8')
 node promise_example.js
         </code></pre>
         <div class="flex flex-wrap justify-center gap-6">
-            <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise" target="_blank" class="px-6 py-3 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition">Learn More</a>
+            <a class="px-6 py-3 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition" href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise" target="_blank">Learn More</a>
         </div>
     </section>
 
@@ -154,7 +152,7 @@ console.log('End');
 node async_await_example.js
         </code></pre>
         <div class="flex flex-wrap justify-center gap-6">
-            <a href="https://developer.mozilla.org/en-US/docs/Learn_web_development/Extensions/Async_JS/Promises" target="_blank" class="px-6 py-3 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition">Learn More</a>
+            <a class="px-6 py-3 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition" href="https://developer.mozilla.org/en-US/docs/Learn_web_development/Extensions/Async_JS/Promises" target="_blank">Learn More</a>
         </div>
     </section>
 
@@ -175,7 +173,7 @@ node async_await_example.js
             <li>Understand requests and responses.</li>
         </ul>
     </section>
-    
+
 </main>
 
 <!-- Keyboard Controls Script -->
@@ -184,9 +182,9 @@ node async_await_example.js
     let currentIndex = 0;
 
     function goToSlide(index) {
-        if(index < 0) index = 0;
-        if(index >= slides.length) index = slides.length - 1;
-        slides[index].scrollIntoView({ behavior: 'smooth' });
+        if (index < 0) index = 0;
+        if (index >= slides.length) index = slides.length - 1;
+        slides[index].scrollIntoView({behavior: 'smooth'});
         currentIndex = index;
     }
 
