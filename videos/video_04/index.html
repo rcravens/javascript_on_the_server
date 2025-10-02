@@ -95,8 +95,8 @@ node callback_example.js
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
         <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Promises - Modern Alternative</h1>
-        <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
-            <li>A Promise is an object representing the eventual completion (or failure) of an async operation and its resulting value. It acts as a placeholder for a value that will be available in the future.</li>
+        <ul class="text-lg md:text-xl max-w-6xl mb-8 list-disc list-inside space-y-2">
+            <li>A <a class="text-yellow-400 underline hover:text-yellow-300" href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise" target="_blank">Promise</a> is an object representing the eventual completion (or failure) of an async operation and its resulting value. It acts as a placeholder for a value that will be available in the future.</li>
             <li>Promises allow for a more structured and linear flow using <code>.then()</code>, <code>.catch()</code>, and <code>.finally()</code> methods. Instead of passing a callback, the async function returns a Promise object, and subsequent operations are chained to it.</li>
             <li>Promises provide a centralized error handling mechanism through the <code>.catch()</code> method, which can catch errors anywhere in the promise chain.</li>
             <li>Promises improve readability and maintainability by flattening the code structure and avoiding deep nesting, especially when chaining multiple async operations.</li>
@@ -118,8 +118,99 @@ fs.readFile('file.txt', 'utf8')
 // terminal window
 node promise_example.js
         </code></pre>
-        <div class="flex flex-wrap justify-center gap-6">
-            <a class="px-6 py-3 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition" href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise" target="_blank">Learn More</a>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Nested Async Calls</h1>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-6xl overflow-hidden h-[75%]">
+            <div class="bg-gray-800 rounded-lg p-6">
+                <h2 class="text-2xl font-bold mb-4 text-yellow-400">Callbacks</h2>
+                <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto overflow-y-auto h-[60%]"><code class="language-javascript">
+function step1(callback) {
+  setTimeout(() => {
+    console.log("Step 1 completed");
+    callback(null, "data from step 1");
+  }, 1000);
+}
+
+function step2(dataFromStep1, callback) {
+  setTimeout(() => {
+    console.log("Step 2 completed with:", dataFromStep1);
+    callback(null, "data from step 2");
+  }, 800);
+}
+
+function step3(dataFromStep2, callback) {
+  setTimeout(() => {
+    console.log("Step 3 completed with:", dataFromStep2);
+    callback(null, "data from step 3");
+  }, 500);
+}
+
+// Callback Hell
+step1((err, result1) => {
+  if (err) {
+    console.error(err);
+    return;
+  }
+  step2(result1, (err, result2) => {
+    if (err) {
+      console.error(err);
+      return;
+    }
+    step3(result2, (err, result3) => {
+      if (err) {
+        console.error(err);
+        return;
+      }
+      console.log("All steps completed with:", result3);
+    });
+  });
+});
+                </code></pre>
+            </div>
+            <div class="bg-gray-800 rounded-lg p-6">
+                <h2 class="text-2xl font-bold mb-4 text-indigo-400">Promises</h2>
+                <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto overflow-y-auto h-[60%]"><code class="language-javascript">
+function step1Promise() {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      console.log("Step 1 completed");
+      resolve("data from step 1");
+    }, 1000);
+  });
+}
+
+function step2Promise(dataFromStep1) {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      console.log("Step 2 completed with:", dataFromStep1);
+      resolve("data from step 2");
+    }, 800);
+  });
+}
+
+function step3Promise(dataFromStep2) {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      console.log("Step 3 completed with:", dataFromStep2);
+      resolve("data from step 3");
+    }, 500);
+  });
+}
+
+// Using Promises
+step1Promise()
+  .then((result1) => step2Promise(result1))
+  .then((result2) => step3Promise(result2))
+  .then((result3) => {
+    console.log("All steps completed with:", result3);
+  })
+  .catch((error) => {
+    console.error("An error occurred:", error);
+  });
+                </code></pre>
+            </div>
         </div>
     </section>
 
@@ -127,7 +218,7 @@ node promise_example.js
         <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Async / Await</h1>
         <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Syntactic Sugar</h2>
         <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
-            <li><code>async/await</code> is syntactic sugar built on top of Promises, introduced in ES8, making async code appear and behave more like sync code.</li>
+            <li><code>async/await</code> is <a class="text-yellow-400 underline hover:text-yellow-300" href="https://developer.mozilla.org/en-US/docs/Learn_web_development/Extensions/Async_JS/Promises" target="_blank">syntactic sugar built on top of Promises</a>, introduced in ES8, making async code appear and behave more like sync code.</li>
             <li>An <code>async</code> function is a function that returns a Promise. The <code>await</code> keyword can only be used inside an <code>async</code> function and pauses the execution of the <code>async</code> function until the awaited Promise settles (resolves or rejects).</li>
             <li>Significantly enhances readability and simplifies error handling using the standard <code>try..catch</code> blocks, making async code easier to reason about.</li>
         </ul>
@@ -147,13 +238,6 @@ try {
 
 console.log('End');
         </code></pre>
-        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
-// terminal window
-node async_await_example.js
-        </code></pre>
-        <div class="flex flex-wrap justify-center gap-6">
-            <a class="px-6 py-3 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition" href="https://developer.mozilla.org/en-US/docs/Learn_web_development/Extensions/Async_JS/Promises" target="_blank">Learn More</a>
-        </div>
     </section>
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
