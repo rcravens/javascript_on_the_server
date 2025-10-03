@@ -13,12 +13,12 @@ const server = http.createServer((req, res) => {
     const acceptHeader = req.headers['accept'];
 
     if (acceptHeader && acceptHeader.includes('application/json')) {
-        // JSON response
-        res.writeHead(200, { 'Content-Type': 'application/json' });
+        // JSON formated response....
+        res.writeHead(200, {'Content-Type': 'application/json'});
         res.end(JSON.stringify(person, null, 2));
     } else {
-        // HTML response with Tailwind CSS
-        res.writeHead(200, { 'Content-Type': 'text/html' });
+        // HTML formated response....
+        res.writeHead(200, {'Content-Type': 'text/html'});
         res.end(`
       <!DOCTYPE html>
       <html lang="en">

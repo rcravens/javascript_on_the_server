@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <title>Routing Basics | Building a Basic Web Server</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/themes/prism-tomorrow.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/themes/prism-tomorrow.css" rel="stylesheet"/>
     <script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/prism.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/components/prism-javascript.min.js"></script>
     <style>
@@ -36,7 +36,7 @@
 </header>
 
 <!-- Scrollable Sections -->
-<main id="slides" class="bg-gradient-to-b from-gray-900 via-gray-800 to-gray-700">
+<main class="bg-gradient-to-b from-gray-900 via-gray-800 to-gray-700" id="slides">
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
         <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">What is routing?</h1>
@@ -55,9 +55,7 @@
         <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">URL Example</h1>
         <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Simple Routing</h2>
         <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
-// http_url_routing.js
-
-const http = require("http");
+// http_url_routing.js (partial)
 
 const server = http.createServer((req, res) => {
     res.setHeader("Content-Type", "text/plain");
@@ -77,10 +75,6 @@ const server = http.createServer((req, res) => {
             res.end("Page not found");
     }
 });
-
-server.listen(3000, () => {
-    console.log("Server running at http://localhost:3000/");
-});
         </code></pre>
         <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
 // terminal window
@@ -93,21 +87,13 @@ node http_url_routing.js
         <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Contact Form</h2>
         <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
 // http_method_routing.js
-const http = require("http");
-const { parse } = require("querystring");
 
 const server = http.createServer((req, res) => {
   if (req.method === "POST") {
-    // POST handler...
+    // POST handler...parse incoming data, process, and respond with receipt
   } else {
-    // GET handler...
-    res.writeHead(200, { "Content-Type": "text/html" });
-    res.end(`...HTML CONTENT HERE...`);
+    // GET handler...respond with HTML form
   }
-});
-
-server.listen(3000, () => {
-  console.log(`Server running at http://localhost:3000`);
 });
         </code></pre>
         <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
@@ -121,8 +107,7 @@ node http_method_routing.js
         <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">URL Example</h1>
         <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Data Response</h2>
         <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
-// http_header_routing.js
-const http = require('http');
+// http_header_routing.js (partial)
 
 const person = {
     first: "Jane",
@@ -134,18 +119,14 @@ const server = http.createServer((req, res) => {
     const acceptHeader = req.headers['accept'];
 
     if (acceptHeader && acceptHeader.includes('application/json')) {
-        // JSON response
+        // JSON formated response...
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify(person, null, 2));
     } else {
-        // HTML response
+        // HTML formated response...
         res.writeHead(200, { 'Content-Type': 'text/html' });
         res.end(`...HTML RESPONSE...`);
     }
-});
-
-server.listen(3000, () => {
-    console.log(`Server running at http://localhost:3000`);
 });
         </code></pre>
         <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
@@ -180,9 +161,9 @@ node http_header_routing.js
     let currentIndex = 0;
 
     function goToSlide(index) {
-        if(index < 0) index = 0;
-        if(index >= slides.length) index = slides.length - 1;
-        slides[index].scrollIntoView({ behavior: 'smooth' });
+        if (index < 0) index = 0;
+        if (index >= slides.length) index = slides.length - 1;
+        slides[index].scrollIntoView({behavior: 'smooth'});
         currentIndex = index;
     }
 
