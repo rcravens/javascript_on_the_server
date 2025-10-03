@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <title>The HTTP Module | Building a Basic Web Server</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/themes/prism-tomorrow.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/themes/prism-tomorrow.css" rel="stylesheet"/>
     <script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/prism.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/components/prism-javascript.min.js"></script>
     <style>
@@ -36,7 +36,7 @@
 </header>
 
 <!-- Scrollable Sections -->
-<main id="slides" class="bg-gradient-to-b from-gray-900 via-gray-800 to-gray-700">
+<main class="bg-gradient-to-b from-gray-900 via-gray-800 to-gray-700" id="slides">
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
         <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Why the HTTP Module?</h1>
@@ -46,7 +46,27 @@
             <li>Foundation for building web servers, APIs, and dynamic websites.</li>
         </ul>
         <div class="flex flex-wrap justify-center gap-6">
-            <a href="https://nodejs.org/api/http.html" target="_blank" class="px-6 py-3 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition">Learn More</a>
+            <a class="px-6 py-3 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition" href="https://nodejs.org/api/http.html" target="_blank">Learn More</a>
+        </div>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Web Foundations</h1>
+        <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
+            <li>HTTP (Hyper Text Transport Protocol) is the language between browsers (clients) and servers.</li>
+            <li>Request and Response Cycle:
+                <ul class="ml-6 text-xl md:text-2xl max-w-6xl mb-8 list-decimal list-inside space-y-2">
+                    <li>You open your browser, the Client, and type in a web address like <code>https://tekcasts.com</code> and hit enter.</li>
+                    <li>The browser takes this address and builds an <strong>HTTP Request</strong>.</li>
+                    <li>After some networking (DNS, routing, TLS/SSL, ...) the server receives the <strong>HTTP Request</strong>.</li>
+                    <li>The server generates an <strong>HTTP Response</strong> to that request.</li>
+                    <li>After some networking the browser receives the <strong>HTTP Response</strong>.</li>
+                    <li>The browser parses the <strong>HTTP Response</strong> and renders the requested page.</li>
+                </ul>
+            </li>
+        </ul>
+        <div class="flex flex-wrap justify-center gap-6">
+            <a class="px-6 py-3 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition" href="https://backend.turing.edu/module2/lessons/how_the_web_works_http" target="_blank">Request / Response Cycle</a>
         </div>
     </section>
 
@@ -80,15 +100,11 @@ server.listen(3000, () => {
         <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">The Request</h1>
         <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Deeper Look</h2>
         <p class="text-xl md:text-2xl max-w-6xl text-center mb-8">
-            <code>http.IncomingMessage</code> object (i.e.  <code>req</code>) contains the request info.
+            <code>http.IncomingMessage</code> object (i.e. <code>req</code>) contains the request info.
         </p>
         <div class="flex flex-wrap justify-center gap-6">
-            <a href="https://www.w3schools.com/nodejs/nodejs_http.asp" target="_blank" class="px-6 py-3 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition">Learn More</a>
+            <a class="px-6 py-3 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition" href="https://www.w3schools.com/nodejs/nodejs_http.asp" target="_blank">Learn More</a>
         </div>
-        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
-// terminal window
-node http_min.js
-        </code></pre>
         <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
 // most used
 req.url                     // /api/v1/users
@@ -102,10 +118,10 @@ req.headers['user-agent']   // value of a single header
         <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">The Response</h1>
         <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Deeper Look</h2>
         <p class="text-xl md:text-2xl max-w-6xl text-center mb-8">
-            <code>http.ServerResponse</code> object (i.e.  <code>res</code>) contains methods to set the response headers and body.
+            <code>http.ServerResponse</code> object (i.e. <code>res</code>) contains methods to set the response headers and body.
         </p>
         <div class="flex flex-wrap justify-center gap-6">
-            <a href="https://www.w3schools.com/nodejs/obj_http_serverresponse.asp" target="_blank" class="px-6 py-3 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition">Learn More</a>
+            <a class="px-6 py-3 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition" href="https://www.w3schools.com/nodejs/obj_http_serverresponse.asp" target="_blank">Learn More</a>
         </div>
         <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
 // most used
@@ -134,7 +150,7 @@ res.end(data)                   // sends final text, and signals that the respon
             <li>Serve different content based on requested path.</li>
         </ul>
     </section>
-    
+
 </main>
 
 <!-- Keyboard Controls Script -->
@@ -143,9 +159,9 @@ res.end(data)                   // sends final text, and signals that the respon
     let currentIndex = 0;
 
     function goToSlide(index) {
-        if(index < 0) index = 0;
-        if(index >= slides.length) index = slides.length - 1;
-        slides[index].scrollIntoView({ behavior: 'smooth' });
+        if (index < 0) index = 0;
+        if (index >= slides.length) index = slides.length - 1;
+        slides[index].scrollIntoView({behavior: 'smooth'});
         currentIndex = index;
     }
 
