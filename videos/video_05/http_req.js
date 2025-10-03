@@ -1,28 +1,42 @@
 const http = require("http"); // CommonJS
 
+function remove_circular_references(obj, seen = new WeakSet()) {
+    if (typeof obj !== 'object' || obj === null) {
+        return obj;
+    }
+
+    if (seen.has(obj)) {
+        return '[Circular]'; // Or a more specific identifier like obj.id
+    }
+
+    seen.add(obj);
+
+    const newObj = Array.isArray(obj) ? [] : {};
+    for (const key in obj) {
+        if (Object.prototype.hasOwnProperty.call(obj, key)) {
+            newObj[key] = remove_circular_references(obj[key], seen);
+        }
+    }
+    return newObj;
+}
+
 const server = http.createServer((req, res) => {
 
-    console.log(req.url);
-    console.log(req.method);
-    console.log(req.headers);
-    console.log(req.headers['user-agent']);
+    const data = {};
 
-    const cache = new Set();
-    const serialized_req = JSON.stringify(req, (key, value) => {
-        if (typeof value === 'object' && value !== null) {
-            if (cache.has(value)) {
-                // Circular reference found, discard key
-                return;
-            }
-            // Store value in our collection
-            cache.add(value);
-        }
-        return value;
-    }, 2); // The '2' is for pretty-printing with 2 spaces indentation
+    data.req = {};
+    data.req.url = req.url;
+    data.req.method = req.method;
+    data.req.headers = req.headers;
+    data.req.user_agent = req.headers['user-agent'];
+    data.req.obj = remove_circular_references(req);
+
+    data.res = {};
+    data.res.obj = remove_circular_references(res);
 
     res.statusCode = 200;
     res.setHeader("Content-Type", "application/json");
-    res.end(serialized_req);
+    res.end(JSON.stringify(data));
 });
 
 server.listen(3000, () => {
