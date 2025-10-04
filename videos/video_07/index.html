@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <title>Serving HTML & Static Files | Building a Basic Web Server</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/themes/prism-tomorrow.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/themes/prism-tomorrow.css" rel="stylesheet"/>
     <script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/prism.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/components/prism-javascript.min.js"></script>
     <style>
@@ -36,7 +36,7 @@
 </header>
 
 <!-- Scrollable Sections -->
-<main id="slides" class="bg-gradient-to-b from-gray-900 via-gray-800 to-gray-700">
+<main class="bg-gradient-to-b from-gray-900 via-gray-800 to-gray-700" id="slides">
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
         <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Why Serve Static Files?</h1>
@@ -46,15 +46,27 @@
             <li>Node can server any file type (text, image, JSON, etc.) using the <code>fs</code> module.</li>
         </ul>
         <div class="flex flex-wrap justify-center gap-6">
-            <a href="https://nodejs.org/api/fs.html" target="_blank" class="px-6 py-3 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition">Learn More</a>
+            <a class="px-6 py-3 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition" href="https://nodejs.org/api/fs.html" target="_blank">Learn More</a>
         </div>
     </section>
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Basic File Server</h1>
-        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Using the HTTP Module</h2>
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Req/Res Handler</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Basic Static File Server</h2>
         <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
 // http_static.js (partial)
+
+const MIME_TYPES = {
+    default: "application/octet-stream",
+    html: "text/html; charset=UTF-8",
+    js: "text/javascript",
+    css: "text/css",
+    png: "image/png",
+    jpg: "image/jpeg",
+    gif: "image/gif",
+    ico: "image/x-icon",
+    svg: "image/svg+xml",
+};
 
 http.createServer(async (req, res) => {
         const file = await prepareFile(req.url);
@@ -64,6 +76,32 @@ http.createServer(async (req, res) => {
         file.stream.pipe(res);
         console.log(`${req.method} ${req.url} ${statusCode}`);
     });
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Url Processing</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Basic Static File Server</h2>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// http_static.js (partial)
+
+const STATIC_PATH = path.join(process.cwd(), "./static");
+
+const toBool = [() => true, () => false];
+
+// url examples: '/', '/profile.html', '/about.html'
+const prepareFile = async (url) => {
+    const paths = [STATIC_PATH, url];
+    if (url.endsWith("/")) paths.push("index.html");
+    const filePath = path.join(...paths);
+    const pathTraversal = !filePath.startsWith(STATIC_PATH);
+    const exists = await fs.promises.access(filePath).then(...toBool);
+    const found = !pathTraversal && exists;
+    const streamPath = found ? filePath : `${STATIC_PATH}/404.html`;
+    const ext = path.extname(streamPath).substring(1).toLowerCase();
+    const stream = fs.createReadStream(streamPath);
+    return { found, ext, stream };
+};
         </code></pre>
         <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
 // terminal window
@@ -88,7 +126,7 @@ node http_static.js
             <li>JSON APIs.</li>
         </ul>
     </section>
-    
+
 </main>
 
 <!-- Keyboard Controls Script -->
@@ -97,9 +135,9 @@ node http_static.js
     let currentIndex = 0;
 
     function goToSlide(index) {
-        if(index < 0) index = 0;
-        if(index >= slides.length) index = slides.length - 1;
-        slides[index].scrollIntoView({ behavior: 'smooth' });
+        if (index < 0) index = 0;
+        if (index >= slides.length) index = slides.length - 1;
+        slides[index].scrollIntoView({behavior: 'smooth'});
         currentIndex = index;
     }
 
