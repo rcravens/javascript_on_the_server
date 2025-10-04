@@ -20,10 +20,13 @@ const STATIC_PATH = path.join(process.cwd(), "./static");
 
 // url examples: '/', '/profile.html', '/about.html'
 const prepareFile = async (url) => {
+    // convert url to path
     const paths = [STATIC_PATH, url];
     if (url.endsWith("/")) paths.push("index.html");
     const filePath = path.join(...paths);
+    // guard against paths that attempt to serve content outside of STATIC_PATH
     const pathTraversal = !filePath.startsWith(STATIC_PATH);
+    // guard against files that do not exist
     const exists = await fs.promises.access(filePath).then(() => true, () => false);
     const found = !pathTraversal && exists;
     const streamPath = found ? filePath : `${STATIC_PATH}/404.html`;
