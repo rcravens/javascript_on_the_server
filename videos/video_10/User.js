@@ -17,9 +17,9 @@ async function initDB() {
             CREATE TABLE IF NOT EXISTS users
             (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                first_name TEXT NOT NULL,
-                last_name TEXT NOTvNULL,
-                email TEXT NOT NULL UNIQUE
+                first_name VARCHAR(255) NOT NULL,
+                last_name VARCHAR(255) NOT NULL,
+                email VARCHAR(255) NOT NULL UNIQUE
             )
         `);
     }

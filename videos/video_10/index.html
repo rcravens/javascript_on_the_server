@@ -50,7 +50,7 @@
             </li>
             <li>Databases provide:
                 <ul class="ml-6 text-xl md:text-2xl max-w-6xl mb-8 list-none list-inside space-y-2">
-                    <li>👉 Structured data storage.</li>
+                    <li>👉 Structured & unstructured data storage.</li>
                     <li>👉 Query capabilities (SQL or NoSQL).</li>
                     <li>👉 Atomicity, Consistency, Isolation, and Durability (ACID) guarantees for reliability.</li>
                 </ul>
@@ -59,7 +59,7 @@
     </section>
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Types of Databases</h1>
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Popular Database Options</h1>
         <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
             <li>SQLite (Relational, file-based) <a class="text-yellow-400 underline hover:text-yellow-300" href="https://www.sqlite.org/index.html" target="_blank">sqlite official</a> <a class="text-yellow-400 underline hover:text-yellow-300" href="https://www.npmjs.com/package/sqlite3" target="_blank">sqlite node</a>:
                 <ul class="ml-6 text-xl md:text-2xl max-w-6xl mb-8 list-none list-inside space-y-2">
@@ -98,7 +98,7 @@ npm install sqlite3     // add dependency
         <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Create DB Table</h1>
         <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">SQLite Example</h2>
         <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
-// Person.js (partial)
+// User.js (partial)
 import sqlite from "sqlite";
 import sqlite3 from "sqlite3";
 
@@ -117,9 +117,9 @@ async function initDB() {
     await db.run(`
       CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        first_name TEXT NOT NULL,
-        last_name TEXT NOT NULL,
-        email TEXT NOT NULL UNIQUE
+        first_name VARCHAR(255) NOT NULL,
+        last_name VARCHAR(255) NOT NULL,
+        email VARCHAR(255) NOT NULL UNIQUE
       )
     `);
   }
