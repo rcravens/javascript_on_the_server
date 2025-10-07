@@ -87,29 +87,18 @@ src/
 // controllers/UserController.js (partial)
 
 export class UserController extends BaseController {
-    // verb: GET, route: /people
-    async index(req, res) { ... }
 
-    // verb: GET, route: /people/:email
-    async show(req, res, params) { ... }
+    async index(req, res) { ... }                   // GET:     /users
+    async show(req, res, params) { ... }            // GET:     /users/:email
 
-    // verb: GET, route: /people/new
-    async new(req, res) { ... }
+    async new(req, res) { ... }                     // GET:     /users/new
+    async create(req, res, params, body) { ... }    // POST:    /users
 
-    // verb: GET, route: /people/:email/edit
-    async edit(req, res, params) { ... }
+    async edit(req, res, params) { ... }            // GET:     /users/:email/edit
+    async update(req, res, params, body) { ... }    // PUT:     /users/:email
 
-    // verb: GET, route: /people/:email/delete
-    async delete(req, res, params) { ... }
-
-    // verb: POST, route: /people
-    async create(req, res, params, body) { ... }
-
-    // verb: PUT, route: /people/:email
-    async update(req, res, params, body) { ... }
-
-    // verb: DELETE, route: /people/:email
-    async destroy(req, res, params) { ... }
+    async delete(req, res, params) { ... }          // GET:     /users/:email/delete
+    async destroy(req, res, params) { ... }         // DELETE:  /users/:email
 }
         </code></pre>
     </section>
@@ -126,12 +115,12 @@ import {BaseController} from "./BaseController.js";
 export class UserController extends BaseController {
     async index(req, res) {
         const users = await User.all();
-        return this.view(res, "users/index", { users });
+        return this.view(res, "user/index", { users });
     }
 
     async edit(req, res, params) {
         const user = await User.find(params.email);
-        return this.view(res, "users/edit", { user });
+        return this.view(res, "user/edit", { user });
     }
 
     async update(req, res, params, body) {
@@ -153,7 +142,7 @@ export class UserController extends BaseController {
 export class BaseController {
 
     async view(res, shortPath, data = {}) {
-        // Convert "person/index" → /views/person/index.ejs
+        // Convert "user/index" → /views/user/index.ejs
         const viewPath = join(views_root, `${shortPath}.ejs`);
         try {
             const content = await ejs.renderFile(viewPath, data);
@@ -268,7 +257,7 @@ export class BaseModel {
     </section>
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">View Per Model</h1>
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Views Per Model</h1>
         <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Conventions --> Generic Code</h2>
         <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
             <li>Views per model in directory named after model.</li>
@@ -310,17 +299,19 @@ export default class Router {
         <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
 // routes.js
 
-// routes.js
 import { UserController } from "./controllers/UserController.js";
 
 export default function registerRoutes(router) {
     router.register("GET", "/users", UserController, "index");
-    router.register("GET", "/users/new", UserController, "new");
     router.register("GET", "/users/:email", UserController, "show");
-    router.register("GET", "/users/:email/edit", UserController, "edit");
-    router.register("GET", "/users/:email/delete", UserController, "delete");
+
+    router.register("GET", "/users/new", UserController, "new");
     router.register("POST", "/users", UserController, "create");
+
+    router.register("GET", "/users/:email/edit", UserController, "edit");
     router.register("PUT", "/users/:email", UserController, "update");
+
+    router.register("GET", "/users/:email/delete", UserController, "delete");
     router.register("DELETE", "/users/:email", UserController, "destroy");
 }
         </code></pre>
@@ -335,7 +326,6 @@ export default function registerRoutes(router) {
 import registerRoutes from "./routes.js";
 
 const router = new Router();
-
 registerRoutes(router);
 
 const server = http.createServer(async (req, res) => {
