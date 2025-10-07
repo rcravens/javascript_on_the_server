@@ -4,10 +4,10 @@ import User from "./User.js";
 
 const server = http.createServer(async (req, res) => {
     if (req.url === "/users") {
-        const people = await User.all();
+        const users = await User.all();
 
         try {
-            const html = await ejs.renderFile("views/users.ejs", {people});
+            const html = await ejs.renderFile("views/users.ejs", {users});
             res.writeHead(200, {"Content-Type": "text/html"});
             res.end(html);
         } catch (err) {
@@ -16,10 +16,10 @@ const server = http.createServer(async (req, res) => {
             console.error("EJS render error:", err);
         }
     } else if (req.url === "/users2") {
-        const people = await User.all();
+        const users = await User.all();
 
         // Render page content
-        const content = await ejs.renderFile("views/users2.ejs", {people});
+        const content = await ejs.renderFile("views/users2.ejs", {users});
 
         // Render layout with content injected as `body`
         const html = await ejs.renderFile("views/layouts/layout.ejs", {body: content});

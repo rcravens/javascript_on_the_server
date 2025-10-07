@@ -1,15 +1,15 @@
-<h1 style="text-align:center;">People</h1>
+<h1 style="text-align:center;">Users</h1>
 <table>
     <tr>
         <th>First Name</th>
         <th>Last Name</th>
         <th>Email</th>
     </tr>
-    <% people.forEach(person => { %>
+    <% users.forEach(user => { %>
         <tr>
-            <td><%= person.first_name %></td>
-            <td><%= person.last_name %></td>
-            <td><%= person.email %></td>
+            <td><%= user.first_name %></td>
+            <td><%= user.last_name %></td>
+            <td><%= user.email %></td>
         </tr>
     <% }) %>
 </table>

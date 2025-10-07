@@ -1,26 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>People</title>
+    <title>Users</title>
     <style>
-        table { border-collapse: collapse; width: 50%; margin: 20px auto; }
-        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
-        th { background-color: #f4f4f4; }
+        table {
+            border-collapse: collapse;
+            width: 50%;
+            margin: 20px auto;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f4f4f4;
+        }
     </style>
 </head>
 <body>
-<h1 style="text-align:center;">People</h1>
+<h1 style="text-align:center;">Users</h1>
 <table>
     <tr>
         <th>First Name</th>
         <th>Last Name</th>
         <th>Email</th>
     </tr>
-    <% people.forEach(person => { %>
+    <% users.forEach(user => { %>
         <tr>
-            <td><%= person.first_name %></td>
-            <td><%= person.last_name %></td>
-            <td><%= person.email %></td>
+            <td><%= user.first_name %></td>
+            <td><%= user.last_name %></td>
+            <td><%= user.email %></td>
         </tr>
     <% }) %>
 </table>
