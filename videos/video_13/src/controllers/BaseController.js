@@ -9,9 +9,9 @@ const LAYOUT_TEMPLATE = join(__dirname, "../views/layouts/layout.ejs");
 const VIEWS_ROOT = join(__dirname, "../views");
 
 export class BaseController {
-    async render(res, viewPath, data = {}) {
+    async render(res, view_path, data = {}) {
         try {
-            const content = await ejs.renderFile(viewPath, data);
+            const content = await ejs.renderFile(view_path, data);
             const html = await ejs.renderFile(LAYOUT_TEMPLATE, {body: content});
 
             res.writeHead(200, {"Content-Type": "text/html"});
@@ -22,10 +22,10 @@ export class BaseController {
         }
     }
 
-    async view(res, shortPath, data = {}) {
+    async view(res, short_path, data = {}) {
         // Convert "users/index" → /views/users/index.ejs
-        const viewPath = join(VIEWS_ROOT, `${shortPath}.ejs`);
-        return this.render(res, viewPath, data);
+        const view_path = join(VIEWS_ROOT, `${short_path}.ejs`);
+        return this.render(res, view_path, data);
     }
 
     redirect(res, route) {
@@ -33,8 +33,8 @@ export class BaseController {
         res.end();
     }
 
-    error(res, statusCode, message) {
-        res.writeHead(statusCode, {"Content-Type": "text/plain"});
+    error(res, status_code, message) {
+        res.writeHead(status_code, {"Content-Type": "text/plain"});
         res.end(message);
     }
 }

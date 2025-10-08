@@ -6,9 +6,9 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const DATA_DIR = path.join(__dirname, "../data");
 
-async function read_json(filePath) {
+async function read_json(file_path) {
     try {
-        const data = await fs.readFile(filePath, "utf-8");
+        const data = await fs.readFile(file_path, "utf-8");
         return JSON.parse(data);
     } catch (err) {
         if (err.code === "ENOENT") {
@@ -19,9 +19,9 @@ async function read_json(filePath) {
     }
 }
 
-async function write_json(filePath, data) {
+async function write_json(file_path, data) {
     try {
-        await fs.writeFile(filePath, JSON.stringify(data, null, 2));
+        await fs.writeFile(file_path, JSON.stringify(data, null, 2));
     } catch (err) {
         console.error("Error writing file:", err);
         throw err;
@@ -29,7 +29,7 @@ async function write_json(filePath, data) {
 }
 
 export class BaseModel {
-    static file_name = null; // e.g. "people.json"
+    static file_name = null; // e.g. "users.json"
     static key_field = "id"; // default key field
 
     static get file_path() {

@@ -141,14 +141,12 @@ export class UserController extends BaseController {
 
 export class BaseController {
 
-    async view(res, shortPath, data = {}) {
-        // Convert "user/index" → /views/user/index.ejs
-        const viewPath = join(views_root, `${shortPath}.ejs`);
+    async render(res, view_path, data = {}) {
         try {
-            const content = await ejs.renderFile(viewPath, data);
-            const html = await ejs.renderFile(layout_template, { body: content });
+            const content = await ejs.renderFile(view_path, data);
+            const html = await ejs.renderFile(LAYOUT_TEMPLATE, {body: content});
 
-            res.writeHead(200, { "Content-Type": "text/html" });
+            res.writeHead(200, {"Content-Type": "text/html"});
             res.end(html);
         } catch (err) {
             console.error("Render error:", err);
@@ -156,14 +154,15 @@ export class BaseController {
         }
     }
 
-    redirect(res, path) {
-        res.writeHead(302, { Location: path });
-        res.end();
+    async view(res, short_path, data = {}) {
+        // Convert "users/index" → /views/users/index.ejs
+        const view_path = join(VIEWS_ROOT, `${short_path}.ejs`);
+        return this.render(res, view_path, data);
     }
 
-    error(res, statusCode, message) {
-        res.writeHead(statusCode, { "Content-Type": "text/plain" });
-        res.end(message);
+    redirect(res, route) {
+        res.writeHead(302, {Location: route});
+        res.end();
     }
 }
         </code></pre>
@@ -197,61 +196,30 @@ export default class User extends BaseModel {
         <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
 // models/BaseModel.js (partial)
 
-async function read_json(filePath) { ... READ JSON DATA ... }
-
-async function write_json(filePath, data) { ... WRITE JSON DATA ... }
-
 export class BaseModel {
-    static fileName = null; // e.g. "people.json"
-    static keyField = "id"; // default key field
+    static file_name = null; // e.g. "users.json"
+    static key_field = "id"; // default key field
 
-    static get filePath() {
-        return path.join(dataDir, this.fileName);
+    static get file_path() {
+        return path.join(DATA_DIR, this.fileName);
     }
 
-    // ------ All: fetch all records
-    static async all() {
-        return await read_json(this.filePath);
-    }
-
-    // ------ Find: by key
     static async find(key) {
-        const records = await read_json(this.filePath);
-        return records.find((r) => r[this.keyField] === key) || null;
+        const records = await read_json(this.file_path);
+        return records.find((r) => r[this.key_field] === key) || null;
     }
 
-    // ------ Create: fail if exists
     static async create(attrs) {
-        const records = await read_json(this.filePath);
-        const exists = records.find((r) => r[this.keyField] === attrs[this.keyField]);
+        const records = await read_json(this.file_path);
+        const exists = records.find((r) => r[this.key_field] === attrs[this.key_field]);
         if (exists) return null;
 
         records.push(attrs);
-        await write_json(this.filePath, records);
+        await write_json(this.file_path, records);
         return attrs;
     }
 
-    // ------ Update: overwrite existing record
-    static async update(key, attrs) {
-        const records = await read_json(this.filePath);
-        const index = records.findIndex((r) => r[this.keyField] === key);
-        if (index === -1) return null;
-
-        records[index] = { ...records[index], ...attrs };
-        await write_json(this.filePath, records);
-        return records[index];
-    }
-
-    // ------ Delete: by key
-    static async delete(key) {
-        const records = await read_json(this.filePath);
-        const index = records.findIndex((r) => r[this.keyField] === key);
-        if (index === -1) return null;
-
-        const [removed] = records.splice(index, 1);
-        await write_json(this.filePath, records);
-        return removed;
-    }
+    ... CONVERT OTHER CRUD TO GENERIC VARIABLES NAMES ...
 }
         </code></pre>
     </section>
@@ -282,13 +250,7 @@ export default class Router {
         this.routes.push({ method, parts, controllerClass, handlerName });
     }
 
-    async handle(req, res, method, urlParts) {
-        ... MATCH ROUTE, CALL CONTROLLER / ACTION ...
-    }
-
-    static parseBody(req) {
-        ... PARSE REQUEST BODY ...
-    }
+    ... OTHER METHODS ...
 }
         </code></pre>
     </section>
@@ -345,14 +307,42 @@ const server = http.createServer(async (req, res) => {
         res.end("Internal Server Error");
     }
 });
-
-server.listen(3000, () => {
-    console.log("Server running at http://localhost:3000/users");
-});
         </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Router</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Conventions --> Generic Code</h2>
         <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
-// terminal
-node server.js
+// Router.js (partial)
+
+export default class Router {
+    constructor() {
+        this.routes = [];
+    }
+
+    async handle(req, res, method, urlParts) {
+        for (const route of this.routes) {
+            const matched = ... MATCHING CODE ...
+
+            if (!matched) continue;
+
+            const controller = new route.controllerClass();
+            if (!controller[route.handlerName])
+                throw new Error(`Handler "${route.handlerName}" not found on controller`);
+
+            let body = {};
+            if (["POST", "PUT", "PATCH"].includes(method)) {
+                body = ... PARSING CODE ...
+            }
+
+            return controller[route.handlerName](req, res, params, body);
+        }
+
+        res.writeHead(404, { "Content-Type": "text/plain" });
+        res.end("Not Found");
+    }
+}
         </code></pre>
     </section>
 
@@ -370,6 +360,7 @@ node server.js
         <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-6 text-center">Closer Look At Forms</h2>
         <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
             <li>Parse POST request data.</li>
+            <li>Full request / response lifecycle.</li>
             <li>Implement basic sanitization to prevent injection attacks.</li>
             <li>Save submitted data.</li>
         </ul>
