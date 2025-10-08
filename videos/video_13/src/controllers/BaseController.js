@@ -5,14 +5,14 @@ import {dirname, join} from "path";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const layout_template = join(__dirname, "../views/layouts/layout.ejs");
-const views_root = join(__dirname, "../views");
+const LAYOUT_TEMPLATE = join(__dirname, "../views/layouts/layout.ejs");
+const VIEWS_ROOT = join(__dirname, "../views");
 
 export class BaseController {
     async render(res, viewPath, data = {}) {
         try {
             const content = await ejs.renderFile(viewPath, data);
-            const html = await ejs.renderFile(layout_template, {body: content});
+            const html = await ejs.renderFile(LAYOUT_TEMPLATE, {body: content});
 
             res.writeHead(200, {"Content-Type": "text/html"});
             res.end(html);
@@ -23,8 +23,8 @@ export class BaseController {
     }
 
     async view(res, shortPath, data = {}) {
-        // Convert "person/index" → /views/person/index.ejs
-        const viewPath = join(views_root, `${shortPath}.ejs`);
+        // Convert "users/index" → /views/users/index.ejs
+        const viewPath = join(VIEWS_ROOT, `${shortPath}.ejs`);
         return this.render(res, viewPath, data);
     }
 
