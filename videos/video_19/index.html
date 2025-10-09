@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <title>Exploring Popular Frameworks | Scaling Up – Beyond the Basics</title>
+    <title>Introducing Middleware | Scaling Up – Beyond the Basics</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/themes/prism-tomorrow.css" rel="stylesheet"/>
     <script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/prism.min.js"></script>
@@ -23,7 +23,7 @@
       <span class="bg-yellow-400 text-gray-900 text-xs md:text-sm font-semibold px-2 py-1 rounded-full uppercase tracking-wide">
         Video
       </span>
-        <h3 class="mt-1 text-lg md:text-2xl font-bold text-yellow-400">Exploring Popular Frameworks</h3>
+        <h3 class="mt-1 text-lg md:text-2xl font-bold text-yellow-400">Introducing Middleware</h3>
     </div>
 
     <!-- Module Title -->
@@ -39,132 +39,278 @@
 <main class="bg-gradient-to-b from-gray-900 via-gray-800 to-gray-700" id="slides">
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Why Use A Framework?</h1>
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">What Is Middleware?</h1>
         <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
-            <li>Vanilla Node is flexible but requires manual routing, middleware, and error handling.</li>
-            <li>
-                Frameworks provide:
-                <ul class="ml-6 text-xl md:text-2xl max-w-6xl mb-8 list-none list-inside space-y-2">
-                    <li>👉 Structure (folders, conventions).</li>
-                    <li>👉 Built-in features (middleware, validation, authentication).</li>
-                    <li>👉 Performance optimizations.</li>
-                    <li>👉 Community support.</li>
-                </ul>
-            </li>
+            <li>Middleware is code that sits between the request and response.</li>
+            <li>Can modify <code>req</code> or <code>res</code>, perform tasks, or control flow.</li>
+            <li>Common pattern in many frameworks, but can be implemented in vanilla Node.</li>
         </ul>
     </section>
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Some Popular Frameworks</h1>
-        <div class="container mx-auto p-4">
-            <table class="min-w-full divide-y divide-gray-200 bg-white shadow-md rounded-lg">
-                <thead class="bg-gray-50">
-                <tr>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Popularity (GitHub Stars)</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Framework</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Backend Only / Full Stack</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Supported Front End Libraries</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Notable Features</th>
-                </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-200">
-                <tr>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><a class="text-blue-600 hover:text-blue-900" href="https://github.com/vercel/next.js" target="_blank">135k</a></td>
-                    <td class="px-6 py-4 whitespace-nowrap"><a class="text-blue-600 hover:text-blue-900" href="https://nextjs.org" target="_blank">Next.js</a></td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Full Stack</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">React</td>
-                    <td class="px-6 py-4 text-sm text-gray-900">Server-side rendering (SSR), static site generation (SSG), API routes, file-based routing, image optimization</td>
-                </tr>
-                <tr>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><a class="text-blue-600 hover:text-blue-900" href="https://github.com/nestjs/nest" target="_blank">72k</a></td>
-                    <td class="px-6 py-4 whitespace-nowrap"><a class="text-blue-600 hover:text-blue-900" href="https://nestjs.com" target="_blank">Nest.js</a></td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Backend Only</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Any (e.g., React, Vue, Angular)</td>
-                    <td class="px-6 py-4 text-sm text-gray-900">Modular architecture, TypeScript support, dependency injection, decorators, inspired by Angular</td>
-                </tr>
-                <tr>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><a class="text-blue-600 hover:text-blue-900" href="https://github.com/expressjs/express" target="_blank">67k</a></td>
-                    <td class="px-6 py-4 whitespace-nowrap"><a class="text-blue-600 hover:text-blue-900" href="https://expressjs.com" target="_blank">Express.js</a></td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Backend Only</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Any (e.g., React, Vue, Angular)</td>
-                    <td class="px-6 py-4 text-sm text-gray-900">Minimalist, flexible routing, middleware support, unopinionated</td>
-                </tr>
-                <tr>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><a class="text-blue-600 hover:text-blue-900" href="https://github.com/nuxt/nuxt" target="_blank">58k</a></td>
-                    <td class="px-6 py-4 whitespace-nowrap"><a class="text-blue-600 hover:text-blue-900" href="https://nuxt.com" target="_blank">Nuxt.js</a></td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Full Stack</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Vue.js</td>
-                    <td class="px-6 py-4 text-sm text-gray-900">Universal rendering, auto code-splitting, server-side rendering, modules ecosystem</td>
-                </tr>
-                <tr>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><a class="text-blue-600 hover:text-blue-900" href="https://github.com/meteor/meteor" target="_blank">44k</a></td>
-                    <td class="px-6 py-4 whitespace-nowrap"><a class="text-blue-600 hover:text-blue-900" href="https://www.meteor.com" target="_blank">Meteor</a></td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Full Stack</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">React, Vue, Angular, Blaze</td>
-                    <td class="px-6 py-4 text-sm text-gray-900">Isomorphic code, real-time data sync, full-stack JavaScript, hot code push</td>
-                </tr>
-                <tr>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><a class="text-blue-600 hover:text-blue-900" href="https://github.com/koajs/koa" target="_blank">35k</a></td>
-                    <td class="px-6 py-4 whitespace-nowrap"><a class="text-blue-600 hover:text-blue-900" href="https://koajs.com" target="_blank">Koa.js</a></td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Backend Only</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Any (e.g., React, Vue, Angular)</td>
-                    <td class="px-6 py-4 text-sm text-gray-900">Async/await support, lightweight middleware, built by Express team</td>
-                </tr>
-                <tr>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><a class="text-blue-600 hover:text-blue-900" href="https://github.com/fastify/fastify" target="_blank">34k</a></td>
-                    <td class="px-6 py-4 whitespace-nowrap"><a class="text-blue-600 hover:text-blue-900" href="https://fastify.io" target="_blank">Fastify</a></td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Backend Only</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Any (e.g., React, Vue, Angular)</td>
-                    <td class="px-6 py-4 text-sm text-gray-900">High performance, low overhead, JSON schema validation, plugin system</td>
-                </tr>
-                <tr>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><a class="text-blue-600 hover:text-blue-900" href="https://github.com/remix-run/remix" target="_blank">31k</a></td>
-                    <td class="px-6 py-4 whitespace-nowrap"><a class="text-blue-600 hover:text-blue-900" href="https://remix.run" target="_blank">Remix</a></td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Full Stack</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">React</td>
-                    <td class="px-6 py-4 text-sm text-gray-900">Nested routing, data loading, forms over GET/POST, progressive enhancement</td>
-                </tr>
-                <tr>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><a class="text-blue-600 hover:text-blue-900" href="https://github.com/balderdashy/sails" target="_blank">22k</a></td>
-                    <td class="px-6 py-4 whitespace-nowrap"><a class="text-blue-600 hover:text-blue-900" href="https://sailsjs.com" target="_blank">Sails.js</a></td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Full Stack</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Any (e.g., EJS, Handlebars)</td>
-                    <td class="px-6 py-4 text-sm text-gray-900">MVC framework, WebSockets support, auto-generated REST APIs, ORM integration</td>
-                </tr>
-                <tr>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><a class="text-blue-600 hover:text-blue-900" href="https://github.com/adonisjs/core" target="_blank">18k</a></td>
-                    <td class="px-6 py-4 whitespace-nowrap"><a class="text-blue-600 hover:text-blue-900" href="https://adonisjs.com" target="_blank">Adonis.js</a></td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Full Stack</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Any (e.g., Edge templates)</td>
-                    <td class="px-6 py-4 text-sm text-gray-900">TypeScript-first, Lucid ORM, MVC pattern, inspired by Laravel</td>
-                </tr>
-                <tr>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><a class="text-blue-600 hover:text-blue-900" href="https://github.com/hapijs/hapi" target="_blank">14k</a></td>
-                    <td class="px-6 py-4 whitespace-nowrap"><a class="text-blue-600 hover:text-blue-900" href="https://hapi.dev" target="_blank">Hapi.js</a></td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Backend Only</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Any (e.g., React, Vue, Angular)</td>
-                    <td class="px-6 py-4 text-sm text-gray-900">Configuration-centric, plugin-based, input validation, caching</td>
-                </tr>
-                </tbody>
-            </table>
-            <p class="mt-4 text-sm text-gray-400">Sorted by GitHub stars (approximate as of late 2025). For verification, see <a class="text-blue-600 hover:text-blue-900" href="https://github.com/vanodevium/node-framework-stars" target="_blank">GitHub stars ranking</a>.</p>
-        </div>
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Our First Middleware</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Auth Middleware</h2>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// middleware/HasAuthenticated.js
+
+export default class HasAuthenticated {
+    async handle(req, res) {
+        if (!req.session.user) {
+            req.alert.warn("Login to access this feature.");
+
+            res.writeHead(302, {Location: "/login"});
+            res.end();
+            return false; // stop further processing
+        }
+        return true; // continue
+    }
+}
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Registering - Updating Routes</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Auth Middleware</h2>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// routes.js (partial)
+
+// routes.js
+import {UserController} from "./controllers/UserController.js";
+import {AuthController} from "./controllers/AuthController.js";
+import HasAuthenticated from "./middleware/HasAuthenticated.js";
+
+export default function registerRoutes(router) {
+
+    // public routes
+    router.get("/users", UserController, "index");
+    router.get("/register", UserController, "new");
+    router.post("/users", UserController, "create");
+    router.get("/login", AuthController, "loginForm");
+    router.post("/login", AuthController, "login");
+
+    // authenticated routes
+    router.group([HasAuthenticated], () => {
+        router.get("/users/:email", UserController, "show");
+        router.get("/users/:email/edit", UserController, "edit");
+        router.get("/users/:email/delete", UserController, "delete");
+        router.put("/users/:email", UserController, "update");
+        router.put("/users/:email/password", UserController, "updatePassword");
+        router.delete("/users/:email", UserController, "destroy");
+
+        router.get("/logout", AuthController, "logout");
+    });
+}
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Registering - Update Router</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Auth Middleware</h2>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// app/Router.js (partial)
+
+export default class Router {
+    constructor() {
+        this.routes = [];
+        this._currentGroupMiddleware = [];
+    }
+
+    #register(method, path, controllerClass, handlerName, middlewares = []) {
+        const combinedMiddleware = [...this._currentGroupMiddleware, ...middlewares];
+
+        const parts = path.split("/").filter(Boolean);
+        this.routes.push({method, parts, controllerClass, handlerName, middlewares: combinedMiddleware});
+    }
+
+    get(path, controllerClass, handlerName, middlewares = []) {
+        this.#register("GET", path, controllerClass, handlerName, middlewares);
+    }
+
+    ... post, put, patch, delete METHODS ...
+
+    group(middleware = [], callback) {
+        const previous = this._currentGroupMiddleware;
+        this._currentGroupMiddleware = [...previous, ...middleware];
+        callback();
+        this._currentGroupMiddleware = previous; // restore
+    }
+}
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Running Middleware</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Auth Middleware</h2>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// app/server.js (partial)
+
+const router = new Router();
+registerRoutes(router);
+
+const server = http.createServer(async (req, res) => {
+    sessionManager.attach(req, res);
+
+    const url = new URL(req.url, `http://${req.headers.host}`);
+    const parts = url.pathname.split("/").filter(Boolean);
+
+    // Handle _method override
+    const method = req.method === "POST" && url.searchParams.get("_method")
+            ? url.searchParams.get("_method").toUpperCase()
+            : req.method;
+
+    try {
+        await router.handle(req, res, method, parts);
+    } catch (err) {
+        console.error("Error handling request:", err);
+        res.writeHead(500, {"Content-Type": "text/plain"});
+        res.end("Internal Server Error");
+    }
+});
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Running Middleware</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Auth Middleware</h2>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// app/Router.js (partial)
+
+export default class Router {
+
+    async handle(req, res, method, urlParts) {
+        for (const route of this.routes) {
+            ... MATCHING LOGIC ...
+
+            if (!matched) continue;
+
+            // Run middlewares in order
+            for (const MiddlewareClass of route.middlewares) {
+                const middleware = new MiddlewareClass();
+                const result = await middleware.handle(req, res, params);
+                if (result === false) return; // stop chain if middleware blocks
+            }
+
+            const controller = new route.controllerClass();
+            if (!controller[route.handlerName])
+                throw new Error(`Handler "${route.handlerName}" not found on controller`);
+
+            let body = {};
+            if (["POST", "PUT", "PATCH"].includes(method)) {
+                body = await Router.parseBody(req);
+            }
+
+            return controller[route.handlerName](req, res, params, body);
+        }
+
+        res.writeHead(404, {"Content-Type": "text/plain"});
+        res.end("Not Found");
+    }
+}
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Try It Out</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Auth Middleware</h2>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// terminal
+npm start
+
+/*
+1. logout
+2. http://localhost:3000/users/bob.cravens@gmail.com/edit       --> access denied
+3. login
+4. http://localhost:3000/users/bob.cravens@gmail.com/edit       --> access granted
+5. http://localhost:3000/users/jed.stracke8@hotmail.com/edit    --> oops...access granted
+*/
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">CanEdit Middleware</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">More Middleware</h2>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// middleware/CanEdit.js
+
+export default class CanEdit {
+    async handle(req, res, params) {
+        const email = params.email;
+        if (req.session.user?.email !== email && !req.session.user?.is_admin) {
+            req.alert.warn("You can only modify your own profile.");
+
+            res.writeHead(302, {"Location": "/users"});
+            res.end();
+            return false;
+        }
+        return true;
+    }
+}
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Update Routes</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">More Middleware</h2>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// routes.js
+
+export default function registerRoutes(router) {
+
+    // public routes
+    router.get("/users", UserController, "index");
+    router.get("/register", UserController, "new");
+    router.post("/users", UserController, "create");
+    router.get("/login", AuthController, "loginForm");
+    router.post("/login", AuthController, "login");
+
+    // authenticated routes
+    router.group([HasAuthenticated], () => {
+        router.get("/users/:email", UserController, "show");
+        router.get("/users/:email/edit", UserController, "edit", [CanEdit]);
+        router.get("/users/:email/delete", UserController, "delete", [CanEdit]);
+        router.put("/users/:email", UserController, "update", [CanEdit]);
+        router.put("/users/:email/password", UserController, "updatePassword", [CanEdit]);
+        router.delete("/users/:email", UserController, "destroy", [CanEdit]);
+
+        router.get("/logout", AuthController, "logout");
+    });
+
+}
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Try It Out</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Auth Middleware</h2>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// terminal
+npm start
+
+/*
+1. logout
+2. http://localhost:3000/users/bob.cravens@gmail.com/edit       --> access denied
+3. login
+4. http://localhost:3000/users/bob.cravens@gmail.com/edit       --> access granted
+5. http://localhost:3000/users/jed.stracke8@hotmail.com/edit    --> access denied
+*/
+        </code></pre>
     </section>
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
         <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Key Takeaways</h1>
         <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
-            <li>Frameworks save time but introduce learning curves and conventions.</li>
+            <li>Middleware pattern promotes DRY code and centralizes common tasks.</li>
+            <li>Logging, authentication, and error handling are common middleware uses.</li>
+            <li>Clean separation improves readability and maintainability.</li>
         </ul>
     </section>
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
         <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Up Next</h1>
-        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-6 text-center">Deployment Basics</h2>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-6 text-center">Exploring Popular Frameworks</h2>
         <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
-            <li>What is a process manager?</li>
-            <li>Use environment variables for configuration.</li>
-            <li>Minimal example.</li>
+            <li>Discuss when and why to use.</li>
+            <li>Review popular choices.</li>
         </ul>
     </section>
 

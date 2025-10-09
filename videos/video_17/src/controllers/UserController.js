@@ -56,9 +56,6 @@ export class UserController extends BaseController {
         const person = await User.create(personData);
         if (person) {
             req.alert.success("User added.");
-
-            // Automatically log in the new user
-            req.session.user = person;
         }
 
         return this.redirect(res, "/users");
@@ -90,12 +87,7 @@ export class UserController extends BaseController {
             email: body.email
         };
 
-        const user = await User.update(params.email, updateData);
-
-        // Refresh session if the updated user is the currently logged-in user
-        if (req.auth.user.get() && req.auth.user.get().email === params.email) {
-            req.auth.user.set(user);
-        }
+        await User.update(params.email, updateData);
 
         req.alert.success("User updated.");
 

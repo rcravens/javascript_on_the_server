@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <title>Authentication Basics | Adding Interactivity & State</title>
+    <title>Flash Messages | Adding Interactivity & State</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/themes/prism-tomorrow.css" rel="stylesheet"/>
     <script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/prism.min.js"></script>
@@ -23,7 +23,7 @@
       <span class="bg-yellow-400 text-gray-900 text-xs md:text-sm font-semibold px-2 py-1 rounded-full uppercase tracking-wide">
         Video
       </span>
-        <h3 class="mt-1 text-lg md:text-2xl font-bold text-yellow-400">Authentication Basics</h3>
+        <h3 class="mt-1 text-lg md:text-2xl font-bold text-yellow-400">Flash Messages</h3>
     </div>
 
     <!-- Module Title -->
@@ -39,138 +39,64 @@
 <main class="bg-gradient-to-b from-gray-900 via-gray-800 to-gray-700" id="slides">
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Why Authentication?</h1>
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">What Are Flash Messages?</h1>
         <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
-            <li>Allows the server to verify user identity.</li>
-            <li>Restricts access to protected resources.</li>
-            <li>Forms the foundation for user accounts, profiles, and permissions.</li>
+            <li>Small pop-up dialogs with feedback for the user.</li>
+            <li>Examples: User added, User deleted, You are not authorized</li>
+            <li>Enhances UX (user experience) in your application.</li>
         </ul>
     </section>
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Login Routes</h1>
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">How I Want To Use</h1>
         <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
-// route.js (partial)
 
-export default function registerRoutes(router) {
-    router.get("/login", AuthController, "loginForm");
-    router.post("/login", AuthController, "login");
-    router.get("/logout", AuthController, "logout");
+req.alert.success("User updated.");
 
-    ... USER ROUTES ...
+if (!valid) {
+    req.alert.error("Please fix the form errors.", "Validation Failed");
+    return this.back(req, res, {errors, body});
+}
+
+if (!authorized) {
+    req.alert.warn("You are not authorized for this feature.");
+
+    res.writeHead(302, {"Location": "/people"});
+    res.end();
 }
         </code></pre>
     </section>
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">AuthController.loginForm</h1>
-        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Authentication Flow</h2>
-        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
-// controllers/AuthController.js (partial)
-
-export class AuthController extends BaseController {
-
-    async loginForm(req, res) {
-        return this.view(res, "auth/login", {}, req);
-    }
-}
-        </code></pre>
-    </section>
-
-    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Login View</h1>
-        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Authentication Flow</h2>
-        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
-// views/auth/login.ejs (partial)
-
-&lt;form method=&quot;POST&quot; action=&quot;/login&quot;&gt;
-
-    &lt;div&gt;
-        &lt;label for=&quot;email&quot;&gt;Email:&lt;/label&gt;
-        &lt;input type=&quot;email&quot; name=&quot;email&quot; value=&quot;&lt;%= old(&#39;email&#39;) %&gt;&quot; required&gt;
-        &lt;% if (error(&#39;email&#39;)) { %&gt;
-            &lt;div&gt;&lt;%= error(&#39;email&#39;) %&gt;&lt;/div&gt;
-        &lt;% } %&gt;
-    &lt;/div&gt;
-
-    &lt;div&gt;
-        &lt;label for=&quot;password&quot;&gt;Password:&lt;/label&gt;
-        &lt;input type=&quot;password&quot; name=&quot;password&quot; required&gt;
-        &lt;% if (error(&#39;password&#39;)) { %&gt;
-            &lt;div&gt;&lt;%= error(&#39;password&#39;) %&gt;&lt;/div&gt;
-        &lt;% } %&gt;
-    &lt;/div&gt;
-
-    &lt;button type=&quot;submit&quot;&gt;Login&lt;/button&gt;
-&lt;/form&gt;
-        </code></pre>
-    </section>
-
-    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">AuthController.login</h1>
-        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Authentication Flow</h2>
-        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
-// controllers/AuthController.js (partial)
-
-export class AuthController extends BaseController {
-
-    async login(req, res, params, body) {
-        const {email, password} = body;
-
-        // Lookup user by email
-        const user = await User.find(email);
-        if (!user) {
-            req.flash.set("errors", {email: "No account found with that email"});
-            req.flash.set("body", body);
-            return this.back(req, res);
-        }
-
-        // Verify password with bcrypt
-        const match = await bcrypt.compare(password, user.password);
-        if (!match) {
-            req.flash.set("errors", {password: "Invalid password"});
-            req.flash.set("body", body);
-            return this.back(req, res);
-        }
-
-        // Store user in session
-        req.auth.user.set( user );
-
-        // Redirect to people index after login
-        return this.redirect(res, "/users");
-    }
-}
-        </code></pre>
-    </section>
-
-    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Session Manager</h1>
-        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Authentication Flow</h2>
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Session Helpers</h1>
         <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
 // app/SessionManager.js (partial)
 
 class SessionManager {
 
-    destroySession(req, res) {
-        ...
-    }
-
     attach(req, res) {
         ...
 
-        // Helper for logged-in user
-        req.auth = {
-            user: {
-                get: () => req.session.user || null,
-                set: (userObj) => {
-                    req.session.user = userObj;
-                    if (this.storageDir) this.saveSessionToFile(sessionId);
-                },
-                clear: () => {
-                    this.destroySession(req, res);  // destroy current session
-                    this.attach(req, res);          // start a fresh session
-                }
+        // Flash helper methods
+        req.flash = {
+            set: (key, value) => {
+                req.session.flash[key] = value;
+                if (this.storageDir) this.saveSessionToFile(sessionId);
+            },
+            get: (key) => {
+                const value = req.session.flash[key];
+                delete req.session.flash[key];  // remove after reading
+                if (this.storageDir) this.saveSessionToFile(sessionId);
+                return value;
             }
+        };
+
+        // Alert helpers for flash message
+        req.alert = {
+            success: (message, title = '') => req.flash.set('alert', {type: 'success', message, title}),
+            error: (message, title = '') => req.flash.set('alert', {type: 'error', message, title}),
+            warn: (message, title = '') => req.flash.set('alert', {type: 'warning', message, title}),
+            get: () => req.flash.get('alert') || null
         };
 
         ...
@@ -179,69 +105,46 @@ class SessionManager {
         </code></pre>
     </section>
 
-
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">AuthController.logout</h1>
-        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Authentication Flow</h2>
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Flash Message Template</h1>
         <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
-// controllers/AuthController.js (partial)
+// views/layouts/_flash.ejs
 
-export class AuthController extends BaseController {
-    ...
+&lt;% if (alert) { %&gt;
+    &lt;div id=&quot;flash-alert&quot; class=&quot;fixed bottom-4 right-4 max-w-sm w-full p-4 rounded shadow-md
+        &lt;%= alert.type === 'success' ? 'bg-green-600' : alert.type === 'error' ? 'bg-red-600' : 'bg-yellow-500' %&gt;
+        text-white&quot;&gt;
+        &lt;% if (alert.title) { %&gt;
+            &lt;strong class=&quot;block mb-1&quot;&gt;&lt;%= alert.title %&gt;&lt;/strong&gt;
+        &lt;% } %&gt;
+        &lt;span&gt;&lt;%= alert.message %&gt;&lt;/span&gt;
+    &lt;/div&gt;
+    &lt;script&gt;
+        setTimeout(() =&gt; {
+            const el = document.getElementById('flash-alert');
+            if (el) el.style.transition = 'opacity 0.5s ease-out';
+            if (el) el.style.opacity = '0';
+        }, 3000); // fade after 3 seconds
+    &lt;/script&gt;
+&lt;% } %&gt;
+        </code></pre>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// views/layouts/layout.ejs
 
-    async logout(req, res) {
-        req.auth.user.clear()/ // clear user session
-
-        sessionManager.attach(req, res);    // Create a new session (not logged in)
-        req.alert.success("You have been logged out.", "Success");
-        return this.redirect(res, "/users");
-    }
-}
+&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;&quot;&gt;
+&lt;%- include(&quot;_head&quot;) %&gt;
+&lt;body class=&quot;bg-gray-900 text-gray-100 min-h-screen flex flex-col&quot;&gt;
+ ...
+&lt;%- include(&quot;_flash&quot;) %&gt;
+ ...
+&lt;/body&gt;
+&lt;/html&gt;
         </code></pre>
     </section>
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Session Manager</h1>
-        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Authentication Flow</h2>
-        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
-// app/SessionManager.js (partial)
-
-class SessionManager {
-
-    destroySession(req, res) {
-        const cookies = this.parseCookies(req);
-        const sessionId = cookies["SID"];
-        if (!sessionId) return;
-
-        // Remove from in-memory store
-        delete this.sessions[sessionId];
-
-        // Remove from disk if using storageDir
-        if (this.storageDir) {
-            const filePath = path.join(this.storageDir, `${sessionId}.json`);
-            if (fs.existsSync(filePath)) {
-                fs.unlinkSync(filePath);
-            }
-        }
-
-        // Clear the cookie (set expiry in the past)
-        res.setHeader("Set-Cookie", "SID=; HttpOnly; Path=/; Max-Age=0");
-
-        // Clean up req
-        if (req.session) delete req.session;
-        if (req.user) delete req.user;
-        if (req.flash) delete req.flash;
-        if (req.alert) delete req.alert;
-    }
-
-    ...
-}
-        </code></pre>
-    </section>
-
-    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Add Auth User To View Data</h1>
-        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">View Updates</h2>
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Add Alert Data To View</h1>
         <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
 // controllers/BaseController.js (partial)
 
@@ -258,9 +161,6 @@ export class BaseController {
             data.old = (field, defaultValue = '') => flashBody[field] || defaultValue;
             data.error = (field) => flashErrors[field] || '';
             data.success = flashSuccess;
-            data.auth = {
-                user: req.auth.user ? req.auth.user.get() : null
-            }
             data.alert = flashAlert;
         }
 
@@ -273,71 +173,18 @@ export class BaseController {
     </section>
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Navigation Bar</h1>
-        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">View Updates</h2>
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Testing It Out</h1>
         <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
-// views/layouts/_nav.js (partial)
+// app/server.js (partial)
 
-&lt;header&gt;
-    &lt;div&gt;
-        &lt;!-- Site Title --&gt;
-        &lt;a href=&quot;/users&quot;&gt;User Manager&lt;/a&gt;
+const server = http.createServer(async (req, res) => {
+    sessionManager.attach(req, res);
 
-        &lt;!-- Right-side navigation --&gt;
-        &lt;div&gt;
-            &lt;% if (auth.user) { %&gt;
-                &lt;a href=&quot;/logout&quot;&gt;Logout&lt;/a&gt;
-                &lt;span&gt;Hello, &lt;%= auth.user.first_name %&gt;&lt;/span&gt;
-            &lt;% } else { %&gt;
-                &lt;a href=&quot;/register&quot;&gt;Register&lt;/a&gt;
-                &lt;a href=&quot;/login&quot;&gt;Login&lt;/a&gt;
-            &lt;% } %&gt;
-        &lt;/div&gt;
-    &lt;/div&gt;
-&lt;/header&gt;
+    req.alert.success('This is my message', 'My Title');
+
+    ... OTHER SERVER CODE ...
+});
         </code></pre>
-    </section>
-
-    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">User List</h1>
-        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">View Updates</h2>
-        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
-// views/user/index.js (partial)
-
-&lt;div&gt;
-    &lt;table&gt;
-        &lt;thead&gt;
-        &lt;tr&gt;
-            &lt;th&gt;First Name&lt;/th&gt;
-            &lt;th&gt;Last Name&lt;/th&gt;
-            &lt;th&gt;Email&lt;/th&gt;
-            &lt;th&gt;Actions&lt;/th&gt;
-        &lt;/tr&gt;
-        &lt;/thead&gt;
-        &lt;tbody&gt;
-        &lt;% users.forEach(u =&gt; { %&gt;
-            &lt;tr&gt;
-                &lt;td&gt;&lt;%= u.first_name %&gt;&lt;/td&gt;
-                &lt;td&gt;&lt;%= u.last_name %&gt;&lt;/td&gt;
-                &lt;td&gt;&lt;%= u.email %&gt;&lt;/td&gt;
-                &lt;td&gt;
-                    &lt;a href=&quot;/users/&lt;%= u.email %&gt;&quot;&gt;View&lt;/a&gt;
-                    &lt;% if (auth.user &amp;&amp; (auth.user.is_admin || auth.user.email === u.email) ) { %&gt;
-                        | &lt;a href=&quot;/users/&lt;%= u.email %&gt;/edit&quot;&gt;Edit&lt;/a&gt;
-                        | &lt;a href=&quot;/users/&lt;%= u.email %&gt;/delete&quot;&gt;Delete&lt;/a&gt;
-                    &lt;% } %&gt;
-                &lt;/td&gt;
-            &lt;/tr&gt;
-        &lt;% }) %&gt;
-        &lt;/tbody&gt;
-    &lt;/table&gt;
-&lt;/div&gt;
-        </code></pre>
-    </section>
-
-
-    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Try It Out</h1>
         <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
 // terminal
 npm start
@@ -345,22 +192,59 @@ npm start
     </section>
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Update UserController</h1>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// controllers/UserController.js (partial)
+
+export class UserController extends BaseController {
+    ...
+
+    async create(req, res, params, body) {
+        const other_user = await User.find(body.email);
+        if (other_user) {
+            req.alert.error("Email is already taken.", "Validation Failed");
+            return this.back(req, res, {body});
+        }
+
+        const {valid, errors} = Validator.validate(User.rules, body);
+        if (!valid) {
+            req.alert.error("Please fix the form errors.", "Validation Failed");
+            return this.back(req, res, {errors, body});
+        }
+
+        // Hash the password
+        const hashedPassword = await User.hashPassword(body.password);
+
+        // Create the person
+        const person = await User.create(body);
+        if (person) {
+            req.alert.success("User added.");
+
+            // Automatically log in the new user
+            req.session.user = person;
+        }
+
+        return this.redirect(res, "/users");
+    }
+}
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
         <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Key Takeaways</h1>
         <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
-            <li>Never store plaintext passwords; always hash.</li>
-            <li>Use <code>bcrypt</code> or similar library for hashing.</li>
-            <li>Sessions track logged-in users.</li>
-            <li>Dynamically provide content based on authentication status.</li>
+            <li>Flash message use the underlying session feature.</li>
+            <li>Flashing success, error, and warn messages improves UX.</li>
         </ul>
     </section>
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
         <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Up Next</h1>
-        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-6 text-center">Authorization & Access Control</h2>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-6 text-center">Authentication Basics</h2>
         <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
-            <li>We hid links from user, but they are still accessible.</li>
-            <li>Introduce the concept of middleware.</li>
-            <li>Restrict routes based on authentication status.</li>
+            <li>Create a login form.</li>
+            <li>Use <code>bcrypt</code> for secure password hashing.</li>
+            <li>Implement session-based login to track authenticated users.</li>
         </ul>
     </section>
 

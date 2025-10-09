@@ -1,12 +1,12 @@
-import { randomBytes } from "crypto";
+import {randomBytes} from "crypto";
 import fs from "fs";
 import path from "path";
 
 class SessionManager {
-    constructor({ storageDir = null } = {}) {
+    constructor({storageDir = null} = {}) {
         this.sessions = {};
         this.storageDir = storageDir;
-        if (storageDir) fs.mkdirSync(storageDir, { recursive: true });
+        if (storageDir) fs.mkdirSync(storageDir, {recursive: true});
     }
 
     generateId() {
@@ -15,7 +15,7 @@ class SessionManager {
 
     createSession() {
         const id = this.generateId();
-        this.sessions[id] = { flash: {} }; // initialize flash container
+        this.sessions[id] = {flash: {}}; // initialize flash container
         if (this.storageDir) this.saveSessionToFile(id);
         return id;
     }
@@ -33,6 +33,32 @@ class SessionManager {
             }
         }
         return null;
+    }
+
+    destroySession(req, res) {
+        const cookies = this.parseCookies(req);
+        const sessionId = cookies["SID"];
+        if (!sessionId) return;
+
+        // Remove from in-memory store
+        delete this.sessions[sessionId];
+
+        // Remove from disk if using storageDir
+        if (this.storageDir) {
+            const filePath = path.join(this.storageDir, `${sessionId}.json`);
+            if (fs.existsSync(filePath)) {
+                fs.unlinkSync(filePath);
+            }
+        }
+
+        // Clear the cookie (set expiry in the past)
+        res.setHeader("Set-Cookie", "SID=; HttpOnly; Path=/; Max-Age=0");
+
+        // Clean up req
+        if (req.session) delete req.session;
+        if (req.user) delete req.user;
+        if (req.flash) delete req.flash;
+        if (req.alert) delete req.alert;
     }
 
     saveSessionToFile(id) {
@@ -66,16 +92,44 @@ class SessionManager {
                 return value;
             },
             all: () => {
-                const value = { ...req.session.flash };
+                const value = {...req.session.flash};
                 req.session.flash = {};  // clear all flash
                 if (this.storageDir) this.saveSessionToFile(sessionId);
                 return value;
             }
         };
 
+        // Alert helpers for flash message
+        req.alert = {
+            success: (message, title = '') => req.flash.set('alert', {type: 'success', message, title}),
+            error: (message, title = '') => req.flash.set('alert', {type: 'error', message, title}),
+            warn: (message, title = '') => req.flash.set('alert', {type: 'warning', message, title}),
+            get: () => req.flash.get('alert') || null
+        };
+
+        // Helper for logged-in user
+        req.auth = {
+            user: {
+                get: () => req.session.user || null,
+                set: (userObj) => {
+                    req.session.user = userObj;
+                    if (this.storageDir) this.saveSessionToFile(sessionId);
+                },
+                clear: () => {
+                    this.destroySession(req, res);  // destroy current session
+                    this.attach(req, res);          // start a fresh session
+                }
+            }
+        };
+
         if (isNew) {
             res.setHeader("Set-Cookie", `SID=${sessionId}; HttpOnly; Path=/`);
         }
+    }
+
+    user(sessionId) {
+        const session = this.getSession(sessionId);
+        return session ? session.user : null;
     }
 
     parseCookies(req) {
@@ -89,4 +143,4 @@ class SessionManager {
     }
 }
 
-export const sessionManager = new SessionManager({ storageDir: "./data/sessions" });
+export const sessionManager = new SessionManager({storageDir: "./data/sessions"});

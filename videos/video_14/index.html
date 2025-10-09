@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <title>Handling Forms & POST Requests | Adding Interactivity & State</title>
+    <title>MVC Page Lifecycle | Dynamic Web Pages</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/themes/prism-tomorrow.css" rel="stylesheet"/>
     <script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/prism.min.js"></script>
@@ -23,7 +23,7 @@
       <span class="bg-yellow-400 text-gray-900 text-xs md:text-sm font-semibold px-2 py-1 rounded-full uppercase tracking-wide">
         Video
       </span>
-        <h3 class="mt-1 text-lg md:text-2xl font-bold text-yellow-400">Handling Forms & POST Requests</h3>
+        <h3 class="mt-1 text-lg md:text-2xl font-bold text-yellow-400">MVC Page Lifecycle</h3>
     </div>
 
     <!-- Module Title -->
@@ -31,7 +31,7 @@
       <span class="bg-indigo-400 text-gray-900 text-xs md:text-sm font-semibold px-2 py-1 rounded-full uppercase tracking-wide">
         Module
       </span>
-        <h3 class="mt-1 text-lg md:text-2xl font-bold text-indigo-400">Adding Interactivity & State</h3>
+        <h3 class="mt-1 text-lg md:text-2xl font-bold text-indigo-400">Dynamic Web Pages</h3>
     </div>
 </header>
 
@@ -39,68 +39,30 @@
 <main class="bg-gradient-to-b from-gray-900 via-gray-800 to-gray-700" id="slides">
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">HTML Forms</h1>
-        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Visitors Send Data To Server</h2>
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">First Step - The Request</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">MVC Request / Response Lifecycle</h2>
+        <p class="text-xl md:text-2xl max-w-6xl text-center mb-8">
+            When a user enters a URL or clicks a link, the browser will "request" that resource.
+        </p>
         <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
-            <li>Client Side - HTML Form:
-                <ul class="ml-6 text-xl md:text-2xl max-w-6xl mb-8 list-none list-inside space-y-2">
-                    <li>👉 Forms allow user to enter and submit data to the server.</li>
-                    <li>👉 Set the HTTP verb / method: <code>method="POST"</code>.</li>
-                    <li>👉 Set the end-point: <code>action="/users"</code>.</li>
-                    <li>👉 Provide <code>input</code>, <code>textarea</code>, and other elements for data entry.</li>
-                    <li>👉 Data is included in the request data submitted to the server.</li>
-                </ul>
-            </li>
-            <li>Server Side - Request / Response:
-                <ul class="ml-6 text-xl md:text-2xl max-w-6xl mb-8 list-none list-inside space-y-2">
-                    <li>👉 Node streams incoming data as part of the request.</li>
-                    <li>👉 Parse data into a usable form.</li>
-                    <li>👉 List for "data" and "end" events.</li>
-                </ul>
-            </li>
+            <li>👉 Networking (DNS, TLS/SSL, ...) steps.</li>
+            <li>👉 A connection between the browser (client) and the web application (server) is established.</li>
+            <li>👉 In our application this is the <code>http.createServer( (req, res) => {} )</code> function.</li>
         </ul>
     </section>
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Client Side - HTML Form</h1>
-        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Visitors Send Data To Server</h2>
-        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
-// views/user/new.ejs
-
-&lt;h1 style="text-align:center;">Add New User&lt;/h1>
-&lt;form method="POST" action="/users" style="width:300px; margin:auto;">
-    &lt;label>First Name:&lt;/label>&lt;br>
-    &lt;input type="text" name="first_name" required>&lt;br>&lt;br>
-
-    &lt;label>Last Name:&lt;/label>&lt;br>
-    &lt;input type="text" name="last_name" required>&lt;br>&lt;br>
-
-    &lt;label>Email:&lt;/label>&lt;br>
-    &lt;input type="email" name="email" required>&lt;br>&lt;br>
-
-    &lt;button type="submit">Create&lt;/button>
-&lt;/form>
-
-&lt;p style="text-align:center;">
-    &lt;a href="/users">Back to Users&lt;/a>
-&lt;/p>
-        </code></pre>
-    </section>
-
-    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Server Side - Routing</h1>
-        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Visitors Send Data To Server</h2>
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">HTTP Server</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">MVC Request / Response Lifecycle</h2>
         <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
 // server.js (partial)
 
-const router = new Router();
-registerRoutes(router);
-
 const server = http.createServer(async (req, res) => {
+    // url parts (e.g., /users/bob.cravens@tekfoundry.com/edit ==> [users, bob.cravens@tekfoundry.com, edit]
     const url = new URL(req.url, `http://${req.headers.host}`);
     const parts = url.pathname.split("/").filter(Boolean);
 
-    // Handle _method override
+    // http verb (e.g., GET, POST, PUT, DELETE...)
     const method = req.method === "POST" && url.searchParams.get("_method")
             ? url.searchParams.get("_method").toUpperCase()
             : req.method;
@@ -109,40 +71,88 @@ const server = http.createServer(async (req, res) => {
         await router.handle(req, res, method, parts);
     } catch (err) {
         console.error("Error handling request:", err);
-        res.writeHead(500, { "Content-Type": "text/plain" });
+        res.writeHead(500, {"Content-Type": "text/plain"});
         res.end("Internal Server Error");
     }
+});
+
+server.listen(3000, () => {
+    console.log("Server running at http://localhost:3000/users");
 });
         </code></pre>
     </section>
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Server Side - Routes</h1>
-        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Visitors Send Data To Server</h2>
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Router</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">MVC Request / Response Lifecycle</h2>
         <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
-// routes.js (partial)
+// Router.js (partial)
 
-import { UserController } from "./controllers/UserController.js";
+export default class Router {
+    constructor() {
+        this.routes = [];
+    }
 
-export default function registerRoutes(router) {
-    // Show the form
-    router.register("GET", "/users/new", UserController, "new");
+    register(method, path, controllerClass, handlerName) {
+        const parts = path.split("/").filter(Boolean);
+        this.routes.push({ method, parts, controllerClass, handlerName });
+    }
 
-    // Process the data
-    router.register("POST", "/users", UserController, "create");
+    async handle(req, res, method, urlParts) {
+        for (const route of this.routes) {
+            let matched = ... MATCHING LOGIC ...
 
-    ... OTHER ROUTES NOT SHOWN ...
+            if (!matched) continue;
+
+            return ... HANDLER LOGIC ...
+        }
+
+        res.writeHead(404, { "Content-Type": "text/plain" });
+        res.end("Not Found");
+    }
 }
         </code></pre>
     </section>
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Server Side - Route Matching</h1>
-        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Visitors Send Data To Server</h2>
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Route Registration</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">MVC Request / Response Lifecycle</h2>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// routes.js
+
+import {UserController} from "./controllers/UserController.js";
+
+export default function registerRoutes(router) {
+    router.register("GET", "/users", UserController, "index");
+    router.register("GET", "/users/:email/edit", UserController, "edit");
+    router.register("GET", "/users/new", UserController, "new");
+    router.register("POST", "/users", UserController, "create");
+    router.register("GET", "/users/:email", UserController, "show");
+    router.register("PUT", "/users/:email", UserController, "update");
+    router.register("GET", "/users/:email/delete", UserController, "delete");
+    router.register("DELETE", "/users/:email", UserController, "destroy");
+}
+        </code></pre>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// server.js (partial)
+
+import Router from "./Router.js";
+import registerRoutes from "./routes.js";
+
+const router = new Router();
+
+registerRoutes(router);
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Route Matching</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">MVC Request / Response Lifecycle</h2>
         <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
 // Router.js (partial)
 
 export default class Router {
+
     async handle(req, res, method, urlParts) {
         for (const route of this.routes) {
             if (route.method !== method) continue;
@@ -162,7 +172,7 @@ export default class Router {
 
             if (!matched) continue;
 
-            ... BODY PARSING & HANDLER NOT SHOWN ...
+            return ... HANDLER LOGIC ...
         }
 
         res.writeHead(404, { "Content-Type": "text/plain" });
@@ -173,15 +183,17 @@ export default class Router {
     </section>
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Server Side - Handler</h1>
-        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Visitors Send Data To Server</h2>
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Route Handler</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">MVC Request / Response Lifecycle</h2>
         <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
 // Router.js (partial)
 
 export default class Router {
     async handle(req, res, method, urlParts) {
         for (const route of this.routes) {
-            ... MATCHING CODE ...
+            let matched = ... MATCHING CODE ...
+
+            if (!matched) continue;
 
             const controller = new route.controllerClass();
             if (!controller[route.handlerName])
@@ -194,19 +206,21 @@ export default class Router {
 
             return controller[route.handlerName](req, res, params, body);
         }
+
+        res.writeHead(404, { "Content-Type": "text/plain" });
+        res.end("Not Found");
     }
 }
         </code></pre>
     </section>
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Server Side - Parsing</h1>
-        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Visitors Send Data To Server</h2>
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Request Body Parsing</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">MVC Request / Response Lifecycle</h2>
         <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
 // Router.js (partial)
 
 export default class Router {
-
     static parseBody(req) {
         return new Promise((resolve, reject) => {
             let data = '';
@@ -233,142 +247,45 @@ export default class Router {
     </section>
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Other Considerations</h1>
-        <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
-            <li>Sanitization:
-                <ul class="ml-6 text-xl md:text-2xl max-w-6xl mb-8 list-none list-inside space-y-2">
-                    <li>👉 Performed at "point of use".</li>
-                    <li>👉 Prevents XSS and injection attacks.</li>
-                    <li>👉 EJS example: <code>&lt;%= variable %></code> performs HTML sanitization, <code>&lt;%- variable %></code> DOES NOT.</li>
-                    <li>👉 SQL: use "parameterized queries" to sanitize variables used in queries.</li>
-                </ul>
-            </li>
-            <li>Validation:
-                <ul class="ml-6 text-xl md:text-2xl max-w-6xl mb-8 list-none list-inside space-y-2">
-                    <li>👉 Performed immediately...before storing or using any data.</li>
-                    <li>👉 Inspection to ensure data conforms to predefined rules (length, min/max, email...).</li>
-                    <li>👉 Data that fails inspection should be sent back to browser for the user to edit.</li>
-                </ul>
-            </li>
-        </ul>
-    </section>
-
-    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Validation Rules</h1>
-        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Simple Validation</h2>
-        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
-// models/User.js
-
-import { BaseModel } from "./BaseModel.js";
-
-export default class User extends BaseModel {
-    static fileName = "users.json";  // JSON file inside /data
-    static keyField = "email";       // unique identifier
-
-    static rules = {
-        first_name: { required: true, type: "string", min: 2, max: 50 },
-        last_name:  { required: true, type: "string", min: 2, max: 50 },
-        email:      { required: true, type: "string", pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/ }
-    };
-
-    constructor(first_name, last_name, email) {
-        super();
-        this.first_name = first_name;
-        this.last_name = last_name;
-        this.email = email;
-    }
-}
-        </code></pre>
-    </section>
-
-    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Validator</h1>
-        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Simple Validation</h2>
-        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
-// Validator.js (partial)
-
-export default class Validator {
-    static validate(rules, data) {
-        const errors = {};
-
-        for (const [field, rule] of Object.entries(rules)) {
-            const value = data[field];
-
-            // Check required
-            if (rule.required && (value === undefined || value === null || value === "")) {
-                errors[field] = `${field} is required`;
-                continue;
-            }
-
-            if (value == null) continue; // skip further checks if value is optional & missing
-
-            // Min length
-            if (rule.min && typeof value === "string" && value.length < rule.min) {
-                errors[field] = `${field} must be at least ${rule.min} characters`;
-            }
-
-            ... OTHER VALIDATION CHECKS ...
-        }
-
-        return {
-            valid: Object.keys(errors).length === 0,
-            errors,
-        };
-    }
-}
-        </code></pre>
-    </section>
-
-    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Validation Usage</h1>
-        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Simple Validation</h2>
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">MVC Logic</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">MVC Request / Response Lifecycle</h2>
         <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
 // controllers/UserController.js (partial)
 
 export class UserController extends BaseController {
 
-    async new(req, res) {
-        return this.view(res, "user/new");
+    async edit(req, res, params) {
+        const user = await User.find(params.email);
+        return this.view(res, "user/edit", {user});
     }
 
-    async create(req, res, params, body) {
-        const { valid, errors} = Validator.validate(User.rules, body);
-        if (!valid) {
-            // TODO: This is not great user experience...addressed in upcoming video!
-            res.writeHead(400, { "Content-Type": "application/json" });
-            res.end(JSON.stringify({ success: false, errors }));
-            return;
-        }
+    async update(req, res, params, body) {
+        body = {...body, email: params.email};
 
-        const user = await User.create(body);
-        return this.redirect(res, "/users");
+        await User.update(params.email, body);
+        return this.redirect(res, `/users/${params.email}/edit`);
     }
 
-    ... OTHER ACTION METHODS ...
+    ... OTHER HANDLERS NOT SHOWN ...
 }
-        </code></pre>
-        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
-// terminal
-node server.js
         </code></pre>
     </section>
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
         <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Key Takeaways</h1>
         <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
-            <li>Listen for "data" and "end" to parse POST body.</li>
-            <li>Forms are the foundation for user input in web apps.</li>
-            <li>Validation should be performed immediately.</li>
-            <li>Sanitization should be performed at point-of-use.</li>
+            <li>Every request goes through the same lifecycle.</li>
+            <li>The <em>Server</em> parses the <em>url parts</em> and <em>method</em> and delegates to the <em>Router</em>.</li>
+            <li>The <em>Router</em> matches to a registered route and calls the <em>MVC Logic</em> for that route.</li>
         </ul>
     </section>
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
         <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Up Next</h1>
-        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-6 text-center">Sessions & Cookies</h2>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-6 text-center">Form Validation</h2>
         <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
-            <li>Store state between HTTP requests.</li>
-            <li>Simple example.</li>
+            <li>Why validation is important.</li>
+            <li>Simple validation engine.</li>
         </ul>
     </section>
 

@@ -2,16 +2,12 @@
 import {UserController} from "./controllers/UserController.js";
 
 export default function registerRoutes(router) {
-
-    // public routes
-    router.get("/users", UserController, "index");
-    router.get("/register", UserController, "new");
-    router.post("/users", UserController, "create");
-
-    router.get("/users/:email", UserController, "show");
-    router.get("/users/:email/edit", UserController, "edit");
-    router.get("/users/:email/delete", UserController, "delete");
-    router.put("/users/:email", UserController, "update");
-    router.put("/users/:email/password", UserController, "updatePassword");
-    router.delete("/users/:email", UserController, "destroy");
+    router.register("GET", "/users", UserController, "index");
+    router.register("GET", "/users/new", UserController, "new");
+    router.register("GET", "/users/:email", UserController, "show");
+    router.register("GET", "/users/:email/edit", UserController, "edit");
+    router.register("GET", "/users/:email/delete", UserController, "delete");
+    router.register("POST", "/users", UserController, "create");
+    router.register("PUT", "/users/:email", UserController, "update");
+    router.register("DELETE", "/users/:email", UserController, "destroy");
 }

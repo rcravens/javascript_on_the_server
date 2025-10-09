@@ -1,8 +1,7 @@
 import http from "http";
 import {URL} from "url";
 import Router from "./Router.js";
-import registerRoutes from "../routes.js";
-import {sessionManager} from "./SessionManager.js";
+import registerRoutes from "./routes.js";
 
 const router = new Router();
 
@@ -10,8 +9,6 @@ const router = new Router();
 registerRoutes(router);
 
 const server = http.createServer(async (req, res) => {
-    sessionManager.attach(req, res);
-
     const url = new URL(req.url, `http://${req.headers.host}`);
     const parts = url.pathname.split("/").filter(Boolean);
 

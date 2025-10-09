@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <title>Introducing Middleware | Scaling Up – Beyond the Basics</title>
+    <title>Authentication Basics | Adding Interactivity & State</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/themes/prism-tomorrow.css" rel="stylesheet"/>
     <script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/prism.min.js"></script>
@@ -23,7 +23,7 @@
       <span class="bg-yellow-400 text-gray-900 text-xs md:text-sm font-semibold px-2 py-1 rounded-full uppercase tracking-wide">
         Video
       </span>
-        <h3 class="mt-1 text-lg md:text-2xl font-bold text-yellow-400">Introducing Middleware</h3>
+        <h3 class="mt-1 text-lg md:text-2xl font-bold text-yellow-400">Authentication Basics</h3>
     </div>
 
     <!-- Module Title -->
@@ -31,7 +31,7 @@
       <span class="bg-indigo-400 text-gray-900 text-xs md:text-sm font-semibold px-2 py-1 rounded-full uppercase tracking-wide">
         Module
       </span>
-        <h3 class="mt-1 text-lg md:text-2xl font-bold text-indigo-400">Scaling Up – Beyond the Basics</h3>
+        <h3 class="mt-1 text-lg md:text-2xl font-bold text-indigo-400">Adding Interactivity & State</h3>
     </div>
 </header>
 
@@ -39,278 +39,328 @@
 <main class="bg-gradient-to-b from-gray-900 via-gray-800 to-gray-700" id="slides">
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">What Is Middleware?</h1>
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Why Authentication?</h1>
         <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
-            <li>Middleware is code that sits between the request and response.</li>
-            <li>Can modify <code>req</code> or <code>res</code>, perform tasks, or control flow.</li>
-            <li>Common pattern in many frameworks, but can be implemented in vanilla Node.</li>
+            <li>Allows the server to verify user identity.</li>
+            <li>Restricts access to protected resources.</li>
+            <li>Forms the foundation for user accounts, profiles, and permissions.</li>
         </ul>
     </section>
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Our First Middleware</h1>
-        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Auth Middleware</h2>
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Login Routes</h1>
         <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
-// middleware/HasAuthenticated.js
-
-export default class HasAuthenticated {
-    async handle(req, res) {
-        if (!req.session.user) {
-            req.alert.warn("Login to access this feature.");
-
-            res.writeHead(302, {Location: "/login"});
-            res.end();
-            return false; // stop further processing
-        }
-        return true; // continue
-    }
-}
-        </code></pre>
-    </section>
-
-    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Registering - Updating Routes</h1>
-        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Auth Middleware</h2>
-        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
-// routes.js (partial)
-
-// routes.js
-import {UserController} from "./controllers/UserController.js";
-import {AuthController} from "./controllers/AuthController.js";
-import HasAuthenticated from "./middleware/HasAuthenticated.js";
+// route.js (partial)
 
 export default function registerRoutes(router) {
-
-    // public routes
-    router.get("/users", UserController, "index");
-    router.get("/register", UserController, "new");
-    router.post("/users", UserController, "create");
     router.get("/login", AuthController, "loginForm");
     router.post("/login", AuthController, "login");
+    router.get("/logout", AuthController, "logout");
 
-    // authenticated routes
-    router.group([HasAuthenticated], () => {
-        router.get("/users/:email", UserController, "show");
-        router.get("/users/:email/edit", UserController, "edit");
-        router.get("/users/:email/delete", UserController, "delete");
-        router.put("/users/:email", UserController, "update");
-        router.put("/users/:email/password", UserController, "updatePassword");
-        router.delete("/users/:email", UserController, "destroy");
-
-        router.get("/logout", AuthController, "logout");
-    });
+    ... USER ROUTES ...
 }
         </code></pre>
     </section>
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Registering - Update Router</h1>
-        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Auth Middleware</h2>
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">AuthController.loginForm</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Authentication Flow</h2>
         <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
-// app/Router.js (partial)
+// controllers/AuthController.js (partial)
 
-export default class Router {
-    constructor() {
-        this.routes = [];
-        this._currentGroupMiddleware = [];
-    }
+export class AuthController extends BaseController {
 
-    #register(method, path, controllerClass, handlerName, middlewares = []) {
-        const combinedMiddleware = [...this._currentGroupMiddleware, ...middlewares];
-
-        const parts = path.split("/").filter(Boolean);
-        this.routes.push({method, parts, controllerClass, handlerName, middlewares: combinedMiddleware});
-    }
-
-    get(path, controllerClass, handlerName, middlewares = []) {
-        this.#register("GET", path, controllerClass, handlerName, middlewares);
-    }
-
-    ... post, put, patch, delete METHODS ...
-
-    group(middleware = [], callback) {
-        const previous = this._currentGroupMiddleware;
-        this._currentGroupMiddleware = [...previous, ...middleware];
-        callback();
-        this._currentGroupMiddleware = previous; // restore
+    async loginForm(req, res) {
+        return this.view(res, "auth/login", {}, req);
     }
 }
         </code></pre>
     </section>
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Running Middleware</h1>
-        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Auth Middleware</h2>
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Login View</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Authentication Flow</h2>
         <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
-// app/server.js (partial)
+// views/auth/login.ejs (partial)
 
-const router = new Router();
-registerRoutes(router);
+&lt;form method=&quot;POST&quot; action=&quot;/login&quot;&gt;
 
-const server = http.createServer(async (req, res) => {
-    sessionManager.attach(req, res);
+    &lt;div&gt;
+        &lt;label for=&quot;email&quot;&gt;Email:&lt;/label&gt;
+        &lt;input type=&quot;email&quot; name=&quot;email&quot; value=&quot;&lt;%= old(&#39;email&#39;) %&gt;&quot; required&gt;
+        &lt;% if (error(&#39;email&#39;)) { %&gt;
+            &lt;div&gt;&lt;%= error(&#39;email&#39;) %&gt;&lt;/div&gt;
+        &lt;% } %&gt;
+    &lt;/div&gt;
 
-    const url = new URL(req.url, `http://${req.headers.host}`);
-    const parts = url.pathname.split("/").filter(Boolean);
+    &lt;div&gt;
+        &lt;label for=&quot;password&quot;&gt;Password:&lt;/label&gt;
+        &lt;input type=&quot;password&quot; name=&quot;password&quot; required&gt;
+        &lt;% if (error(&#39;password&#39;)) { %&gt;
+            &lt;div&gt;&lt;%= error(&#39;password&#39;) %&gt;&lt;/div&gt;
+        &lt;% } %&gt;
+    &lt;/div&gt;
 
-    // Handle _method override
-    const method = req.method === "POST" && url.searchParams.get("_method")
-            ? url.searchParams.get("_method").toUpperCase()
-            : req.method;
-
-    try {
-        await router.handle(req, res, method, parts);
-    } catch (err) {
-        console.error("Error handling request:", err);
-        res.writeHead(500, {"Content-Type": "text/plain"});
-        res.end("Internal Server Error");
-    }
-});
+    &lt;button type=&quot;submit&quot;&gt;Login&lt;/button&gt;
+&lt;/form&gt;
         </code></pre>
     </section>
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Running Middleware</h1>
-        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Auth Middleware</h2>
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">AuthController.login</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Authentication Flow</h2>
         <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
-// app/Router.js (partial)
+// controllers/AuthController.js (partial)
 
-export default class Router {
+export class AuthController extends BaseController {
 
-    async handle(req, res, method, urlParts) {
-        for (const route of this.routes) {
-            ... MATCHING LOGIC ...
+    async login(req, res, params, body) {
+        const {email, password} = body;
 
-            if (!matched) continue;
-
-            // Run middlewares in order
-            for (const MiddlewareClass of route.middlewares) {
-                const middleware = new MiddlewareClass();
-                const result = await middleware.handle(req, res, params);
-                if (result === false) return; // stop chain if middleware blocks
-            }
-
-            const controller = new route.controllerClass();
-            if (!controller[route.handlerName])
-                throw new Error(`Handler "${route.handlerName}" not found on controller`);
-
-            let body = {};
-            if (["POST", "PUT", "PATCH"].includes(method)) {
-                body = await Router.parseBody(req);
-            }
-
-            return controller[route.handlerName](req, res, params, body);
+        // Lookup user by email
+        const user = await User.find(email);
+        if (!user) {
+            req.flash.set("errors", {email: "No account found with that email"});
+            req.flash.set("body", body);
+            return this.back(req, res);
         }
 
-        res.writeHead(404, {"Content-Type": "text/plain"});
-        res.end("Not Found");
+        // Verify password with bcrypt
+        const match = await bcrypt.compare(password, user.password);
+        if (!match) {
+            req.flash.set("errors", {password: "Invalid password"});
+            req.flash.set("body", body);
+            return this.back(req, res);
+        }
+
+        // Store user in session
+        req.auth.user.set( user );
+
+        // Redirect to people index after login
+        return this.redirect(res, "/users");
     }
 }
         </code></pre>
     </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Session Manager</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Authentication Flow</h2>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// app/SessionManager.js (partial)
+
+class SessionManager {
+
+    destroySession(req, res) {
+        ...
+    }
+
+    attach(req, res) {
+        ...
+
+        // Helper for logged-in user
+        req.auth = {
+            user: {
+                get: () => req.session.user || null,
+                set: (userObj) => {
+                    req.session.user = userObj;
+                    if (this.storageDir) this.saveSessionToFile(sessionId);
+                },
+                clear: () => {
+                    this.destroySession(req, res);  // destroy current session
+                    this.attach(req, res);          // start a fresh session
+                }
+            }
+        };
+
+        ...
+    }
+}
+        </code></pre>
+    </section>
+
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">AuthController.logout</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Authentication Flow</h2>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// controllers/AuthController.js (partial)
+
+export class AuthController extends BaseController {
+    ...
+
+    async logout(req, res) {
+        req.auth.user.clear()/ // clear user session
+
+        sessionManager.attach(req, res);    // Create a new session (not logged in)
+        req.alert.success("You have been logged out.", "Success");
+        return this.redirect(res, "/users");
+    }
+}
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Session Manager</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Authentication Flow</h2>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// app/SessionManager.js (partial)
+
+class SessionManager {
+
+    destroySession(req, res) {
+        const cookies = this.parseCookies(req);
+        const sessionId = cookies["SID"];
+        if (!sessionId) return;
+
+        // Remove from in-memory store
+        delete this.sessions[sessionId];
+
+        // Remove from disk if using storageDir
+        if (this.storageDir) {
+            const filePath = path.join(this.storageDir, `${sessionId}.json`);
+            if (fs.existsSync(filePath)) {
+                fs.unlinkSync(filePath);
+            }
+        }
+
+        // Clear the cookie (set expiry in the past)
+        res.setHeader("Set-Cookie", "SID=; HttpOnly; Path=/; Max-Age=0");
+
+        // Clean up req
+        if (req.session) delete req.session;
+        if (req.user) delete req.user;
+        if (req.flash) delete req.flash;
+        if (req.alert) delete req.alert;
+    }
+
+    ...
+}
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Add Auth User To View Data</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">View Updates</h2>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// controllers/BaseController.js (partial)
+
+export class BaseController {
+
+    async view(res, shortPath, data = {}, req = null) {
+        if (req) {
+            // Add helpers
+            const flashErrors = req.flash.get("errors") || {};
+            const flashBody = req.flash.get("body") || {};
+            const flashSuccess = req.flash.get("success") || null;
+            const flashAlert = req.alert.get();
+
+            data.old = (field, defaultValue = '') => flashBody[field] || defaultValue;
+            data.error = (field) => flashErrors[field] || '';
+            data.success = flashSuccess;
+            data.auth = {
+                user: req.auth.user ? req.auth.user.get() : null
+            }
+            data.alert = flashAlert;
+        }
+
+        // Convert "person/index" → /views/person/index.ejs
+        const viewPath = join(views_root, `${shortPath}.ejs`);
+        return this.render(res, viewPath, data);
+    }
+}
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Navigation Bar</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">View Updates</h2>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// views/layouts/_nav.js (partial)
+
+&lt;header&gt;
+    &lt;div&gt;
+        &lt;!-- Site Title --&gt;
+        &lt;a href=&quot;/users&quot;&gt;User Manager&lt;/a&gt;
+
+        &lt;!-- Right-side navigation --&gt;
+        &lt;div&gt;
+            &lt;% if (auth.user) { %&gt;
+                &lt;a href=&quot;/logout&quot;&gt;Logout&lt;/a&gt;
+                &lt;span&gt;Hello, &lt;%= auth.user.first_name %&gt;&lt;/span&gt;
+            &lt;% } else { %&gt;
+                &lt;a href=&quot;/register&quot;&gt;Register&lt;/a&gt;
+                &lt;a href=&quot;/login&quot;&gt;Login&lt;/a&gt;
+            &lt;% } %&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/header&gt;
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">User List</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">View Updates</h2>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// views/user/index.js (partial)
+
+&lt;div&gt;
+    &lt;table&gt;
+        &lt;thead&gt;
+        &lt;tr&gt;
+            &lt;th&gt;First Name&lt;/th&gt;
+            &lt;th&gt;Last Name&lt;/th&gt;
+            &lt;th&gt;Email&lt;/th&gt;
+            &lt;th&gt;Actions&lt;/th&gt;
+        &lt;/tr&gt;
+        &lt;/thead&gt;
+        &lt;tbody&gt;
+        &lt;% users.forEach(u =&gt; { %&gt;
+            &lt;tr&gt;
+                &lt;td&gt;&lt;%= u.first_name %&gt;&lt;/td&gt;
+                &lt;td&gt;&lt;%= u.last_name %&gt;&lt;/td&gt;
+                &lt;td&gt;&lt;%= u.email %&gt;&lt;/td&gt;
+                &lt;td&gt;
+                    &lt;a href=&quot;/users/&lt;%= u.email %&gt;&quot;&gt;View&lt;/a&gt;
+                    &lt;% if (auth.user &amp;&amp; (auth.user.is_admin || auth.user.email === u.email) ) { %&gt;
+                        | &lt;a href=&quot;/users/&lt;%= u.email %&gt;/edit&quot;&gt;Edit&lt;/a&gt;
+                        | &lt;a href=&quot;/users/&lt;%= u.email %&gt;/delete&quot;&gt;Delete&lt;/a&gt;
+                    &lt;% } %&gt;
+                &lt;/td&gt;
+            &lt;/tr&gt;
+        &lt;% }) %&gt;
+        &lt;/tbody&gt;
+    &lt;/table&gt;
+&lt;/div&gt;
+        </code></pre>
+    </section>
+
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
         <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Try It Out</h1>
-        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Auth Middleware</h2>
         <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
 // terminal
 npm start
-
-/*
-1. logout
-2. http://localhost:3000/users/bob.cravens@gmail.com/edit       --> access denied
-3. login
-4. http://localhost:3000/users/bob.cravens@gmail.com/edit       --> access granted
-5. http://localhost:3000/users/jed.stracke8@hotmail.com/edit    --> oops...access granted
-*/
-        </code></pre>
-    </section>
-
-    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">CanEdit Middleware</h1>
-        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">More Middleware</h2>
-        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
-// middleware/CanEdit.js
-
-export default class CanEdit {
-    async handle(req, res, params) {
-        const email = params.email;
-        if (req.session.user?.email !== email && !req.session.user?.is_admin) {
-            req.alert.warn("You can only modify your own profile.");
-
-            res.writeHead(302, {"Location": "/users"});
-            res.end();
-            return false;
-        }
-        return true;
-    }
-}
-        </code></pre>
-    </section>
-
-    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Update Routes</h1>
-        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">More Middleware</h2>
-        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
-// routes.js
-
-export default function registerRoutes(router) {
-
-    // public routes
-    router.get("/users", UserController, "index");
-    router.get("/register", UserController, "new");
-    router.post("/users", UserController, "create");
-    router.get("/login", AuthController, "loginForm");
-    router.post("/login", AuthController, "login");
-
-    // authenticated routes
-    router.group([HasAuthenticated], () => {
-        router.get("/users/:email", UserController, "show");
-        router.get("/users/:email/edit", UserController, "edit", [CanEdit]);
-        router.get("/users/:email/delete", UserController, "delete", [CanEdit]);
-        router.put("/users/:email", UserController, "update", [CanEdit]);
-        router.put("/users/:email/password", UserController, "updatePassword", [CanEdit]);
-        router.delete("/users/:email", UserController, "destroy", [CanEdit]);
-
-        router.get("/logout", AuthController, "logout");
-    });
-
-}
-        </code></pre>
-    </section>
-
-    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Try It Out</h1>
-        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Auth Middleware</h2>
-        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
-// terminal
-npm start
-
-/*
-1. logout
-2. http://localhost:3000/users/bob.cravens@gmail.com/edit       --> access denied
-3. login
-4. http://localhost:3000/users/bob.cravens@gmail.com/edit       --> access granted
-5. http://localhost:3000/users/jed.stracke8@hotmail.com/edit    --> access denied
-*/
         </code></pre>
     </section>
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
         <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Key Takeaways</h1>
         <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
-            <li>Middleware pattern promotes DRY code and centralizes common tasks.</li>
-            <li>Logging, authentication, and error handling are common middleware uses.</li>
-            <li>Clean separation improves readability and maintainability.</li>
+            <li>Never store plaintext passwords; always hash.</li>
+            <li>Use <code>bcrypt</code> or similar library for hashing.</li>
+            <li>Sessions track logged-in users.</li>
+            <li>Dynamically provide content based on authentication status.</li>
         </ul>
     </section>
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
         <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Up Next</h1>
-        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-6 text-center">Exploring Popular Frameworks</h2>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-6 text-center">Authorization & Access Control</h2>
         <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
-            <li>Discuss when and why to use.</li>
-            <li>Review popular choices.</li>
+            <li>We hid links from user, but they are still accessible.</li>
+            <li>Introduce the concept of middleware.</li>
+            <li>Restrict routes based on authentication status.</li>
         </ul>
     </section>
 

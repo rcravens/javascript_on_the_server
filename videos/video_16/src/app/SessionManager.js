@@ -1,12 +1,12 @@
-import {randomBytes} from "crypto";
+import { randomBytes } from "crypto";
 import fs from "fs";
 import path from "path";
 
 class SessionManager {
-    constructor({storageDir = null} = {}) {
+    constructor({ storageDir = null } = {}) {
         this.sessions = {};
         this.storageDir = storageDir;
-        if (storageDir) fs.mkdirSync(storageDir, {recursive: true});
+        if (storageDir) fs.mkdirSync(storageDir, { recursive: true });
     }
 
     generateId() {
@@ -15,7 +15,7 @@ class SessionManager {
 
     createSession() {
         const id = this.generateId();
-        this.sessions[id] = {flash: {}}; // initialize flash container
+        this.sessions[id] = { flash: {} }; // initialize flash container
         if (this.storageDir) this.saveSessionToFile(id);
         return id;
     }
@@ -66,29 +66,16 @@ class SessionManager {
                 return value;
             },
             all: () => {
-                const value = {...req.session.flash};
+                const value = { ...req.session.flash };
                 req.session.flash = {};  // clear all flash
                 if (this.storageDir) this.saveSessionToFile(sessionId);
                 return value;
             }
         };
 
-        // Alert helpers for flash message
-        req.alert = {
-            success: (message, title = '') => req.flash.set('alert', {type: 'success', message, title}),
-            error: (message, title = '') => req.flash.set('alert', {type: 'error', message, title}),
-            warn: (message, title = '') => req.flash.set('alert', {type: 'warning', message, title}),
-            get: () => req.flash.get('alert') || null
-        };
-        
         if (isNew) {
             res.setHeader("Set-Cookie", `SID=${sessionId}; HttpOnly; Path=/`);
         }
-    }
-
-    user(sessionId) {
-        const session = this.getSession(sessionId);
-        return session ? session.user : null;
     }
 
     parseCookies(req) {
@@ -102,4 +89,4 @@ class SessionManager {
     }
 }
 
-export const sessionManager = new SessionManager({storageDir: "./data/sessions"});
+export const sessionManager = new SessionManager({ storageDir: "./data/sessions" });

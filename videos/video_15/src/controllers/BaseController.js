@@ -22,18 +22,7 @@ export class BaseController {
         }
     }
 
-    async view(res, shortPath, data = {}, req = null) {
-        if (req) {
-            // Add helpers
-            const flashErrors = req.flash.get("errors") || {};
-            const flashBody = req.flash.get("body") || {};
-            const flashSuccess = req.flash.get("success") || null;
-
-            data.old = (field, defaultValue = '') => flashBody[field] || defaultValue;
-            data.error = (field) => flashErrors[field] || '';
-            data.success = () => flashSuccess || '';
-        }
-
+    async view(res, shortPath, data = {}) {
         // Convert "person/index" → /views/person/index.ejs
         const viewPath = join(views_root, `${shortPath}.ejs`);
         return this.render(res, viewPath, data);
@@ -41,20 +30,6 @@ export class BaseController {
 
     redirect(res, route) {
         res.writeHead(302, {Location: route});
-        res.end();
-    }
-
-    back(req, res, flashData = {}) {
-        // Store flash data
-        if (req.flash) {
-            for (const key in flashData) {
-                req.flash.set(key, flashData[key]);
-            }
-        }
-
-        // Redirect to referer if present, else fallback to root
-        const redirectUrl = req.headers?.referer || "/";
-        res.writeHead(302, {Location: redirectUrl});
         res.end();
     }
 

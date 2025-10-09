@@ -51,13 +51,6 @@ export default class Router {
         this.#register("DELETE", path, controllerClass, handlerName);
     }
 
-    group(middleware = [], callback) {
-        const previous = this._currentGroupMiddleware;
-        this._currentGroupMiddleware = [...previous, ...middleware];
-        callback();
-        this._currentGroupMiddleware = previous; // restore
-    }
-
     async handle(req, res, method, urlParts) {
         for (const route of this.routes) {
             if (route.method !== method) continue;

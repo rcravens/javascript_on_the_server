@@ -1,4 +1,3 @@
-// controllers/PersonController.js
 import User from "../models/User.js";
 import {BaseController} from "./BaseController.js";
 import Validator from "../Validator.js";
@@ -48,7 +47,7 @@ export class UserController extends BaseController {
             res.end(JSON.stringify({success: false, errors}));
             return;
         }
-        
+
         await User.update(params.email, body);
         return this.redirect(res, `/users/${params.email}/edit`);
     }

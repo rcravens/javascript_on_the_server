@@ -35,7 +35,7 @@ export class AuthController extends BaseController {
     }
 
     async logout(req, res) {
-        req.auth.user.clear();  // clear user session
+        req.auth.user.clear();
 
         req.alert.success("You have been logged out.", "Success");
         return this.redirect(res, "/users");
