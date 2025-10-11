@@ -18,7 +18,7 @@ class SessionManager {
 
     createSession() {
         const id = this.generateId();
-        this.sessions[id] = {flash: {}}; // initialize flash container
+        this.sessions[id] = {flash: {}, lastAccess: Date.now()}; // initialize flash container
         if (this.storage_dir) this.saveSessionToFile(id);
         return id;
     }

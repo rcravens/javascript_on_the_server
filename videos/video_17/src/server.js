@@ -1,5 +1,5 @@
 import http from "http";
-import {sessionManager} from "SessionManager.js";
+import {sessionManager} from "./SessionManager.js";
 
 const server = http.createServer(async (req, res) => {
     sessionManager.attach(req, res);
@@ -12,18 +12,22 @@ const server = http.createServer(async (req, res) => {
     // 2. Delete a session variable
     // delete req.session['user_id'];
 
-    console.log('user_id', req.session['user_id']);
+    const user_id = req.session['user_id'] ?? '-- not found --';
+    console.log('user_id', user_id);
 
     // 3. Set flash variable
     // req.flash.set('msg', 'Hello');
 
     // 4. Read flash variable
-    // console.log('msg', req.flash.get('msg'));
+    const msg = req.flash.get('msg') ?? '-- not found --';
+    console.log('msg', msg);
 
     // Respond to request
     const data = {};
     data.sessions = sessionManager.sessions;
     data.session = req.session;
+    data.user_id = user_id;
+    data.msg = msg;
 
     res.statusCode = 200;
     res.setHeader("Content-Type", "application/json");

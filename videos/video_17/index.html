@@ -58,35 +58,55 @@
         <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Sessions</h1>
         <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Simple File-Based Manager</h2>
         <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
-// app/SessionManager.js (partial)
+// SessionManager.js (partial)
 
 class SessionManager {
-    constructor({ storageDir = null } = {}) {
+    constructor({storage_dir: storage_dir = null, max_age_seconds: max_age_seconds = 3600} = {}) {
         this.sessions = {};
-        this.storageDir = storageDir;
-        if (storageDir) fs.mkdirSync(storageDir, { recursive: true });
+        this.storage_dir = storage_dir;
+        this.max_age_in_milliseconds = max_age_seconds * 1000;
+        if (storage_dir) fs.mkdirSync(storage_dir, {recursive: true});
     }
 
     createSession() {
         const id = randomBytes(16).toString("hex");
-        this.sessions[id] = { flash: {} }; // initialize flash container
-        if (this.storageDir) this.saveSessionToFile(id);
+        this.sessions[id] = {flash: {}, lastAccess: Date.now()}; // initialize flash container
+        if (this.storage_dir) this.saveSessionToFile(id);
         return id;
     }
 
-    getSession(id) {
+    saveSessionToFile(id) {
+        if (!this.storage_dir || !this.sessions[id]) return;
+        const filePath = path.join(this.storage_dir, `${id}.json`);
+        fs.writeFileSync(filePath, JSON.stringify(this.sessions[id], null, 2));
+    }
+}
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Sessions</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Simple File-Based Manager</h2>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// SessionManager.js (partial)
+
+class SessionManager {
+
+   getSession(id) {
         if (!id) return null;
         if (this.sessions[id]) return this.sessions[id];
-        if (this.storageDir) {
-            return ... READ SESSION DATA FROM FILE ...
+        if (this.storage_dir) {
+            const filePath = path.join(this.storage_dir, `${id}.json`);
+            if (fs.existsSync(filePath)) {
+                const data = JSON.parse(fs.readFileSync(filePath));
+                this.sessions[id] = data;
+                if (!this.sessions[id].flash) this.sessions[id].flash = {};
+                return data;
+            }
         }
         return null;
     }
-
-    saveSessionToFile(id) { ... WRITE SESSION DATA TO FILE ... }
 }
-
-export const sessionManager = new SessionManager({ storageDir: "./data/sessions" });
         </code></pre>
     </section>
 
@@ -94,7 +114,7 @@ export const sessionManager = new SessionManager({ storageDir: "./data/sessions"
         <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Attach Session</h1>
         <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Simple File-Based Manager</h2>
         <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
-// app/SessionManager.js (partial)
+// SessionManager.js (partial)
 
 class SessionManager {
     ... SESSION MANAGER CODE ...
@@ -129,7 +149,7 @@ class SessionManager {
         <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Session Proxy</h1>
         <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Simple File-Based Manager</h2>
         <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
-// app/SessionManager.js (partial)
+// SessionManager.js (partial)
 
 let session = this.getSession(sessionId);
 
@@ -157,7 +177,7 @@ req.session = new Proxy(session, {
         <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Flash Data</h1>
         <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Simple File-Based Manager</h2>
         <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
-// app/SessionManager.js (partial)
+// SessionManager.js (partial)
 
 // Flash helper methods
 req.flash = {
@@ -185,7 +205,7 @@ req.flash = {
         <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Using Sessions</h1>
         <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Simple File-Based Manager</h2>
         <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
-// session/server.js (partial)
+// server.js (partial)
 
 const server = http.createServer(async (req, res) => {
     sessionManager.attach(req, res);
@@ -204,7 +224,7 @@ const server = http.createServer(async (req, res) => {
         <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
 // terminal
 
-cd session ---> npm run dev
+npm run dev
         </code></pre>
     </section>
 
