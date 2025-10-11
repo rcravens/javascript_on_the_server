@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <title>Authentication Basics | Adding Interactivity & State</title>
+    <title>Sessions & Cookies | Adding Interactivity & State</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/themes/prism-tomorrow.css" rel="stylesheet"/>
     <script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/prism.min.js"></script>
@@ -23,7 +23,7 @@
       <span class="bg-yellow-400 text-gray-900 text-xs md:text-sm font-semibold px-2 py-1 rounded-full uppercase tracking-wide">
         Video
       </span>
-        <h3 class="mt-1 text-lg md:text-2xl font-bold text-yellow-400">Authentication Basics</h3>
+        <h3 class="mt-1 text-lg md:text-2xl font-bold text-yellow-400">Sessions & Cookies</h3>
     </div>
 
     <!-- Module Title -->
@@ -39,209 +39,337 @@
 <main class="bg-gradient-to-b from-gray-900 via-gray-800 to-gray-700" id="slides">
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Why Authentication?</h1>
-        <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
-            <li>Allows the server to verify user identity.</li>
-            <li>Restricts access to protected resources.</li>
-            <li>Forms the foundation for user accounts, profiles, and permissions.</li>
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">The Problem</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">HTTP is Stateless</h2>
+        <table class="max-w-6xl text-white text-lg">
+            <tbody>
+            <tr>
+                <td class="p-6 align-middle w-[50%]">
+                    <ol class="text-xl md:text-2xl max-w-6xl mb-8 list-decimal list-inside space-y-2">
+                        <li><code>GET: /users/new</code></li>
+                        <li class="text-red-600">Request/Response Lifecycle #1</li>
+                        <li>HTML form rendered in browser</li>
+                        <li>Fill out INVALID data and submit</li>
+                    </ol>
+                </td>
+                <td class="p-6 align-middle">
+                    <img alt="Slide Image" class="rounded-lg shadow-lg h-[300px]" src="html_form.png">
+                </td>
+            </tr>
+            <tr>
+                <td class="p-6 align-middle w-[50%]">
+                    <ol class="text-xl md:text-2xl max-w-6xl mb-8 list-decimal list-inside space-y-2" start="5">
+                        <li><code>POST: /users/create</code></li>
+                        <li class="text-red-600">Request/Response Lifecycle #2</li>
+                        <li>Validation fails</li>
+                        <li>Redirect back to <code>GET: /users/new</code></li>
+                        <li>Browser request redirect location</li>
+                        <li class="text-red-600">Request/Response Lifecycle #3</li>
+                        <li>HTML form with "old values" and "errors"</li>
+                    </ol>
+                </td>
+                <td class="p-6 text-center align-middle">
+                    <img alt="Slide Image" class="rounded-lg shadow-lg h-[300px]" src="html_form_errors.png">
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Why Sessions & Cookies?</h1>
+        <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-none list-inside space-y-6">
+            <li>HTTP is stateless: each request is independent.</li>
+            <li>Cookies / Cookie Data:
+                <ul class="ml-6 text-xl md:text-2xl max-w-6xl mb-8 list-none list-inside space-y-2">
+                    <li>👉 Stored by your web browser (client side).</li>
+                    <li>👉 Data is available on both the client (only non "HTTP Only") & server.</li>
+                    <li>👉 Travel in the request / response headers: server --> client --> server.</li>
+                    <li>👉 Allow servers to remember clients across requests.</li>
+                    <li>👉 Can originate on the client or the server.</li>
+                    <li>👉 Small pieces of information.</li>
+                    <li>👉 Usage: session ID, personalization, tracking/analytics...</li>
+                </ul>
+            </li>
+            <li>Sessions / Session Data:
+                <ul class="ml-6 text-xl md:text-2xl max-w-6xl mb-8 list-none list-inside space-y-2">
+                    <li>👉 Stored by your web server (server side).</li>
+                    <li>👉 Data is available only on the server and not on the client.</li>
+                    <li>👉 Track user-specific data on the server by associating it with a session ID stored in a cookie.</li>
+                    <li>👉 Session data should be persistent while user browses website.</li>
+                    <li>👉 Usage: flash message, form validation, cart management...</li>
+                </ul>
+            </li>
         </ul>
     </section>
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Login Routes</h1>
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Cookie Storage</h1>
         <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
-// route.js (partial)
+// cookie_jar.js (partial)
 
-export default function registerRoutes(router) {
-    router.get("/login", AuthController, "loginForm");
-    router.post("/login", AuthController, "login");
-    router.get("/logout", AuthController, "logout");
+// Cookie Data - Example: "Name1=Value1; Name2=Value2;..."
+console.log(req.headers.cookie);
 
-    ... USER ROUTES ...
+// Cookie Parser
+parseCookies(req) {
+    const list = {};
+    const cookieHeader = req.headers.cookie || "";
+    cookieHeader.split(";").forEach(cookie => {
+        const parts = cookie.split("=");
+        if (parts.length === 2) list[parts[0].trim()] = decodeURIComponent(parts[1].trim());
+    });
+    return list;
 }
-        </code></pre>
-    </section>
 
-    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">AuthController.loginForm</h1>
-        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Authentication Flow</h2>
+Set and clear cookie data from the server
+res.setHeader("Set-Cookie", [
+        `COOKIE1=Chocolate Chip; HttpOnly; Path=/`,                 // set cookie
+        `COOKIE2=Oatmeal Raisin; HttpOnly; Path=/; Max-Age=10`,     // set another cookie (10s)
+        `SID=; HttpOnly; Path=/; Max-Age=0`                         // clear a cookie
+    ]
+);
+        </code></pre>
         <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
-// controllers/AuthController.js (partial)
+// terminal
 
-export class AuthController extends BaseController {
-
-    async loginForm(req, res) {
-        return this.view(res, "auth/login", {}, req);
-    }
-}
+cd cookies --> npm run dev
         </code></pre>
     </section>
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Login View</h1>
-        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Authentication Flow</h2>
-        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
-// views/auth/login.ejs (partial)
-
-&lt;form method=&quot;POST&quot; action=&quot;/login&quot;&gt;
-
-    &lt;div&gt;
-        &lt;label for=&quot;email&quot;&gt;Email:&lt;/label&gt;
-        &lt;input type=&quot;email&quot; name=&quot;email&quot; value=&quot;&lt;%= old(&#39;email&#39;) %&gt;&quot; required&gt;
-        &lt;% if (error(&#39;email&#39;)) { %&gt;
-            &lt;div&gt;&lt;%= error(&#39;email&#39;) %&gt;&lt;/div&gt;
-        &lt;% } %&gt;
-    &lt;/div&gt;
-
-    &lt;div&gt;
-        &lt;label for=&quot;password&quot;&gt;Password:&lt;/label&gt;
-        &lt;input type=&quot;password&quot; name=&quot;password&quot; required&gt;
-        &lt;% if (error(&#39;password&#39;)) { %&gt;
-            &lt;div&gt;&lt;%= error(&#39;password&#39;) %&gt;&lt;/div&gt;
-        &lt;% } %&gt;
-    &lt;/div&gt;
-
-    &lt;button type=&quot;submit&quot;&gt;Login&lt;/button&gt;
-&lt;/form&gt;
-        </code></pre>
-    </section>
-
-    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">AuthController.login</h1>
-        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Authentication Flow</h2>
-        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
-// controllers/AuthController.js (partial)
-
-export class AuthController extends BaseController {
-
-    async login(req, res, params, body) {
-        const {email, password} = body;
-
-        // Lookup user by email
-        const user = await User.find(email);
-        if (!user) {
-            req.flash.set("errors", {email: "No account found with that email"});
-            req.flash.set("body", body);
-            return this.back(req, res);
-        }
-
-        // Verify password with bcrypt
-        const match = await bcrypt.compare(password, user.password);
-        if (!match) {
-            req.flash.set("errors", {password: "Invalid password"});
-            req.flash.set("body", body);
-            return this.back(req, res);
-        }
-
-        // Store user in session
-        req.auth.user.set( user );
-
-        // Redirect to people index after login
-        return this.redirect(res, "/users");
-    }
-}
-        </code></pre>
-    </section>
-
-    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Session Manager</h1>
-        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Authentication Flow</h2>
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Sessions</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Simple File-Based Manager</h2>
         <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
 // app/SessionManager.js (partial)
 
 class SessionManager {
-
-    destroySession(req, res) {
-        ...
+    constructor({ storageDir = null } = {}) {
+        this.sessions = {};
+        this.storageDir = storageDir;
+        if (storageDir) fs.mkdirSync(storageDir, { recursive: true });
     }
+
+    createSession() {
+        const id = randomBytes(16).toString("hex");
+        this.sessions[id] = { flash: {} }; // initialize flash container
+        if (this.storageDir) this.saveSessionToFile(id);
+        return id;
+    }
+
+    getSession(id) {
+        if (!id) return null;
+        if (this.sessions[id]) return this.sessions[id];
+        if (this.storageDir) {
+            return ... READ SESSION DATA FROM FILE ...
+        }
+        return null;
+    }
+
+    saveSessionToFile(id) { ... WRITE SESSION DATA TO FILE ... }
+}
+
+export const sessionManager = new SessionManager({ storageDir: "./data/sessions" });
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Attach Session</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Simple File-Based Manager</h2>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// app/SessionManager.js (partial)
+
+class SessionManager {
+    ... SESSION MANAGER CODE ...
 
     attach(req, res) {
-        ...
+        const cookies = this.parseCookies(req);
+        let sessionId = cookies["SID"];
+        let isNew = false;
 
-        // Helper for logged-in user
-        req.auth = {
-            user: {
-                get: () => req.session.user || null,
-                set: (userObj) => {
-                    req.session.user = userObj;
-                    if (this.storageDir) this.saveSessionToFile(sessionId);
-                },
-                clear: () => {
-                    this.destroySession(req, res);  // destroy current session
-                    this.attach(req, res);          // start a fresh session
-                }
-            }
-        };
+        if (!sessionId || !this.getSession(sessionId)) {
+            sessionId = this.createSession();
+            isNew = true;
+        }
 
-        ...
-    }
-}
-        </code></pre>
-    </section>
+        let session = this.getSession(sessionId);
 
+        // Auto-save changes to session
+        req.session = new Proxy(session, { ... PROXY HANDLERS ... });
 
-    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">AuthController.logout</h1>
-        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Authentication Flow</h2>
-        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
-// controllers/AuthController.js (partial)
+        // Flash helper methods
+        req.flash = { ... FLASH HELPER CODE ... };
 
-export class AuthController extends BaseController {
-    ...
-
-    async logout(req, res) {
-        req.auth.user.clear()/ // clear user session
-
-        sessionManager.attach(req, res);    // Create a new session (not logged in)
-        req.alert.success("You have been logged out.", "Success");
-        return this.redirect(res, "/users");
+        if (isNew) {
+            res.setHeader("Set-Cookie", `SID=${sessionId}; HttpOnly; Path=/`);
+        }
     }
 }
         </code></pre>
     </section>
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Session Manager</h1>
-        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Authentication Flow</h2>
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Session Proxy</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Simple File-Based Manager</h2>
         <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
 // app/SessionManager.js (partial)
 
-class SessionManager {
+let session = this.getSession(sessionId);
 
-    destroySession(req, res) {
-        const cookies = this.parseCookies(req);
-        const sessionId = cookies["SID"];
-        if (!sessionId) return;
+// Auto-save changes to session
+req.session = new Proxy(session, {
+    set: (target, prop, value) => {
+        target[prop] = value;
+        if (this.storageDir) this.saveSessionToFile(sessionId);
+        return true;
+    },
+    deleteProperty: (target, prop) => {
+        delete target[prop];
+        if (this.storageDir) this.saveSessionToFile(sessionId);
+        return true;
+    }
+});
+        </code></pre>
+        <div class="flex flex-wrap justify-center gap-6">
+            <!-- Primary -->
+            <a class="px-6 py-3 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition" href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy" target="_blank">Proxy Documentation</a>
+        </div>
+    </section>
 
-        // Remove from in-memory store
-        delete this.sessions[sessionId];
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Flash Data</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Simple File-Based Manager</h2>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// app/SessionManager.js (partial)
 
-        // Remove from disk if using storageDir
-        if (this.storageDir) {
-            const filePath = path.join(this.storageDir, `${sessionId}.json`);
-            if (fs.existsSync(filePath)) {
-                fs.unlinkSync(filePath);
-            }
-        }
+// Flash helper methods
+req.flash = {
+    set: (key, value) => {
+        req.session.flash[key] = value;
+        if (this.storageDir) this.saveSessionToFile(sessionId);
+    },
+    get: (key) => {
+        const value = req.session.flash[key];
+        delete req.session.flash[key];  // remove after reading
+        if (this.storageDir) this.saveSessionToFile(sessionId);
+        return value;
+    },
+    all: () => {
+        const value = { ...req.session.flash };
+        req.session.flash = {};  // clear all flash
+        if (this.storageDir) this.saveSessionToFile(sessionId);
+        return value;
+    }
+};
+        </code></pre>
+    </section>
 
-        // Clear the cookie (set expiry in the past)
-        res.setHeader("Set-Cookie", "SID=; HttpOnly; Path=/; Max-Age=0");
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Using Sessions</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Simple File-Based Manager</h2>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// session/server.js (partial)
 
-        // Clean up req
-        if (req.session) delete req.session;
-        if (req.user) delete req.user;
-        if (req.flash) delete req.flash;
-        if (req.alert) delete req.alert;
+const server = http.createServer(async (req, res) => {
+    sessionManager.attach(req, res);
+
+    // Session example
+    req.session['user_id'] = 123
+    delete req.session['user_id'];
+
+    // Flash example
+    req.flash.set('msg', 'Hello');
+    console.log('msg', req.flash.get('msg'));
+
+    ... RESPONSE CODE ...
+});
+        </code></pre>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// terminal
+
+cd session ---> npm run dev
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">New User Routes</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Form Validation Revisited</h2>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// controllers/UserController.js (partial)
+
+export class UserController extends BaseController {
+
+    async new(req, res) {
+        return this.view(res, "user/new", {}, req);
     }
 
-    ...
+    async create(req, res, params, body) {
+        const {valid, errors} = Validator.validate(User.rules, body);
+        if (!valid) {
+            return this.back(req, res, {errors, body});
+        }
+
+        const user = await User.create(body);
+        return this.redirect(res, "/users");
+    }
+
+    ... OTHER ACTION METHODS ...
 }
         </code></pre>
     </section>
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Add Auth User To View Data</h1>
-        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">View Updates</h2>
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">BaseController Generic Method</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Form Validation Revisited</h2>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// controllers/BaseController.js (partial)
+
+export class BaseController {
+
+    back(req, res, flashData = {}) {
+        // Store flash data
+        if (req.flash) {
+            for (const key in flashData) {
+                req.flash.set(key, flashData[key]);
+            }
+        }
+
+        // Redirect to referer if present, else fallback to root
+        const redirectUrl = req.headers?.referer || "/";
+        res.writeHead(302, {Location: redirectUrl});
+        res.end();
+    }
+
+    ... OTHER BASE METHODS ...
+}
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">HTML Form with Helpers</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Form Validation Revisited</h2>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// views/user/new.ejs (partial)
+
+&lt;form method="POST" action="/users">
+    &lt;div>
+        &lt;label for="first_name">First Name:&lt;/label>
+        &lt;input type="text" name="first_name" value="<%= old('first_name') %>" required>
+        &lt;% if (error('first_name')) { %>
+            &lt;div><%= error('first_name') %>&lt;/div>
+        &lt;% } %>
+    &lt;/div>
+
+    ... OTHER FIELDS ...
+
+    &lt;button type="submit">Create&lt;/button>
+&lt;/form>
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">HTML Helpers</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Form Validation Revisited</h2>
         <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
 // controllers/BaseController.js (partial)
 
@@ -253,93 +381,28 @@ export class BaseController {
             const flashErrors = req.flash.get("errors") || {};
             const flashBody = req.flash.get("body") || {};
             const flashSuccess = req.flash.get("success") || null;
-            const flashAlert = req.alert.get();
 
             data.old = (field, defaultValue = '') => flashBody[field] || defaultValue;
             data.error = (field) => flashErrors[field] || '';
-            data.success = flashSuccess;
-            data.auth = {
-                user: req.auth.user ? req.auth.user.get() : null
-            }
-            data.alert = flashAlert;
+            data.success = () => flashSuccess || '';
         }
 
-        // Convert "person/index" → /views/person/index.ejs
+        // Convert "user/index" → /views/user/index.ejs
         const viewPath = join(views_root, `${shortPath}.ejs`);
         return this.render(res, viewPath, data);
     }
+
+    ... OTHER BASE METHODS ...
 }
         </code></pre>
     </section>
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Navigation Bar</h1>
-        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">View Updates</h2>
-        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
-// views/layouts/_nav.js (partial)
-
-&lt;header&gt;
-    &lt;div&gt;
-        &lt;!-- Site Title --&gt;
-        &lt;a href=&quot;/users&quot;&gt;User Manager&lt;/a&gt;
-
-        &lt;!-- Right-side navigation --&gt;
-        &lt;div&gt;
-            &lt;% if (auth.user) { %&gt;
-                &lt;a href=&quot;/logout&quot;&gt;Logout&lt;/a&gt;
-                &lt;span&gt;Hello, &lt;%= auth.user.first_name %&gt;&lt;/span&gt;
-            &lt;% } else { %&gt;
-                &lt;a href=&quot;/register&quot;&gt;Register&lt;/a&gt;
-                &lt;a href=&quot;/login&quot;&gt;Login&lt;/a&gt;
-            &lt;% } %&gt;
-        &lt;/div&gt;
-    &lt;/div&gt;
-&lt;/header&gt;
-        </code></pre>
-    </section>
-
-    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">User List</h1>
-        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">View Updates</h2>
-        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
-// views/user/index.js (partial)
-
-&lt;div&gt;
-    &lt;table&gt;
-        &lt;thead&gt;
-        &lt;tr&gt;
-            &lt;th&gt;First Name&lt;/th&gt;
-            &lt;th&gt;Last Name&lt;/th&gt;
-            &lt;th&gt;Email&lt;/th&gt;
-            &lt;th&gt;Actions&lt;/th&gt;
-        &lt;/tr&gt;
-        &lt;/thead&gt;
-        &lt;tbody&gt;
-        &lt;% users.forEach(u =&gt; { %&gt;
-            &lt;tr&gt;
-                &lt;td&gt;&lt;%= u.first_name %&gt;&lt;/td&gt;
-                &lt;td&gt;&lt;%= u.last_name %&gt;&lt;/td&gt;
-                &lt;td&gt;&lt;%= u.email %&gt;&lt;/td&gt;
-                &lt;td&gt;
-                    &lt;a href=&quot;/users/&lt;%= u.email %&gt;&quot;&gt;View&lt;/a&gt;
-                    &lt;% if (auth.user &amp;&amp; (auth.user.is_admin || auth.user.email === u.email) ) { %&gt;
-                        | &lt;a href=&quot;/users/&lt;%= u.email %&gt;/edit&quot;&gt;Edit&lt;/a&gt;
-                        | &lt;a href=&quot;/users/&lt;%= u.email %&gt;/delete&quot;&gt;Delete&lt;/a&gt;
-                    &lt;% } %&gt;
-                &lt;/td&gt;
-            &lt;/tr&gt;
-        &lt;% }) %&gt;
-        &lt;/tbody&gt;
-    &lt;/table&gt;
-&lt;/div&gt;
-        </code></pre>
-    </section>
-
-
-    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Try It Out</h1>
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Give It A Try</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Form Validation Revisited</h2>
         <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
 // terminal
+
 npm start
         </code></pre>
     </section>
@@ -347,20 +410,24 @@ npm start
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
         <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Key Takeaways</h1>
         <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
-            <li>Never store plaintext passwords; always hash.</li>
-            <li>Use <code>bcrypt</code> or similar library for hashing.</li>
-            <li>Sessions track logged-in users.</li>
-            <li>Dynamically provide content based on authentication status.</li>
+            <li>Cookies store client-side data.</li>
+            <li>Sessions can store server-side data linked via a cookie (session ID).</li>
+            <li>Production Considerations:
+                <ul class="ml-6 text-xl md:text-2xl max-w-6xl mb-8 list-none list-inside space-y-2">
+                    <li>👉 Use signed/encrypted cookies.</li>
+                    <li>👉 Persistent, redundant, scalable storage solution (e.g., dedicated Redis server)</li>
+                    <li>👉 Consider server-side session storage with libraries like express-session.</li>
+                </ul>
+            </li>
         </ul>
     </section>
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
         <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Up Next</h1>
-        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-6 text-center">Authorization & Access Control</h2>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-6 text-center">Flash Messages</h2>
         <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
-            <li>We hid links from user, but they are still accessible.</li>
-            <li>Introduce the concept of middleware.</li>
-            <li>Restrict routes based on authentication status.</li>
+            <li>Popup messages for user feedback.</li>
+            <li>Improved user experience.</li>
         </ul>
     </section>
 

@@ -11,7 +11,7 @@ registerRoutes(router);
 
 const server = http.createServer(async (req, res) => {
     sessionManager.attach(req, res);
-    
+
     const url = new URL(req.url, `http://${req.headers.host}`);
     const parts = url.pathname.split("/").filter(Boolean);
 

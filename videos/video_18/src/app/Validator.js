@@ -33,14 +33,6 @@ export default class Validator {
             if (rule.pattern && typeof value === "string" && !rule.pattern.test(value)) {
                 errors[field] = `${field} is not in a valid format`;
             }
-            
-            // Confirm (match another field)
-            if (rule.confirm) {
-                const confirmField = rule.confirm;
-                if (value !== data[confirmField]) {
-                    errors[field] = `${field} does not match ${confirmField}`;
-                }
-            }
         }
 
         return {

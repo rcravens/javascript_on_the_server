@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <title>Introducing Middleware | Scaling Up – Beyond the Basics</title>
+    <title>Flash Messages | Adding Interactivity & State</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/themes/prism-tomorrow.css" rel="stylesheet"/>
     <script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/prism.min.js"></script>
@@ -23,7 +23,7 @@
       <span class="bg-yellow-400 text-gray-900 text-xs md:text-sm font-semibold px-2 py-1 rounded-full uppercase tracking-wide">
         Video
       </span>
-        <h3 class="mt-1 text-lg md:text-2xl font-bold text-yellow-400">Introducing Middleware</h3>
+        <h3 class="mt-1 text-lg md:text-2xl font-bold text-yellow-400">Flash Messages</h3>
     </div>
 
     <!-- Module Title -->
@@ -31,7 +31,7 @@
       <span class="bg-indigo-400 text-gray-900 text-xs md:text-sm font-semibold px-2 py-1 rounded-full uppercase tracking-wide">
         Module
       </span>
-        <h3 class="mt-1 text-lg md:text-2xl font-bold text-indigo-400">Scaling Up – Beyond the Basics</h3>
+        <h3 class="mt-1 text-lg md:text-2xl font-bold text-indigo-400">Adding Interactivity & State</h3>
     </div>
 </header>
 
@@ -39,278 +39,212 @@
 <main class="bg-gradient-to-b from-gray-900 via-gray-800 to-gray-700" id="slides">
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">What Is Middleware?</h1>
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">What Are Flash Messages?</h1>
         <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
-            <li>Middleware is code that sits between the request and response.</li>
-            <li>Can modify <code>req</code> or <code>res</code>, perform tasks, or control flow.</li>
-            <li>Common pattern in many frameworks, but can be implemented in vanilla Node.</li>
+            <li>Small pop-up dialogs with feedback for the user.</li>
+            <li>Examples: User added, User deleted, You are not authorized</li>
+            <li>Enhances UX (user experience) in your application.</li>
         </ul>
     </section>
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Our First Middleware</h1>
-        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Auth Middleware</h2>
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">How I Want To Use</h1>
         <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
-// middleware/HasAuthenticated.js
 
-export default class HasAuthenticated {
-    async handle(req, res) {
-        if (!req.session.user) {
-            req.alert.warn("Login to access this feature.");
+req.alert.success("User updated.");
 
-            res.writeHead(302, {Location: "/login"});
-            res.end();
-            return false; // stop further processing
+if (!valid) {
+    req.alert.error("Please fix the form errors.", "Validation Failed");
+    return this.back(req, res, {errors, body});
+}
+
+if (!authorized) {
+    req.alert.warn("You are not authorized for this feature.");
+
+    res.writeHead(302, {"Location": "/people"});
+    res.end();
+}
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Session Helpers</h1>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// app/SessionManager.js (partial)
+
+class SessionManager {
+
+    attach(req, res) {
+        ...
+
+        // Flash helper methods
+        req.flash = {
+            set: (key, value) => {
+                req.session.flash[key] = value;
+                if (this.storageDir) this.saveSessionToFile(sessionId);
+            },
+            get: (key) => {
+                const value = req.session.flash[key];
+                delete req.session.flash[key];  // remove after reading
+                if (this.storageDir) this.saveSessionToFile(sessionId);
+                return value;
+            }
+        };
+
+        // Alert helpers for flash message
+        req.alert = {
+            success: (message, title = '') => req.flash.set('alert', {type: 'success', message, title}),
+            error: (message, title = '') => req.flash.set('alert', {type: 'error', message, title}),
+            warn: (message, title = '') => req.flash.set('alert', {type: 'warning', message, title}),
+            get: () => req.flash.get('alert') || null
+        };
+
+        ...
+    }
+}
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Add Alert Data To View</h1>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// controllers/BaseController.js (partial)
+
+export class BaseController {
+
+    async view(res, shortPath, data = {}, req = null) {
+        if (req) {
+            // Add helpers
+            const flashErrors = req.flash.get("errors") || {};
+            const flashBody = req.flash.get("body") || {};
+            const flashSuccess = req.flash.get("success") || null;
+            const flashAlert = req.alert.get();
+
+            data.old = (field, defaultValue = '') => flashBody[field] || defaultValue;
+            data.error = (field) => flashErrors[field] || '';
+            data.success = flashSuccess;
+            data.alert = flashAlert;
         }
-        return true; // continue
+
+        // Convert "person/index" → /views/person/index.ejs
+        const viewPath = join(views_root, `${shortPath}.ejs`);
+        return this.render(res, viewPath, data);
     }
 }
         </code></pre>
     </section>
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Registering - Updating Routes</h1>
-        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Auth Middleware</h2>
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Flash Message Template</h1>
         <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
-// routes.js (partial)
+// views/layouts/_flash.ejs
 
-// routes.js
-import {UserController} from "./controllers/UserController.js";
-import {AuthController} from "./controllers/AuthController.js";
-import HasAuthenticated from "./middleware/HasAuthenticated.js";
-
-export default function registerRoutes(router) {
-
-    // public routes
-    router.get("/users", UserController, "index");
-    router.get("/register", UserController, "new");
-    router.post("/users", UserController, "create");
-    router.get("/login", AuthController, "loginForm");
-    router.post("/login", AuthController, "login");
-
-    // authenticated routes
-    router.group([HasAuthenticated], () => {
-        router.get("/users/:email", UserController, "show");
-        router.get("/users/:email/edit", UserController, "edit");
-        router.get("/users/:email/delete", UserController, "delete");
-        router.put("/users/:email", UserController, "update");
-        router.put("/users/:email/password", UserController, "updatePassword");
-        router.delete("/users/:email", UserController, "destroy");
-
-        router.get("/logout", AuthController, "logout");
-    });
-}
+&lt;% if (alert) { %&gt;
+    &lt;div id=&quot;flash-alert&quot; class=&quot;fixed bottom-4 right-4 max-w-sm w-full p-4 rounded shadow-md
+        &lt;%= alert.type === 'success' ? 'bg-green-600' : alert.type === 'error' ? 'bg-red-600' : 'bg-yellow-500' %&gt;
+        text-white&quot;&gt;
+        &lt;% if (alert.title) { %&gt;
+            &lt;strong class=&quot;block mb-1&quot;&gt;&lt;%= alert.title %&gt;&lt;/strong&gt;
+        &lt;% } %&gt;
+        &lt;span&gt;&lt;%= alert.message %&gt;&lt;/span&gt;
+    &lt;/div&gt;
+    &lt;script&gt;
+        setTimeout(() =&gt; {
+            const el = document.getElementById('flash-alert');
+            if (el) el.style.transition = 'opacity 0.5s ease-out';
+            if (el) el.style.opacity = '0';
+        }, 3000); // fade after 3 seconds
+    &lt;/script&gt;
+&lt;% } %&gt;
         </code></pre>
-    </section>
-
-    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Registering - Update Router</h1>
-        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Auth Middleware</h2>
         <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
-// app/Router.js (partial)
+// views/layouts/layout.ejs
 
-export default class Router {
-    constructor() {
-        this.routes = [];
-        this._currentGroupMiddleware = [];
-    }
-
-    #register(method, path, controllerClass, handlerName, middlewares = []) {
-        const combinedMiddleware = [...this._currentGroupMiddleware, ...middlewares];
-
-        const parts = path.split("/").filter(Boolean);
-        this.routes.push({method, parts, controllerClass, handlerName, middlewares: combinedMiddleware});
-    }
-
-    get(path, controllerClass, handlerName, middlewares = []) {
-        this.#register("GET", path, controllerClass, handlerName, middlewares);
-    }
-
-    ... post, put, patch, delete METHODS ...
-
-    group(middleware = [], callback) {
-        const previous = this._currentGroupMiddleware;
-        this._currentGroupMiddleware = [...previous, ...middleware];
-        callback();
-        this._currentGroupMiddleware = previous; // restore
-    }
-}
+&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;&quot;&gt;
+&lt;%- include(&quot;_head&quot;) %&gt;
+&lt;body class=&quot;bg-gray-900 text-gray-100 min-h-screen flex flex-col&quot;&gt;
+ ...
+&lt;%- include(&quot;_flash&quot;) %&gt;
+ ...
+&lt;/body&gt;
+&lt;/html&gt;
         </code></pre>
     </section>
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Running Middleware</h1>
-        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Auth Middleware</h2>
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Testing It Out</h1>
         <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
 // app/server.js (partial)
-
-const router = new Router();
-registerRoutes(router);
 
 const server = http.createServer(async (req, res) => {
     sessionManager.attach(req, res);
 
-    const url = new URL(req.url, `http://${req.headers.host}`);
-    const parts = url.pathname.split("/").filter(Boolean);
+    req.alert.success('This is my message', 'My Title');
 
-    // Handle _method override
-    const method = req.method === "POST" && url.searchParams.get("_method")
-            ? url.searchParams.get("_method").toUpperCase()
-            : req.method;
-
-    try {
-        await router.handle(req, res, method, parts);
-    } catch (err) {
-        console.error("Error handling request:", err);
-        res.writeHead(500, {"Content-Type": "text/plain"});
-        res.end("Internal Server Error");
-    }
+    ... OTHER SERVER CODE ...
 });
         </code></pre>
-    </section>
-
-    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Running Middleware</h1>
-        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Auth Middleware</h2>
-        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
-// app/Router.js (partial)
-
-export default class Router {
-
-    async handle(req, res, method, urlParts) {
-        for (const route of this.routes) {
-            ... MATCHING LOGIC ...
-
-            if (!matched) continue;
-
-            // Run middlewares in order
-            for (const MiddlewareClass of route.middlewares) {
-                const middleware = new MiddlewareClass();
-                const result = await middleware.handle(req, res, params);
-                if (result === false) return; // stop chain if middleware blocks
-            }
-
-            const controller = new route.controllerClass();
-            if (!controller[route.handlerName])
-                throw new Error(`Handler "${route.handlerName}" not found on controller`);
-
-            let body = {};
-            if (["POST", "PUT", "PATCH"].includes(method)) {
-                body = await Router.parseBody(req);
-            }
-
-            return controller[route.handlerName](req, res, params, body);
-        }
-
-        res.writeHead(404, {"Content-Type": "text/plain"});
-        res.end("Not Found");
-    }
-}
-        </code></pre>
-    </section>
-
-    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Try It Out</h1>
-        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Auth Middleware</h2>
         <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
 // terminal
 npm start
-
-/*
-1. logout
-2. http://localhost:3000/users/bob.cravens@gmail.com/edit       --> access denied
-3. login
-4. http://localhost:3000/users/bob.cravens@gmail.com/edit       --> access granted
-5. http://localhost:3000/users/jed.stracke8@hotmail.com/edit    --> oops...access granted
-*/
         </code></pre>
     </section>
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">CanEdit Middleware</h1>
-        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">More Middleware</h2>
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Update UserController</h1>
         <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
-// middleware/CanEdit.js
+// controllers/UserController.js (partial)
 
-export default class CanEdit {
-    async handle(req, res, params) {
-        const email = params.email;
-        if (req.session.user?.email !== email && !req.session.user?.is_admin) {
-            req.alert.warn("You can only modify your own profile.");
+export class UserController extends BaseController {
+    ...
 
-            res.writeHead(302, {"Location": "/users"});
-            res.end();
-            return false;
+    async create(req, res, params, body) {
+        const other_user = await User.find(body.email);
+        if (other_user) {
+            req.alert.error("Email is already taken.", "Validation Failed");
+            return this.back(req, res, {body});
         }
-        return true;
+
+        const {valid, errors} = Validator.validate(User.rules, body);
+        if (!valid) {
+            req.alert.error("Please fix the form errors.", "Validation Failed");
+            return this.back(req, res, {errors, body});
+        }
+
+        // Hash the password
+        const hashedPassword = await User.hashPassword(body.password);
+
+        // Create the person
+        const person = await User.create(body);
+        if (person) {
+            req.alert.success("User added.");
+
+            // Automatically log in the new user
+            req.session.user = person;
+        }
+
+        return this.redirect(res, "/users");
     }
 }
-        </code></pre>
-    </section>
-
-    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Update Routes</h1>
-        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">More Middleware</h2>
-        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
-// routes.js
-
-export default function registerRoutes(router) {
-
-    // public routes
-    router.get("/users", UserController, "index");
-    router.get("/register", UserController, "new");
-    router.post("/users", UserController, "create");
-    router.get("/login", AuthController, "loginForm");
-    router.post("/login", AuthController, "login");
-
-    // authenticated routes
-    router.group([HasAuthenticated], () => {
-        router.get("/users/:email", UserController, "show");
-        router.get("/users/:email/edit", UserController, "edit", [CanEdit]);
-        router.get("/users/:email/delete", UserController, "delete", [CanEdit]);
-        router.put("/users/:email", UserController, "update", [CanEdit]);
-        router.put("/users/:email/password", UserController, "updatePassword", [CanEdit]);
-        router.delete("/users/:email", UserController, "destroy", [CanEdit]);
-
-        router.get("/logout", AuthController, "logout");
-    });
-
-}
-        </code></pre>
-    </section>
-
-    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Try It Out</h1>
-        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Auth Middleware</h2>
-        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
-// terminal
-npm start
-
-/*
-1. logout
-2. http://localhost:3000/users/bob.cravens@gmail.com/edit       --> access denied
-3. login
-4. http://localhost:3000/users/bob.cravens@gmail.com/edit       --> access granted
-5. http://localhost:3000/users/jed.stracke8@hotmail.com/edit    --> access denied
-*/
         </code></pre>
     </section>
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
         <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Key Takeaways</h1>
         <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
-            <li>Middleware pattern promotes DRY code and centralizes common tasks.</li>
-            <li>Logging, authentication, and error handling are common middleware uses.</li>
-            <li>Clean separation improves readability and maintainability.</li>
+            <li>Flash message use the underlying session feature.</li>
+            <li>Flashing success, error, and warn messages improves UX.</li>
         </ul>
     </section>
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
         <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Up Next</h1>
-        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-6 text-center">Exploring Popular Frameworks</h2>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-6 text-center">Authentication Basics</h2>
         <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
-            <li>Discuss when and why to use.</li>
-            <li>Review popular choices.</li>
+            <li>Create a login form.</li>
+            <li>Use <code>bcrypt</code> for secure password hashing.</li>
+            <li>Implement session-based login to track authenticated users.</li>
         </ul>
     </section>
 

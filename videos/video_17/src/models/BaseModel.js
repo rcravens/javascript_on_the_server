@@ -1,5 +1,5 @@
 import path from "path";
-import {fileURLToPath} from "url";
+import { fileURLToPath } from "url";
 import fs from "fs/promises";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -36,19 +36,6 @@ export class BaseModel {
         return path.join(dataDir, this.fileName);
     }
 
-    // ------ Overwrite the existing records
-    static async overwrite(records) {
-        const filePath = this.filePath;
-
-        // Ensure it's always an array
-        const data = Array.isArray(records) ? records : [];
-
-        // Write pretty JSON
-        await write_json(filePath, data);
-
-        return data;
-    }
-
     // ------ All: fetch all records
     static async all() {
         return await read_json(this.filePath);
@@ -77,7 +64,7 @@ export class BaseModel {
         const index = records.findIndex((r) => r[this.keyField] === key);
         if (index === -1) return null;
 
-        records[index] = {...records[index], ...attrs};
+        records[index] = { ...records[index], ...attrs };
         await write_json(this.filePath, records);
         return records[index];
     }

@@ -6,12 +6,12 @@ import Validator from "../app/Validator.js";
 export class UserController extends BaseController {
     async index(req, res) {
         const users = await User.all();
-        return this.view(res, "user/index", {users}, req);
+        return this.view(res, "user/index", {users});
     }
 
     async show(req, res, params) {
         const user = await User.find(params.email);
-        return this.view(res, "user/show", {user}, req);
+        return this.view(res, "user/show", {user});
     }
 
     async new(req, res) {
@@ -25,99 +25,32 @@ export class UserController extends BaseController {
 
     async delete(req, res, params) {
         const user = await User.find(params.email);
-        return this.view(res, "user/delete", {user}, req);
+        return this.view(res, "user/delete", {user});
     }
 
     async create(req, res, params, body) {
-        const other_user = await User.find(body.email);
-        if (other_user) {
-            req.alert.error("Email is already taken.", "Validation Failed");
-            return this.back(req, res, {body});
-        }
-
         const {valid, errors} = Validator.validate(User.rules, body);
         if (!valid) {
-            req.alert.error("Please fix the form errors.", "Validation Failed");
             return this.back(req, res, {errors, body});
         }
 
-        // Hash the password
-        const hashedPassword = await User.hashPassword(body.password);
-
-        // Create the person
-        const personData = {
-            first_name: body.first_name,
-            last_name: body.last_name,
-            email: body.email,
-            password: hashedPassword,
-            is_admin: false
-        };
-
-        const person = await User.create(personData);
-        if (person) {
-            req.alert.success("User added.");
-        }
-
+        const person = await User.create(body);
         return this.redirect(res, "/users");
     }
 
     async update(req, res, params, body) {
-
-        // If changing email, ensure it does not already exist
-        if (body.email !== params.email) {
-            const other_user = User.find(body.email);
-            if (other_user) {
-                req.alert.error("Email is already taken.", "Validation Failed");
-                return this.back(req, res, {body});
-            }
-        }
-
-        // Validate the fields
-        const rules = this.pickRules(User.rules, ["first_name", "last_name", "email"]);
-        const {valid, errors} = Validator.validate(rules, body);
+        body = {...body, email: params.email};
+        const {valid, errors} = Validator.validate(User.rules, body);
         if (!valid) {
-            req.alert.error("Please fix the form errors.", "Validation Failed");
             return this.back(req, res, {errors, body});
         }
 
-        // Prepare update data
-        const updateData = {
-            first_name: body.first_name,
-            last_name: body.last_name,
-            email: body.email
-        };
-
-        await User.update(params.email, updateData);
-
-        req.alert.success("User updated.");
-
-        return this.redirect(res, `/users/${body.email}/edit`);
-    }
-
-    async updatePassword(req, res, params, body) {
-        const rules = this.pickRules(User.rules, ["password"]);
-        const {valid, errors} = Validator.validate(rules, body);
-
-        if (!valid) {
-            req.alert.error("Please fix the form errors.", "Validation Failed");
-            return this.back(req, res, {errors, body});
-        }
-
-        // Hash the new password
-        const hashedPassword = await User.hashPassword(body.password);
-
-        await User.update(params.email, {password: hashedPassword});
-
-        req.alert.success("Password updated.");
-
+        const user = await User.update(params.email, body);
         return this.redirect(res, `/users/${params.email}/edit`);
     }
 
     async destroy(req, res, params) {
         await User.delete(params.email);
-
-        req.alert.success("User deleted.");
-
         return this.redirect(res, "/users");
     }
 }

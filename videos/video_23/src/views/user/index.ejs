@@ -1,0 +1,28 @@
+<div class="max-w-4xl mx-auto bg-gray-800 p-6 rounded-lg shadow-lg overflow-x-auto">
+    <table class="w-full text-gray-100 table-auto">
+        <thead class="bg-gray-700">
+        <tr>
+            <th class="px-4 py-2 text-left">First Name</th>
+            <th class="px-4 py-2 text-left">Last Name</th>
+            <th class="px-4 py-2 text-left">Email</th>
+            <th class="px-4 py-2 text-left">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <% users.forEach(u => { %>
+            <tr class="border-b border-gray-700 hover:bg-gray-700">
+                <td class="px-4 py-2"><%= u.first_name %></td>
+                <td class="px-4 py-2"><%= u.last_name %></td>
+                <td class="px-4 py-2"><%= u.email %></td>
+                <td class="px-4 py-2 space-x-2">
+                    <a href="/users/<%= u.email %>" class="text-green-400 hover:underline">View</a>
+                    <% if (auth.user && (auth.user.is_admin || auth.user.email === u.email) ) { %>
+                        | <a href="/users/<%= u.email %>/edit" class="text-yellow-400 hover:underline">Edit</a>
+                        | <a href="/users/<%= u.email %>/delete" class="text-red-400 hover:underline">Delete</a>
+                    <% } %>
+                </td>
+            </tr>
+        <% }) %>
+        </tbody>
+    </table>
+</div>

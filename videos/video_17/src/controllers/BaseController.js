@@ -12,7 +12,7 @@ export class BaseController {
     async render(res, viewPath, data = {}) {
         try {
             const content = await ejs.renderFile(viewPath, data);
-            const html = await ejs.renderFile(layout_template, {...data, body: content});
+            const html = await ejs.renderFile(layout_template, {body: content});
 
             res.writeHead(200, {"Content-Type": "text/html"});
             res.end(html);
@@ -28,12 +28,10 @@ export class BaseController {
             const flashErrors = req.flash.get("errors") || {};
             const flashBody = req.flash.get("body") || {};
             const flashSuccess = req.flash.get("success") || null;
-            const flashAlert = req.alert.get();
 
             data.old = (field, defaultValue = '') => flashBody[field] || defaultValue;
             data.error = (field) => flashErrors[field] || '';
-            data.success = flashSuccess;
-            data.alert = flashAlert;
+            data.success = () => flashSuccess || '';
         }
 
         // Convert "person/index" → /views/person/index.ejs
@@ -63,13 +61,5 @@ export class BaseController {
     error(res, statusCode, message) {
         res.writeHead(statusCode, {"Content-Type": "text/plain"});
         res.end(message);
-    }
-
-    pickRules(rules, fields) {
-        const subset = {};
-        fields.forEach(field => {
-            if (rules[field]) subset[field] = rules[field];
-        });
-        return subset;
     }
 }

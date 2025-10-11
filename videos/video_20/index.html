@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <title>Exploring Popular Frameworks | Scaling Up – Beyond the Basics</title>
+    <title>Authentication Basics | Adding Interactivity & State</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/themes/prism-tomorrow.css" rel="stylesheet"/>
     <script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/prism.min.js"></script>
@@ -23,7 +23,7 @@
       <span class="bg-yellow-400 text-gray-900 text-xs md:text-sm font-semibold px-2 py-1 rounded-full uppercase tracking-wide">
         Video
       </span>
-        <h3 class="mt-1 text-lg md:text-2xl font-bold text-yellow-400">Exploring Popular Frameworks</h3>
+        <h3 class="mt-1 text-lg md:text-2xl font-bold text-yellow-400">Authentication Basics</h3>
     </div>
 
     <!-- Module Title -->
@@ -31,7 +31,7 @@
       <span class="bg-indigo-400 text-gray-900 text-xs md:text-sm font-semibold px-2 py-1 rounded-full uppercase tracking-wide">
         Module
       </span>
-        <h3 class="mt-1 text-lg md:text-2xl font-bold text-indigo-400">Scaling Up – Beyond the Basics</h3>
+        <h3 class="mt-1 text-lg md:text-2xl font-bold text-indigo-400">Adding Interactivity & State</h3>
     </div>
 </header>
 
@@ -39,132 +39,328 @@
 <main class="bg-gradient-to-b from-gray-900 via-gray-800 to-gray-700" id="slides">
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Why Use A Framework?</h1>
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Why Authentication?</h1>
         <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
-            <li>Vanilla Node is flexible but requires manual routing, middleware, and error handling.</li>
-            <li>
-                Frameworks provide:
-                <ul class="ml-6 text-xl md:text-2xl max-w-6xl mb-8 list-none list-inside space-y-2">
-                    <li>👉 Structure (folders, conventions).</li>
-                    <li>👉 Built-in features (middleware, validation, authentication).</li>
-                    <li>👉 Performance optimizations.</li>
-                    <li>👉 Community support.</li>
-                </ul>
-            </li>
+            <li>Allows the server to verify user identity.</li>
+            <li>Restricts access to protected resources.</li>
+            <li>Forms the foundation for user accounts, profiles, and permissions.</li>
         </ul>
     </section>
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Some Popular Frameworks</h1>
-        <div class="container mx-auto p-4">
-            <table class="min-w-full divide-y divide-gray-200 bg-white shadow-md rounded-lg">
-                <thead class="bg-gray-50">
-                <tr>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Popularity (GitHub Stars)</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Framework</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Backend Only / Full Stack</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Supported Front End Libraries</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Notable Features</th>
-                </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-200">
-                <tr>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><a class="text-blue-600 hover:text-blue-900" href="https://github.com/vercel/next.js" target="_blank">135k</a></td>
-                    <td class="px-6 py-4 whitespace-nowrap"><a class="text-blue-600 hover:text-blue-900" href="https://nextjs.org" target="_blank">Next.js</a></td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Full Stack</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">React</td>
-                    <td class="px-6 py-4 text-sm text-gray-900">Server-side rendering (SSR), static site generation (SSG), API routes, file-based routing, image optimization</td>
-                </tr>
-                <tr>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><a class="text-blue-600 hover:text-blue-900" href="https://github.com/nestjs/nest" target="_blank">72k</a></td>
-                    <td class="px-6 py-4 whitespace-nowrap"><a class="text-blue-600 hover:text-blue-900" href="https://nestjs.com" target="_blank">Nest.js</a></td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Backend Only</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Any (e.g., React, Vue, Angular)</td>
-                    <td class="px-6 py-4 text-sm text-gray-900">Modular architecture, TypeScript support, dependency injection, decorators, inspired by Angular</td>
-                </tr>
-                <tr>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><a class="text-blue-600 hover:text-blue-900" href="https://github.com/expressjs/express" target="_blank">67k</a></td>
-                    <td class="px-6 py-4 whitespace-nowrap"><a class="text-blue-600 hover:text-blue-900" href="https://expressjs.com" target="_blank">Express.js</a></td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Backend Only</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Any (e.g., React, Vue, Angular)</td>
-                    <td class="px-6 py-4 text-sm text-gray-900">Minimalist, flexible routing, middleware support, unopinionated</td>
-                </tr>
-                <tr>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><a class="text-blue-600 hover:text-blue-900" href="https://github.com/nuxt/nuxt" target="_blank">58k</a></td>
-                    <td class="px-6 py-4 whitespace-nowrap"><a class="text-blue-600 hover:text-blue-900" href="https://nuxt.com" target="_blank">Nuxt.js</a></td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Full Stack</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Vue.js</td>
-                    <td class="px-6 py-4 text-sm text-gray-900">Universal rendering, auto code-splitting, server-side rendering, modules ecosystem</td>
-                </tr>
-                <tr>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><a class="text-blue-600 hover:text-blue-900" href="https://github.com/meteor/meteor" target="_blank">44k</a></td>
-                    <td class="px-6 py-4 whitespace-nowrap"><a class="text-blue-600 hover:text-blue-900" href="https://www.meteor.com" target="_blank">Meteor</a></td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Full Stack</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">React, Vue, Angular, Blaze</td>
-                    <td class="px-6 py-4 text-sm text-gray-900">Isomorphic code, real-time data sync, full-stack JavaScript, hot code push</td>
-                </tr>
-                <tr>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><a class="text-blue-600 hover:text-blue-900" href="https://github.com/koajs/koa" target="_blank">35k</a></td>
-                    <td class="px-6 py-4 whitespace-nowrap"><a class="text-blue-600 hover:text-blue-900" href="https://koajs.com" target="_blank">Koa.js</a></td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Backend Only</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Any (e.g., React, Vue, Angular)</td>
-                    <td class="px-6 py-4 text-sm text-gray-900">Async/await support, lightweight middleware, built by Express team</td>
-                </tr>
-                <tr>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><a class="text-blue-600 hover:text-blue-900" href="https://github.com/fastify/fastify" target="_blank">34k</a></td>
-                    <td class="px-6 py-4 whitespace-nowrap"><a class="text-blue-600 hover:text-blue-900" href="https://fastify.io" target="_blank">Fastify</a></td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Backend Only</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Any (e.g., React, Vue, Angular)</td>
-                    <td class="px-6 py-4 text-sm text-gray-900">High performance, low overhead, JSON schema validation, plugin system</td>
-                </tr>
-                <tr>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><a class="text-blue-600 hover:text-blue-900" href="https://github.com/remix-run/remix" target="_blank">31k</a></td>
-                    <td class="px-6 py-4 whitespace-nowrap"><a class="text-blue-600 hover:text-blue-900" href="https://remix.run" target="_blank">Remix</a></td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Full Stack</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">React</td>
-                    <td class="px-6 py-4 text-sm text-gray-900">Nested routing, data loading, forms over GET/POST, progressive enhancement</td>
-                </tr>
-                <tr>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><a class="text-blue-600 hover:text-blue-900" href="https://github.com/balderdashy/sails" target="_blank">22k</a></td>
-                    <td class="px-6 py-4 whitespace-nowrap"><a class="text-blue-600 hover:text-blue-900" href="https://sailsjs.com" target="_blank">Sails.js</a></td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Full Stack</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Any (e.g., EJS, Handlebars)</td>
-                    <td class="px-6 py-4 text-sm text-gray-900">MVC framework, WebSockets support, auto-generated REST APIs, ORM integration</td>
-                </tr>
-                <tr>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><a class="text-blue-600 hover:text-blue-900" href="https://github.com/adonisjs/core" target="_blank">18k</a></td>
-                    <td class="px-6 py-4 whitespace-nowrap"><a class="text-blue-600 hover:text-blue-900" href="https://adonisjs.com" target="_blank">Adonis.js</a></td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Full Stack</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Any (e.g., Edge templates)</td>
-                    <td class="px-6 py-4 text-sm text-gray-900">TypeScript-first, Lucid ORM, MVC pattern, inspired by Laravel</td>
-                </tr>
-                <tr>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><a class="text-blue-600 hover:text-blue-900" href="https://github.com/hapijs/hapi" target="_blank">14k</a></td>
-                    <td class="px-6 py-4 whitespace-nowrap"><a class="text-blue-600 hover:text-blue-900" href="https://hapi.dev" target="_blank">Hapi.js</a></td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Backend Only</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Any (e.g., React, Vue, Angular)</td>
-                    <td class="px-6 py-4 text-sm text-gray-900">Configuration-centric, plugin-based, input validation, caching</td>
-                </tr>
-                </tbody>
-            </table>
-            <p class="mt-4 text-sm text-gray-400">Sorted by GitHub stars (approximate as of late 2025). For verification, see <a class="text-blue-600 hover:text-blue-900" href="https://github.com/vanodevium/node-framework-stars" target="_blank">GitHub stars ranking</a>.</p>
-        </div>
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Login Routes</h1>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// route.js (partial)
+
+export default function registerRoutes(router) {
+    router.get("/login", AuthController, "loginForm");
+    router.post("/login", AuthController, "login");
+    router.get("/logout", AuthController, "logout");
+
+    ... USER ROUTES ...
+}
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">AuthController.loginForm</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Authentication Flow</h2>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// controllers/AuthController.js (partial)
+
+export class AuthController extends BaseController {
+
+    async loginForm(req, res) {
+        return this.view(res, "auth/login", {}, req);
+    }
+}
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Login View</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Authentication Flow</h2>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// views/auth/login.ejs (partial)
+
+&lt;form method=&quot;POST&quot; action=&quot;/login&quot;&gt;
+
+    &lt;div&gt;
+        &lt;label for=&quot;email&quot;&gt;Email:&lt;/label&gt;
+        &lt;input type=&quot;email&quot; name=&quot;email&quot; value=&quot;&lt;%= old(&#39;email&#39;) %&gt;&quot; required&gt;
+        &lt;% if (error(&#39;email&#39;)) { %&gt;
+            &lt;div&gt;&lt;%= error(&#39;email&#39;) %&gt;&lt;/div&gt;
+        &lt;% } %&gt;
+    &lt;/div&gt;
+
+    &lt;div&gt;
+        &lt;label for=&quot;password&quot;&gt;Password:&lt;/label&gt;
+        &lt;input type=&quot;password&quot; name=&quot;password&quot; required&gt;
+        &lt;% if (error(&#39;password&#39;)) { %&gt;
+            &lt;div&gt;&lt;%= error(&#39;password&#39;) %&gt;&lt;/div&gt;
+        &lt;% } %&gt;
+    &lt;/div&gt;
+
+    &lt;button type=&quot;submit&quot;&gt;Login&lt;/button&gt;
+&lt;/form&gt;
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">AuthController.login</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Authentication Flow</h2>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// controllers/AuthController.js (partial)
+
+export class AuthController extends BaseController {
+
+    async login(req, res, params, body) {
+        const {email, password} = body;
+
+        // Lookup user by email
+        const user = await User.find(email);
+        if (!user) {
+            req.flash.set("errors", {email: "No account found with that email"});
+            req.flash.set("body", body);
+            return this.back(req, res);
+        }
+
+        // Verify password with bcrypt
+        const match = await bcrypt.compare(password, user.password);
+        if (!match) {
+            req.flash.set("errors", {password: "Invalid password"});
+            req.flash.set("body", body);
+            return this.back(req, res);
+        }
+
+        // Store user in session
+        req.auth.user.set( user );
+
+        // Redirect to people index after login
+        return this.redirect(res, "/users");
+    }
+}
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Session Manager</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Authentication Flow</h2>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// app/SessionManager.js (partial)
+
+class SessionManager {
+
+    destroySession(req, res) {
+        ...
+    }
+
+    attach(req, res) {
+        ...
+
+        // Helper for logged-in user
+        req.auth = {
+            user: {
+                get: () => req.session.user || null,
+                set: (userObj) => {
+                    req.session.user = userObj;
+                    if (this.storageDir) this.saveSessionToFile(sessionId);
+                },
+                clear: () => {
+                    this.destroySession(req, res);  // destroy current session
+                    this.attach(req, res);          // start a fresh session
+                }
+            }
+        };
+
+        ...
+    }
+}
+        </code></pre>
+    </section>
+
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">AuthController.logout</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Authentication Flow</h2>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// controllers/AuthController.js (partial)
+
+export class AuthController extends BaseController {
+    ...
+
+    async logout(req, res) {
+        req.auth.user.clear()/ // clear user session
+
+        sessionManager.attach(req, res);    // Create a new session (not logged in)
+        req.alert.success("You have been logged out.", "Success");
+        return this.redirect(res, "/users");
+    }
+}
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Session Manager</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Authentication Flow</h2>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// app/SessionManager.js (partial)
+
+class SessionManager {
+
+    destroySession(req, res) {
+        const cookies = this.parseCookies(req);
+        const sessionId = cookies["SID"];
+        if (!sessionId) return;
+
+        // Remove from in-memory store
+        delete this.sessions[sessionId];
+
+        // Remove from disk if using storageDir
+        if (this.storageDir) {
+            const filePath = path.join(this.storageDir, `${sessionId}.json`);
+            if (fs.existsSync(filePath)) {
+                fs.unlinkSync(filePath);
+            }
+        }
+
+        // Clear the cookie (set expiry in the past)
+        res.setHeader("Set-Cookie", "SID=; HttpOnly; Path=/; Max-Age=0");
+
+        // Clean up req
+        if (req.session) delete req.session;
+        if (req.user) delete req.user;
+        if (req.flash) delete req.flash;
+        if (req.alert) delete req.alert;
+    }
+
+    ...
+}
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Add Auth User To View Data</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">View Updates</h2>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// controllers/BaseController.js (partial)
+
+export class BaseController {
+
+    async view(res, shortPath, data = {}, req = null) {
+        if (req) {
+            // Add helpers
+            const flashErrors = req.flash.get("errors") || {};
+            const flashBody = req.flash.get("body") || {};
+            const flashSuccess = req.flash.get("success") || null;
+            const flashAlert = req.alert.get();
+
+            data.old = (field, defaultValue = '') => flashBody[field] || defaultValue;
+            data.error = (field) => flashErrors[field] || '';
+            data.success = flashSuccess;
+            data.auth = {
+                user: req.auth.user ? req.auth.user.get() : null
+            }
+            data.alert = flashAlert;
+        }
+
+        // Convert "person/index" → /views/person/index.ejs
+        const viewPath = join(views_root, `${shortPath}.ejs`);
+        return this.render(res, viewPath, data);
+    }
+}
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Navigation Bar</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">View Updates</h2>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// views/layouts/_nav.js (partial)
+
+&lt;header&gt;
+    &lt;div&gt;
+        &lt;!-- Site Title --&gt;
+        &lt;a href=&quot;/users&quot;&gt;User Manager&lt;/a&gt;
+
+        &lt;!-- Right-side navigation --&gt;
+        &lt;div&gt;
+            &lt;% if (auth.user) { %&gt;
+                &lt;a href=&quot;/logout&quot;&gt;Logout&lt;/a&gt;
+                &lt;span&gt;Hello, &lt;%= auth.user.first_name %&gt;&lt;/span&gt;
+            &lt;% } else { %&gt;
+                &lt;a href=&quot;/register&quot;&gt;Register&lt;/a&gt;
+                &lt;a href=&quot;/login&quot;&gt;Login&lt;/a&gt;
+            &lt;% } %&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/header&gt;
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">User List</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">View Updates</h2>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// views/user/index.js (partial)
+
+&lt;div&gt;
+    &lt;table&gt;
+        &lt;thead&gt;
+        &lt;tr&gt;
+            &lt;th&gt;First Name&lt;/th&gt;
+            &lt;th&gt;Last Name&lt;/th&gt;
+            &lt;th&gt;Email&lt;/th&gt;
+            &lt;th&gt;Actions&lt;/th&gt;
+        &lt;/tr&gt;
+        &lt;/thead&gt;
+        &lt;tbody&gt;
+        &lt;% users.forEach(u =&gt; { %&gt;
+            &lt;tr&gt;
+                &lt;td&gt;&lt;%= u.first_name %&gt;&lt;/td&gt;
+                &lt;td&gt;&lt;%= u.last_name %&gt;&lt;/td&gt;
+                &lt;td&gt;&lt;%= u.email %&gt;&lt;/td&gt;
+                &lt;td&gt;
+                    &lt;a href=&quot;/users/&lt;%= u.email %&gt;&quot;&gt;View&lt;/a&gt;
+                    &lt;% if (auth.user &amp;&amp; (auth.user.is_admin || auth.user.email === u.email) ) { %&gt;
+                        | &lt;a href=&quot;/users/&lt;%= u.email %&gt;/edit&quot;&gt;Edit&lt;/a&gt;
+                        | &lt;a href=&quot;/users/&lt;%= u.email %&gt;/delete&quot;&gt;Delete&lt;/a&gt;
+                    &lt;% } %&gt;
+                &lt;/td&gt;
+            &lt;/tr&gt;
+        &lt;% }) %&gt;
+        &lt;/tbody&gt;
+    &lt;/table&gt;
+&lt;/div&gt;
+        </code></pre>
+    </section>
+
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Try It Out</h1>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// terminal
+npm start
+        </code></pre>
     </section>
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
         <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Key Takeaways</h1>
         <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
-            <li>Frameworks save time but introduce learning curves and conventions.</li>
+            <li>Never store plaintext passwords; always hash.</li>
+            <li>Use <code>bcrypt</code> or similar library for hashing.</li>
+            <li>Sessions track logged-in users.</li>
+            <li>Dynamically provide content based on authentication status.</li>
         </ul>
     </section>
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
         <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Up Next</h1>
-        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-6 text-center">Deployment Basics</h2>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-6 text-center">Authorization & Access Control</h2>
         <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
-            <li>What is a process manager?</li>
-            <li>Use environment variables for configuration.</li>
-            <li>Minimal example.</li>
+            <li>We hid links from user, but they are still accessible.</li>
+            <li>Introduce the concept of middleware.</li>
+            <li>Restrict routes based on authentication status.</li>
         </ul>
     </section>
 

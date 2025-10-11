@@ -33,9 +33,6 @@ export class BaseController {
             data.old = (field, defaultValue = '') => flashBody[field] || defaultValue;
             data.error = (field) => flashErrors[field] || '';
             data.success = flashSuccess;
-            data.auth = {
-                user: req.auth.user ? req.auth.user.get() : null
-            }
             data.alert = flashAlert;
         }
 
