@@ -1,4 +1,5 @@
 import {randomBytes} from "crypto";
+import {fileURLToPath} from "url";
 import fs from "fs";
 import path from "path";
 
@@ -51,7 +52,21 @@ class SessionManager {
             isNew = true;
         }
 
-        req.session = this.getSession(sessionId);
+        let session = this.getSession(sessionId);
+
+        // Auto-save changes to session
+        req.session = new Proxy(session, {
+            set: (target, prop, value) => {
+                target[prop] = value;
+                if (this.storageDir) this.saveSessionToFile(sessionId);
+                return true;
+            },
+            deleteProperty: (target, prop) => {
+                delete target[prop];
+                if (this.storageDir) this.saveSessionToFile(sessionId);
+                return true;
+            }
+        });
 
         // Flash helper methods
         req.flash = {
@@ -80,7 +95,7 @@ class SessionManager {
             warn: (message, title = '') => req.flash.set('alert', {type: 'warning', message, title}),
             get: () => req.flash.get('alert') || null
         };
-        
+
         if (isNew) {
             res.setHeader("Set-Cookie", `SID=${sessionId}; HttpOnly; Path=/`);
         }
@@ -102,4 +117,7 @@ class SessionManager {
     }
 }
 
-export const sessionManager = new SessionManager({storageDir: "./data/sessions"});
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const storage_dir = path.join(__dirname, "../data/sessions");
+export const sessionManager = new SessionManager({storageDir: storage_dir});

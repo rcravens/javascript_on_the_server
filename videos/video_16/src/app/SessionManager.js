@@ -1,12 +1,14 @@
-import { randomBytes } from "crypto";
+import {randomBytes} from "crypto";
+import {fileURLToPath} from "url";
 import fs from "fs";
 import path from "path";
 
+
 class SessionManager {
-    constructor({ storageDir = null } = {}) {
+    constructor({storageDir = null} = {}) {
         this.sessions = {};
         this.storageDir = storageDir;
-        if (storageDir) fs.mkdirSync(storageDir, { recursive: true });
+        if (storageDir) fs.mkdirSync(storageDir, {recursive: true});
     }
 
     generateId() {
@@ -15,7 +17,7 @@ class SessionManager {
 
     createSession() {
         const id = this.generateId();
-        this.sessions[id] = { flash: {} }; // initialize flash container
+        this.sessions[id] = {flash: {}}; // initialize flash container
         if (this.storageDir) this.saveSessionToFile(id);
         return id;
     }
@@ -51,7 +53,21 @@ class SessionManager {
             isNew = true;
         }
 
-        req.session = this.getSession(sessionId);
+        let session = this.getSession(sessionId);
+
+        // Auto-save changes to session
+        req.session = new Proxy(session, {
+            set: (target, prop, value) => {
+                target[prop] = value;
+                if (this.storageDir) this.saveSessionToFile(sessionId);
+                return true;
+            },
+            deleteProperty: (target, prop) => {
+                delete target[prop];
+                if (this.storageDir) this.saveSessionToFile(sessionId);
+                return true;
+            }
+        });
 
         // Flash helper methods
         req.flash = {
@@ -66,7 +82,7 @@ class SessionManager {
                 return value;
             },
             all: () => {
-                const value = { ...req.session.flash };
+                const value = {...req.session.flash};
                 req.session.flash = {};  // clear all flash
                 if (this.storageDir) this.saveSessionToFile(sessionId);
                 return value;
@@ -89,4 +105,7 @@ class SessionManager {
     }
 }
 
-export const sessionManager = new SessionManager({ storageDir: "./data/sessions" });
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const storage_dir = path.join(__dirname, "../data/sessions");
+export const sessionManager = new SessionManager({storageDir: storage_dir});

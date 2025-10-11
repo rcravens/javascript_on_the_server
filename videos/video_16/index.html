@@ -39,23 +39,63 @@
 <main class="bg-gradient-to-b from-gray-900 via-gray-800 to-gray-700" id="slides">
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">The Problem</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">HTTP is Stateless</h2>
+        <table class="max-w-6xl text-white text-lg">
+            <tbody>
+            <tr>
+                <td class="p-6 align-middle w-[50%]">
+                    <ol class="text-xl md:text-2xl max-w-6xl mb-8 list-decimal list-inside space-y-2">
+                        <li><code>GET: /users/new</code></li>
+                        <li class="text-red-600">Request/Response Lifecycle #1</li>
+                        <li>HTML form rendered in browser</li>
+                        <li>Fill out INVALID data and submit</li>
+                    </ol>
+                </td>
+                <td class="p-6 align-middle">
+                    <img alt="Slide Image" class="rounded-lg shadow-lg h-[300px]" src="html_form.png">
+                </td>
+            </tr>
+            <tr>
+                <td class="p-6 align-middle w-[50%]">
+                    <ol class="text-xl md:text-2xl max-w-6xl mb-8 list-decimal list-inside space-y-2" start="5">
+                        <li><code>POST: /users/create</code></li>
+                        <li class="text-red-600">Request/Response Lifecycle #2</li>
+                        <li>Validation fails</li>
+                        <li>Redirect back to <code>GET: /users/new</code></li>
+                        <li>Browser request redirect location</li>
+                        <li class="text-red-600">Request/Response Lifecycle #3</li>
+                        <li>HTML form with "old values" and "errors"</li>
+                    </ol>
+                </td>
+                <td class="p-6 text-center align-middle">
+                    <img alt="Slide Image" class="rounded-lg shadow-lg h-[300px]" src="html_form_errors.png">
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
         <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Why Sessions & Cookies?</h1>
-        <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
+        <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-none list-inside space-y-6">
             <li>HTTP is stateless: each request is independent.</li>
-            <li>Cookies:
+            <li>Cookies / Cookie Data:
                 <ul class="ml-6 text-xl md:text-2xl max-w-6xl mb-8 list-none list-inside space-y-2">
-                    <li>👉 Allow servers to remember clients across requests.</li>
-                    <li>👉 Can originate on the client (browser) or the server.</li>
+                    <li>👉 Stored by your web browser (client side).</li>
+                    <li>👉 Data is available on both the client (only non & server.</li>
                     <li>👉 Travel in the request / response headers: server --> client --> server.</li>
+                    <li>👉 Allow servers to remember clients across requests.</li>
+                    <li>👉 Can originate on the client or the server.</li>
                     <li>👉 Small pieces of information.</li>
-                    <li>👉 Data is available on the client.</li>
                     <li>👉 Usage: session ID, personalization, tracking/analytics...</li>
                 </ul>
             </li>
-            <li>Sessions:
+            <li>Sessions / Session Data:
                 <ul class="ml-6 text-xl md:text-2xl max-w-6xl mb-8 list-none list-inside space-y-2">
+                    <li>👉 Stored by your web server (server side).</li>
+                    <li>👉 Data is available only on the server and not on the client.</li>
                     <li>👉 Track user-specific data on the server by associating it with a session ID stored in a cookie.</li>
-                    <li>👉 Data is not available on the client.</li>
                     <li>👉 Session data should be persistent while user browses website.</li>
                     <li>👉 Usage: flash message, form validation, cart management...</li>
                 </ul>
@@ -64,12 +104,14 @@
     </section>
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Cookies</h1>
-        <img alt="Slide Image" class="rounded-lg shadow-lg max-w-full h-auto" src="cookies.png">
-
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Cookie Storage</h1>
         <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
-// app/SessionManager.js (partial)
+// cookie_jar.js (partial)
 
+// Cookie Data - Example: "Name1=Value1; Name2=Value2;..."
+console.log(req.headers.cookie);
+
+// Cookie Parser
 parseCookies(req) {
     const list = {};
     const cookieHeader = req.headers.cookie || "";
@@ -80,17 +122,18 @@ parseCookies(req) {
     return list;
 }
 
-attach(req, res) {
-    const cookies = this.parseCookies(req);
-    let sessionId = cookies["SID"];
-    let isNew = !sessionId;
+// Set and Clear Cookies
+res.setHeader("Set-Cookie", [
+        `COOKIE1=Chocolate Chip; HttpOnly; Path=/`,     // set cookie
+        `COOKIE2=Oatmeal Raisin; HttpOnly; Path=/`,     // set another cookie
+        `SID=; HttpOnly; Path=/; Max-Age=0`             // clear a cookie
+    ]
+);
+        </code></pre>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// terminal
 
-    ... SESSION RELATED CODE ...
-
-    if (isNew) {
-        res.setHeader("Set-Cookie", `SID=${sessionId}; HttpOnly; Path=/`);
-    }
-}
+cd cookies --> npm run dev
         </code></pre>
     </section>
 
@@ -118,28 +161,20 @@ class SessionManager {
         if (!id) return null;
         if (this.sessions[id]) return this.sessions[id];
         if (this.storageDir) {
-            const filePath = path.join(this.storageDir, `${id}.json`);
-            if (fs.existsSync(filePath)) {
-                const data = JSON.parse(fs.readFileSync(filePath));
-                this.sessions[id] = data;
-                if (!this.sessions[id].flash) this.sessions[id].flash = {};
-                return data;
-            }
+            return ... READ SESSION DATA FROM FILE ...
         }
         return null;
     }
 
-    saveSessionToFile(id) {
-        if (!this.storageDir || !this.sessions[id]) return;
-        const filePath = path.join(this.storageDir, `${id}.json`);
-        fs.writeFileSync(filePath, JSON.stringify(this.sessions[id], null, 2));
-    }
+    saveSessionToFile(id) { ... WRITE SESSION DATA TO FILE ... }
 }
+
+export const sessionManager = new SessionManager({ storageDir: "./data/sessions" });
         </code></pre>
     </section>
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Attaching Session</h1>
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Attach Session</h1>
         <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Simple File-Based Manager</h2>
         <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
 // app/SessionManager.js (partial)
@@ -157,7 +192,10 @@ class SessionManager {
             isNew = true;
         }
 
-        req.session = this.getSession(sessionId);
+        let session = this.getSession(sessionId);
+
+        // Auto-save changes to session
+        req.session = new Proxy(session, { ... PROXY HANDLERS ... });
 
         // Flash helper methods
         req.flash = { ... FLASH HELPER CODE ... };
@@ -168,6 +206,34 @@ class SessionManager {
     }
 }
         </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Session Proxy</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Simple File-Based Manager</h2>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// app/SessionManager.js (partial)
+
+let session = this.getSession(sessionId);
+
+// Auto-save changes to session
+req.session = new Proxy(session, {
+    set: (target, prop, value) => {
+        target[prop] = value;
+        if (this.storageDir) this.saveSessionToFile(sessionId);
+        return true;
+    },
+    deleteProperty: (target, prop) => {
+        delete target[prop];
+        if (this.storageDir) this.saveSessionToFile(sessionId);
+        return true;
+    }
+});
+        </code></pre>
+        <div class="flex flex-wrap justify-center gap-6">
+            <!-- Primary -->
+            <a class="px-6 py-3 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition" href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy" target="_blank">Proxy Documentation</a>
+        </div>
     </section>
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
@@ -202,17 +268,26 @@ req.flash = {
         <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Using Sessions</h1>
         <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Simple File-Based Manager</h2>
         <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
-// app/server.js (partial)
+// session/server.js (partial)
 
 const server = http.createServer(async (req, res) => {
     sessionManager.attach(req, res);
 
-    // Now session is attached to the request
-    const value = req.session['key'];           // value is stored until session ends
-    const req.flash.set('msg', 'Hello World!')  // msg is stored until it is read
+    // Session example
+    req.session['user_id'] = 123
+    delete req.session['user_id'];
 
-    ... OTHER SERVER CODE ...
+    // Flash example
+    req.flash.set('msg', 'Hello');
+    console.log('msg', req.flash.get('msg'));
+
+    ... RESPONSE CODE ...
 });
+        </code></pre>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// terminal
+
+cd session ---> npm run dev
         </code></pre>
     </section>
 
