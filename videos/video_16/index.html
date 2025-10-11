@@ -75,7 +75,7 @@ parseCookies(req) {
     return list;
 }
 
-Set and clear cookie data from the server
+// Set and clear cookie data from the server
 res.setHeader("Set-Cookie", [
         `COOKIE1=Chocolate Chip; HttpOnly; Path=/`,                 // set cookie
         `COOKIE2=Oatmeal Raisin; HttpOnly; Path=/; Max-Age=10`,     // set another cookie (10s)
@@ -86,7 +86,7 @@ res.setHeader("Set-Cookie", [
         <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
 // terminal
 
-cd cookies --> npm run dev
+npm run dev
         </code></pre>
     </section>
 

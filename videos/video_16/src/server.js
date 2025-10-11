@@ -8,18 +8,18 @@ const server = http.createServer(async (req, res) => {
     console.log(cookies);
 
     // Set cookie data from the server
-    res.setHeader("Set-Cookie", [
-            `COOKIE1=Chocolate Chip; HttpOnly; Path=/`,                 // set cookie
-            `COOKIE2=Oatmeal Raisin; HttpOnly; Path=/; Max-Age=30`,     // set another cookie (30s)
-            `SID=123; HttpOnly; Path=/; Max-Age=3600`                   // set cookie (60m)
-        ]
-    );
-
-    // Clear cookie data from the server
     // res.setHeader("Set-Cookie", [
-    //         `SID=; HttpOnly; Path=/; Max-Age=0`                         // clear a cookie
+    //         `COOKIE1=Chocolate Chip; HttpOnly; Path=/`,                 // set cookie
+    //         `COOKIE2=Oatmeal Raisin; HttpOnly; Path=/; Max-Age=30`,     // set another cookie (30s)
+    //         `SID=123; HttpOnly; Path=/; Max-Age=3600`                   // set cookie (60m)
     //     ]
     // );
+
+    // Clear cookie data from the server
+    res.setHeader("Set-Cookie", [
+            `SID=; HttpOnly; Path=/; Max-Age=0`                         // clear a cookie
+        ]
+    );
 
     // Respond to request
     const data = {};
