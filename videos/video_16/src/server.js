@@ -7,10 +7,16 @@ const server = http.createServer(async (req, res) => {
     const cookies = parseCookies(req);
     console.log(cookies);
 
-    // Set and clear cookie data from the server
+    // Set cookie data from the server
+    res.setHeader("Set-Cookie", [
+            `COOKIE1=Chocolate Chip; HttpOnly; Path=/`,                 // set cookie
+            `COOKIE2=Oatmeal Raisin; HttpOnly; Path=/; Max-Age=30`,     // set another cookie (30s)
+            `SID=123; HttpOnly; Path=/; Max-Age=3600`                   // set cookie (60m)
+        ]
+    );
+
+    // Clear cookie data from the server
     // res.setHeader("Set-Cookie", [
-    //         `COOKIE1=Chocolate Chip; HttpOnly; Path=/`,                 // set cookie
-    //         `COOKIE2=Oatmeal Raisin; HttpOnly; Path=/; Max-Age=10`,     // set another cookie (10s)
     //         `SID=; HttpOnly; Path=/; Max-Age=0`                         // clear a cookie
     //     ]
     // );
