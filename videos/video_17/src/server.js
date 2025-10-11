@@ -1,5 +1,5 @@
 import http from "http";
-import {sessionManager} from "../src/app/SessionManager.js";
+import {sessionManager} from "SessionManager.js";
 
 const server = http.createServer(async (req, res) => {
     sessionManager.attach(req, res);

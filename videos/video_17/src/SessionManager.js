@@ -144,4 +144,4 @@ sessionManager.cleanUpSessions();
 
 setInterval(() => {
     sessionManager.cleanUpSessions();
-}, 60 * 1000);  // every 1 minute
+}, 10 * 60 * 1000);  // every 10 minutes
