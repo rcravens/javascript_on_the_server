@@ -23,8 +23,8 @@ const server = http.createServer(async (req, res) => {
 
     // Respond to request
     const data = {};
-    data.cookie_text = req.headers.cookie;
-    data.cookies = cookies;
+    data.req_cookie_text = req.headers.cookie;
+    data.req_cookies = cookies;
 
     res.statusCode = 200;
     res.setHeader("Content-Type", "application/json");
