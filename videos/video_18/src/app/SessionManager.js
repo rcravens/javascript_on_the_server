@@ -71,11 +71,9 @@ class SessionManager {
     attach(req, res) {
         const cookies = this.parseCookies(req);
         let sessionId = cookies["SID"];
-        let isNew = false;
 
         if (!sessionId || !this.getSession(sessionId)) {
             sessionId = this.createSession();
-            isNew = true;
         }
 
         let session = this.getSession(sessionId);
@@ -137,9 +135,7 @@ class SessionManager {
             }
         };
 
-        if (isNew) {
-            res.setHeader("Set-Cookie", `SID=${sessionId}; HttpOnly; Path=/`);
-        }
+        res.setHeader("Set-Cookie", `SID=${sessionId}; HttpOnly; Path=/`);
     }
 
     user(sessionId) {
