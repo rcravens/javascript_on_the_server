@@ -213,8 +213,8 @@ const server = http.createServer(async (req, res) => {
     sessionManager.attach(req, res);
 
     // Session example
-    req.session['user_id'] = 123
-    delete req.session['user_id'];
+    req.session.user_id = 123
+    delete req.session.user_id;
 
     // Flash example
     req.flash.set('msg', 'Hello');
