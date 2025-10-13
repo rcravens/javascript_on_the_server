@@ -7,10 +7,10 @@ const server = http.createServer(async (req, res) => {
     console.log('url', req.url);
 
     // 1. Set a session variable
-    // req.session['user_id'] = 123
+    // req.session.user_id = 123
 
     // 2. Delete a session variable
-    // delete req.session['user_id'];
+    // delete req.session.user_id;
 
     const user_id = req.session['user_id'] ?? '-- not found --';
     console.log('user_id', user_id);

@@ -52,6 +52,13 @@
                 </ul>
             </li>
         </ul>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// How I Want To Use
+
+req.session.user_id = 123;
+
+delete req.session.user_id;
+        </code></pre>
     </section>
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
@@ -81,6 +88,8 @@ class SessionManager {
         fs.writeFileSync(filePath, JSON.stringify(this.sessions[id], null, 2));
     }
 }
+
+export const sessionManager = new SessionManager({storage_dir: './data/sessions'});
         </code></pre>
     </section>
 
@@ -122,24 +131,17 @@ class SessionManager {
     attach(req, res) {
         const cookies = this.parseCookies(req);
         let sessionId = cookies["SID"];
-        let isNew = false;
 
         if (!sessionId || !this.getSession(sessionId)) {
             sessionId = this.createSession();
-            isNew = true;
         }
-
         let session = this.getSession(sessionId);
 
-        // Auto-save changes to session
-        req.session = new Proxy(session, { ... PROXY HANDLERS ... });
-
-        // Flash helper methods
+        req.session = new Proxy(session, { ... PROXY HANDLERS ... });   // auto save
         req.flash = { ... FLASH HELPER CODE ... };
 
-        if (isNew) {
-            res.setHeader("Set-Cookie", `SID=${sessionId}; HttpOnly; Path=/`);
-        }
+        req.session.lastAccess = Date.now();
+        res.setHeader("Set-Cookie", `SID=${sessionId}; HttpOnly; Path=/; Max-Age=3600`);
     }
 }
         </code></pre>
@@ -229,13 +231,63 @@ npm run dev
     </section>
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Session Cleanup</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Simple File-Based Manager</h2>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// SessionManager.js (partial)
+
+class SessionManager {
+
+    cleanUpSessions() {
+        const now = Date.now();
+
+        // In-memory sessions
+        for (const id in this.sessions) {
+            const session = this.sessions[id];
+            if (session.lastAccess && now - session.lastAccess > this.max_age_in_milliseconds) {
+                delete this.sessions[id];
+            }
+        }
+
+        // Disk sessions
+        if (this.storage_dir) {
+            const files = fs.readdirSync(this.storage_dir);
+            for (const file of files) {
+                if (!file.endsWith(".json")) continue;
+                const filePath = path.join(this.storage_dir, file);
+                const data = JSON.parse(fs.readFileSync(filePath));
+                if (data.lastAccess && now - data.lastAccess > this.max_age_in_milliseconds) {
+                    fs.unlinkSync(filePath);
+                    delete this.sessions[file.replace(".json", "")];
+                }
+            }
+        }
+    }
+}
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Session Cleanup</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Simple File-Based Manager</h2>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// SessionManager.js (partial)
+
+export const sessionManager = new SessionManager({storage_dir: './data/sessions'});
+
+setInterval(() => {
+    sessionManager.cleanUpSessions();
+}, 10 * 60 * 1000);  // every 10 minutes
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
         <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Key Takeaways</h1>
         <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
-            <li>Cookies store client-side data.</li>
+            <li>Cookies store client-side data (e.g., session ID).</li>
             <li>Sessions can store server-side data linked via a cookie (session ID).</li>
             <li>Production Considerations:
                 <ul class="ml-6 text-xl md:text-2xl max-w-6xl mb-8 list-none list-inside space-y-2">
-                    <li>👉 Use signed/encrypted cookies.</li>
                     <li>👉 Persistent, redundant, scalable storage solution (e.g., dedicated Redis server)</li>
                     <li>👉 Consider server-side session storage with libraries like express-session.</li>
                 </ul>
