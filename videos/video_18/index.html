@@ -198,15 +198,9 @@ npm start
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
         <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Key Takeaways</h1>
         <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
-            <li>Cookies store client-side data.</li>
-            <li>Sessions can store server-side data linked via a cookie (session ID).</li>
-            <li>Production Considerations:
-                <ul class="ml-6 text-xl md:text-2xl max-w-6xl mb-8 list-none list-inside space-y-2">
-                    <li>👉 Use signed/encrypted cookies.</li>
-                    <li>👉 Persistent, redundant, scalable storage solution (e.g., dedicated Redis server)</li>
-                    <li>👉 Consider server-side session storage with libraries like express-session.</li>
-                </ul>
-            </li>
+            <li>Cookies & Sessions can provide state to HTTP.</li>
+            <li>State enables data to flow to future request / responses.</li>
+            <li>This enables an improved user experience.</li>
         </ul>
     </section>
 
