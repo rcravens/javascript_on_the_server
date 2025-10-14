@@ -5,7 +5,8 @@
   "main": "Person.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node app/server.js"
+    "start": "node app/server.js",
+    "dev": "nodemon app/server.js"
   },
   "keywords": [],
   "author": "",
@@ -13,5 +14,8 @@
   "type": "module",
   "dependencies": {
     "ejs": "^3.1.10"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
   }
 }

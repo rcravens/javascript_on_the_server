@@ -39,18 +39,17 @@
 <main class="bg-gradient-to-b from-gray-900 via-gray-800 to-gray-700" id="slides">
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">The Problem</h1>
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">The Challenge</h1>
         <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">HTTP is Stateless</h2>
         <table class="max-w-6xl text-white text-lg">
             <tbody>
             <tr>
                 <td class="p-6 align-middle w-[50%]">
-                    <ol class="text-xl md:text-2xl max-w-6xl mb-8 list-decimal list-inside space-y-2">
-                        <li><code>GET: /users/new</code></li>
-                        <li class="text-red-600">Request/Response Lifecycle #1</li>
-                        <li>HTML form rendered in browser</li>
+                    <p class="text-2xl my-6 text-red-600">Request: <code>GET /users/new</code></p>
+                    <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
+                        <li>Response: HTML form rendered in browser</li>
                         <li>Fill out INVALID data and submit</li>
-                    </ol>
+                    </ul>
                 </td>
                 <td class="p-6 align-middle">
                     <img alt="Slide Image" class="rounded-lg shadow-lg h-[300px]" src="html_form.png">
@@ -58,15 +57,16 @@
             </tr>
             <tr>
                 <td class="p-6 align-middle w-[50%]">
-                    <ol class="text-xl md:text-2xl max-w-6xl mb-8 list-decimal list-inside space-y-2" start="5">
-                        <li><code>POST: /users/create</code></li>
-                        <li class="text-red-600">Request/Response Lifecycle #2</li>
+                    <p class="text-2xl my-6 text-red-600">Request: <code>POST /users/create</code></p>
+                    <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
                         <li>Validation fails</li>
-                        <li>Redirect back to <code>GET: /users/new</code></li>
+                        <li>Response: Redirect back to <code>/users/new</code></li>
+                    </ul>
+                    <p class="text-2xl my-6 text-red-600">Request: <code>GET /users/new</code></p>
+                    <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
                         <li>Browser request redirect location</li>
-                        <li class="text-red-600">Request/Response Lifecycle #3</li>
-                        <li>HTML form with "old values" and "errors"</li>
-                    </ol>
+                        <li>Response: HTML form with data</li>
+                    </ul>
                 </td>
                 <td class="p-6 text-center align-middle">
                     <img alt="Slide Image" class="rounded-lg shadow-lg h-[300px]" src="html_form_errors.png">
@@ -77,7 +77,7 @@
     </section>
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">New User Routes</h1>
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">"New User" Routes</h1>
         <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Form Validation Revisited</h2>
         <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
 // controllers/UserController.js (partial)
@@ -91,6 +91,9 @@ export class UserController extends BaseController {
     async create(req, res, params, body) {
         const {valid, errors} = Validator.validate(User.rules, body);
         if (!valid) {
+            // res.writeHead(400, {"Content-Type": "application/json"});
+            // res.end(JSON.stringify({success: false, errors}));
+            // return;
             return this.back(req, res, {errors, body});
         }
 
