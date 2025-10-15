@@ -88,26 +88,7 @@ export class UserController extends BaseController {
 
         return this.redirect(res, `/users/${body.email}/edit`);
     }
-
-    async updatePassword(req, res, params, body) {
-        const rules = this.pickRules(User.rules, ["password"]);
-        const {valid, errors} = Validator.validate(rules, body);
-
-        if (!valid) {
-            req.alert.error("Please fix the form errors.", "Validation Failed");
-            return this.back(req, res, {errors, body});
-        }
-
-        // Hash the new password
-        const hashedPassword = await User.hashPassword(body.password);
-
-        await User.update(params.email, {password: hashedPassword});
-
-        req.alert.success("Password updated.");
-
-        return this.redirect(res, `/users/${params.email}/edit`);
-    }
-
+    
     async destroy(req, res, params) {
         await User.delete(params.email);
 
