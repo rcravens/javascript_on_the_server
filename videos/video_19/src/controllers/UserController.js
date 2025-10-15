@@ -41,16 +41,11 @@ export class UserController extends BaseController {
             return this.back(req, res, {errors, body});
         }
 
-        // Hash the password
-        const hashedPassword = await User.hashPassword(body.password);
-
         // Create the person
         const personData = {
             first_name: body.first_name,
             last_name: body.last_name,
-            email: body.email,
-            password: hashedPassword,
-            is_admin: false
+            email: body.email
         };
 
         const person = await User.create(personData);

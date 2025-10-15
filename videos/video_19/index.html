@@ -35,6 +35,7 @@
     </div>
 </header>
 
+<div class="absolute bottom-4 right-4 space-y-2 z-50" id="flash-container"></div>
 <!-- Scrollable Sections -->
 <main class="bg-gradient-to-b from-gray-900 via-gray-800 to-gray-700" id="slides">
 
@@ -45,7 +46,62 @@
             <li>Examples: User added, User deleted, You are not authorized</li>
             <li>Enhances UX (user experience) in your application.</li>
         </ul>
+        <div class="flex space-x-4">
+            <button class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded" onclick="showFlash('success')">Success</button>
+            <button class="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 px-4 rounded" onclick="showFlash('warn')">Warn</button>
+            <button class="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded" onclick="showFlash('error')">Error</button>
+        </div>
     </section>
+    <script>
+        function showFlash(type) {
+            const container = document.getElementById('flash-container');
+            const flash = document.createElement('div');
+
+            // Determine background color based on type
+            let bgColor = '';
+            let title = '';
+            let msg = '';
+            switch (type) {
+                case 'success':
+                    bgColor = 'bg-green-600';
+                    title = 'Success Example';
+                    msg = 'User has been created.';
+                    break;
+                case 'warn':
+                    bgColor = 'bg-yellow-500';
+                    title = 'Warn Example';
+                    msg = 'You are not authorized!';
+                    break;
+                case 'error':
+                    bgColor = 'bg-red-600';
+                    title = 'Error Example';
+                    msg = 'Please correct the validation errors.';
+                    break;
+            }
+
+            // Flash message HTML
+            flash.className = `${bgColor} text-white px-6 py-4 rounded shadow-lg transform transition-all duration-500 opacity-0 translate-y-2`;
+            flash.innerHTML = `
+      <strong class="block text-lg font-bold">${title}</strong>
+      <span>${msg}</span>
+    `;
+
+            container.appendChild(flash);
+
+            // Fade in
+            requestAnimationFrame(() => {
+                flash.classList.remove('opacity-0');
+                flash.classList.add('opacity-100');
+            });
+
+            // Remove after 3 seconds (with fade-out animation)
+            setTimeout(() => {
+                flash.classList.remove('opacity-100');
+                flash.classList.add('opacity-0');
+                setTimeout(() => flash.remove(), 500);
+            }, 3000);
+        }
+    </script>
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
         <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">How I Want To Use</h1>
@@ -212,16 +268,10 @@ export class UserController extends BaseController {
             return this.back(req, res, {errors, body});
         }
 
-        // Hash the password
-        const hashedPassword = await User.hashPassword(body.password);
-
-        // Create the person
-        const person = await User.create(body);
-        if (person) {
+        // Create the user
+        const user = await User.create(body);
+        if (user) {
             req.alert.success("User added.");
-
-            // Automatically log in the new user
-            req.session.user = person;
         }
 
         return this.redirect(res, "/users");
