@@ -4,16 +4,16 @@ export default class Router {
         this._current_group_middleware = [];
     }
 
-    static parseBody(req) {
+    static #parse_body(req) {
         return new Promise((resolve, reject) => {
             let data = '';
             req.on('data', chunk => data += chunk);
             req.on('end', () => {
                 try {
-                    const contentType = req.headers['content-type'] || '';
-                    if (contentType.includes('application/json')) {
+                    const content_type = req.headers['content-type'] || '';
+                    if (content_type.includes('application/json')) {
                         resolve(JSON.parse(data || '{}'));
-                    } else if (contentType.includes('application/x-www-form-urlencoded')) {
+                    } else if (content_type.includes('application/x-www-form-urlencoded')) {
                         const params = new URLSearchParams(data);
                         resolve(Object.fromEntries(params.entries()));
                     } else {
@@ -26,31 +26,31 @@ export default class Router {
         });
     }
 
-    #register(method, path, controllerClass, handlerName, middlewares = []) {
-        const combinedMiddleware = [...this._current_group_middleware, ...middlewares];
+    #register(method, path, controller_class, handler_name, middlewares = []) {
+        const combined_middleware = [...this._current_group_middleware, ...middlewares];
 
         const parts = path.split("/").filter(Boolean);
-        this.routes.push({method, parts, controllerClass, handlerName, middlewares: combinedMiddleware});
+        this.routes.push({method, parts, controller_class, handler_name, middlewares: combined_middleware});
     }
 
-    get(path, controllerClass, handlerName, middlewares = []) {
-        this.#register("GET", path, controllerClass, handlerName, middlewares);
+    get(path, controller_class, handler_name, middlewares = []) {
+        this.#register("GET", path, controller_class, handler_name, middlewares);
     }
 
-    post(path, controllerClass, handlerName, middlewares = []) {
-        this.#register("POST", path, controllerClass, handlerName, middlewares);
+    post(path, controller_class, handler_name, middlewares = []) {
+        this.#register("POST", path, controller_class, handler_name, middlewares);
     }
 
-    put(path, controllerClass, handlerName, middlewares = []) {
-        this.#register("PUT", path, controllerClass, handlerName, middlewares);
+    put(path, controller_class, handler_name, middlewares = []) {
+        this.#register("PUT", path, controller_class, handler_name, middlewares);
     }
 
-    patch(path, controllerClass, handlerName, middlewares = []) {
-        this.#register("PATCH", path, controllerClass, handlerName, middlewares);
+    patch(path, controller_class, handler_name, middlewares = []) {
+        this.#register("PATCH", path, controller_class, handler_name, middlewares);
     }
 
-    delete(path, controllerClass, handlerName, middlewares = []) {
-        this.#register("DELETE", path, controllerClass, handlerName, middlewares);
+    delete(path, controller_class, handler_name, middlewares = []) {
+        this.#register("DELETE", path, controller_class, handler_name, middlewares);
     }
 
     group(middleware = [], callback) {
@@ -86,16 +86,16 @@ export default class Router {
                 if (result === false) return; // stop chain if middleware blocks
             }
 
-            const controller = new route.controllerClass();
-            if (!controller[route.handlerName])
-                throw new Error(`Handler "${route.handlerName}" not found on controller`);
+            const controller = new route.controller_class();
+            if (!controller[route.handler_name])
+                throw new Error(`Handler "${route.handler_name}" not found on controller`);
 
             let body = {};
             if (["POST", "PUT", "PATCH"].includes(method)) {
-                body = await Router.parseBody(req);
+                body = await Router.#parse_body(req);
             }
 
-            return controller[route.handlerName](req, res, params, body);
+            return controller[route.handler_name](req, res, params, body);
         }
 
         res.writeHead(404, {"Content-Type": "text/plain"});

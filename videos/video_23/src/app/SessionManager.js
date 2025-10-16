@@ -11,24 +11,24 @@ class SessionManager {
         if (storage_dir) fs.mkdirSync(storage_dir, {recursive: true});
     }
 
-    generateId() {
+    #generate_id() {
         return randomBytes(16).toString("hex");
     }
 
-    createSession() {
-        const id = this.generateId();
+    #create_session() {
+        const id = this.#generate_id();
         this.sessions[id] = {flash: {}}; // initialize flash container
-        if (this.storage_dir) this.saveSessionToFile(id);
+        if (this.storage_dir) this.#save_session_to_file(id);
         return id;
     }
 
-    getSession(id) {
+    #get_session(id) {
         if (!id) return null;
         if (this.sessions[id]) return this.sessions[id];
         if (this.storage_dir) {
-            const filePath = path.join(this.storage_dir, `${id}.json`);
-            if (fs.existsSync(filePath)) {
-                const data = JSON.parse(fs.readFileSync(filePath));
+            const file_path = path.join(this.storage_dir, `${id}.json`);
+            if (fs.existsSync(file_path)) {
+                const data = JSON.parse(fs.readFileSync(file_path));
                 this.sessions[id] = data;
                 if (!this.sessions[id].flash) this.sessions[id].flash = {};
                 return data;
@@ -37,8 +37,8 @@ class SessionManager {
         return null;
     }
 
-    destroySession(req, res) {
-        const cookies = this.parseCookies(req);
+    #destroy_session(req, res) {
+        const cookies = this.#parse_cookies(req);
         const sessionId = cookies["SID"];
         if (!sessionId) return;
 
@@ -47,9 +47,9 @@ class SessionManager {
 
         // Remove from disk if using storageDir
         if (this.storage_dir) {
-            const filePath = path.join(this.storage_dir, `${sessionId}.json`);
-            if (fs.existsSync(filePath)) {
-                fs.unlinkSync(filePath);
+            const file_path = path.join(this.storage_dir, `${sessionId}.json`);
+            if (fs.existsSync(file_path)) {
+                fs.unlinkSync(file_path);
             }
         }
 
@@ -63,13 +63,13 @@ class SessionManager {
         if (req.alert) delete req.alert;
     }
 
-    saveSessionToFile(id) {
+    #save_session_to_file(id) {
         if (!this.storage_dir || !this.sessions[id]) return;
-        const filePath = path.join(this.storage_dir, `${id}.json`);
-        fs.writeFileSync(filePath, JSON.stringify(this.sessions[id], null, 2));
+        const file_path = path.join(this.storage_dir, `${id}.json`);
+        fs.writeFileSync(file_path, JSON.stringify(this.sessions[id], null, 2));
     }
 
-    cleanUpSessions() {
+    clean_up_sessions() {
         console.log('cleaning old sessions');
         const now = Date.now();
 
@@ -86,11 +86,11 @@ class SessionManager {
             const files = fs.readdirSync(this.storage_dir);
             for (const file of files) {
                 if (!file.endsWith(".json")) continue;
-                const filePath = path.join(this.storage_dir, file);
+                const file_path = path.join(this.storage_dir, file);
                 try {
-                    const data = JSON.parse(fs.readFileSync(filePath));
+                    const data = JSON.parse(fs.readFileSync(file_path));
                     if (data.lastAccess && now - data.lastAccess > this.max_age_in_milliseconds) {
-                        fs.unlinkSync(filePath);
+                        fs.unlinkSync(file_path);
                         delete this.sessions[file.replace(".json", "")];
                     }
                 } catch (err) {
@@ -101,25 +101,25 @@ class SessionManager {
     }
 
     attach(req, res) {
-        const cookies = this.parseCookies(req);
-        let sessionId = cookies["SID"];
+        const cookies = this.#parse_cookies(req);
+        let session_id = cookies["SID"];
 
-        if (!sessionId || !this.getSession(sessionId)) {
-            sessionId = this.createSession();
+        if (!session_id || !this.#get_session(session_id)) {
+            session_id = this.#create_session();
         }
 
-        let session = this.getSession(sessionId);
+        let session = this.#get_session(session_id);
 
         // Auto-save changes to session
         req.session = new Proxy(session, {
             set: (target, prop, value) => {
                 target[prop] = value;
-                if (this.storage_dir) this.saveSessionToFile(sessionId);
+                if (this.storage_dir) this.#save_session_to_file(session_id);
                 return true;
             },
             deleteProperty: (target, prop) => {
                 delete target[prop];
-                if (this.storage_dir) this.saveSessionToFile(sessionId);
+                if (this.storage_dir) this.#save_session_to_file(session_id);
                 return true;
             }
         });
@@ -130,18 +130,18 @@ class SessionManager {
         req.flash = {
             set: (key, value) => {
                 req.session.flash[key] = value;
-                if (this.storage_dir) this.saveSessionToFile(sessionId);
+                if (this.storage_dir) this.#save_session_to_file(session_id);
             },
             get: (key) => {
                 const value = req.session.flash[key];
                 delete req.session.flash[key];  // remove after reading
-                if (this.storage_dir) this.saveSessionToFile(sessionId);
+                if (this.storage_dir) this.#save_session_to_file(session_id);
                 return value;
             },
             all: () => {
                 const value = {...req.session.flash};
                 req.session.flash = {};  // clear all flash
-                if (this.storage_dir) this.saveSessionToFile(sessionId);
+                if (this.storage_dir) this.#save_session_to_file(session_id);
                 return value;
             }
         };
@@ -160,24 +160,24 @@ class SessionManager {
                 get: () => req.session.user || null,
                 set: (userObj) => {
                     req.session.user = userObj;
-                    if (this.storage_dir) this.saveSessionToFile(sessionId);
+                    if (this.storage_dir) this.#save_session_to_file(session_id);
                 },
                 clear: () => {
-                    this.destroySession(req, res);  // destroy current session
+                    this.#destroy_session(req, res);  // destroy current session
                     this.attach(req, res);          // start a fresh session
                 }
             }
         };
 
-        res.setHeader("Set-Cookie", `SID=${sessionId}; HttpOnly; Path=/`);
+        res.setHeader("Set-Cookie", `SID=${session_id}; HttpOnly; Path=/`);
     }
 
-    user(sessionId) {
-        const session = this.getSession(sessionId);
+    user(session_id) {
+        const session = this.#get_session(session_id);
         return session ? session.user : null;
     }
 
-    parseCookies(req) {
+    #parse_cookies(req) {
         const list = {};
         const cookieHeader = req.headers.cookie || "";
         cookieHeader.split(";").forEach(cookie => {
@@ -194,8 +194,8 @@ const storage_dir = path.join(__dirname, "../data/sessions");
 export const sessionManager = new SessionManager({storage_dir: storage_dir});
 
 
-sessionManager.cleanUpSessions();
+sessionManager.clean_up_sessions();
 
 setInterval(() => {
-    sessionManager.cleanUpSessions();
+    sessionManager.clean_up_sessions();
 }, 60 * 1000);  // every 1 minute

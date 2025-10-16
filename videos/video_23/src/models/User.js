@@ -16,22 +16,22 @@ export default class User extends BaseModel {
         }
     };
 
-    constructor(first_name, last_name, email, passwordHash, is_admin = false) {
+    constructor(first_name, last_name, email, password_hash, is_admin = false) {
         super();
         this.first_name = first_name;
         this.last_name = last_name;
         this.email = email;
-        this.password = passwordHash; // store only bcrypt hash
+        this.password = password_hash; // store only bcrypt hash
         this.is_admin = is_admin;
     }
 
-    static async hash_password(plainPassword) {
-        const saltRounds = 10;
-        return await bcrypt.hash(plainPassword, saltRounds);
+    static async hash_password(plain_text) {
+        const salt_rounds = 10;
+        return await bcrypt.hash(plain_text, salt_rounds);
     }
 
-    async check_password(plainPassword) {
+    async check_password(plain_text) {
         if (!this.password) return false;
-        return bcrypt.compare(plainPassword, this.password);
+        return bcrypt.compare(plain_text, this.password);
     }
 }

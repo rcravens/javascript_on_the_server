@@ -9,9 +9,9 @@ const layout_template = join(__dirname, "../views/layouts/layout.ejs");
 const views_root = join(__dirname, "../views");
 
 export class BaseController {
-    async render(res, viewPath, data = {}) {
+    async render(res, view_path, data = {}) {
         try {
-            const content = await ejs.renderFile(viewPath, data);
+            const content = await ejs.renderFile(view_path, data);
             const html = await ejs.renderFile(layout_template, {...data, body: content});
 
             res.writeHead(200, {"Content-Type": "text/html"});
@@ -22,26 +22,26 @@ export class BaseController {
         }
     }
 
-    async view(res, shortPath, data = {}, req = null) {
+    async view(res, short_path, data = {}, req = null) {
         if (req) {
             // Add helpers
-            const flashErrors = req.flash.get("errors") || {};
-            const flashBody = req.flash.get("body") || {};
-            const flashSuccess = req.flash.get("success") || null;
-            const flashAlert = req.alert.get();
+            const flash_errors = req.flash.get("errors") || {};
+            const flash_body = req.flash.get("body") || {};
+            const flash_success = req.flash.get("success") || null;
+            const flash_alert = req.alert.get();
 
-            data.old = (field, defaultValue = '') => flashBody[field] || defaultValue;
-            data.error = (field) => flashErrors[field] || '';
-            data.success = flashSuccess;
+            data.old = (field, default_value = '') => flash_body[field] || default_value;
+            data.error = (field) => flash_errors[field] || '';
+            data.success = flash_success;
             data.auth = {
                 user: req.auth.user ? req.auth.user.get() : null
             }
-            data.alert = flashAlert;
+            data.alert = flash_alert;
         }
 
         // Convert "person/index" → /views/person/index.ejs
-        const viewPath = join(views_root, `${shortPath}.ejs`);
-        return this.render(res, viewPath, data);
+        const view_path = join(views_root, `${short_path}.ejs`);
+        return this.render(res, view_path, data);
     }
 
     redirect(res, route) {
@@ -49,22 +49,22 @@ export class BaseController {
         res.end();
     }
 
-    back(req, res, flashData = {}) {
+    back(req, res, flash_data = {}) {
         // Store flash data
         if (req.flash) {
-            for (const key in flashData) {
-                req.flash.set(key, flashData[key]);
+            for (const key in flash_data) {
+                req.flash.set(key, flash_data[key]);
             }
         }
 
         // Redirect to referer if present, else fallback to root
-        const redirectUrl = req.headers?.referer || "/";
-        res.writeHead(302, {Location: redirectUrl});
+        const redirect_url = req.headers?.referer || "/";
+        res.writeHead(302, {Location: redirect_url});
         res.end();
     }
 
-    error(res, statusCode, message) {
-        res.writeHead(statusCode, {"Content-Type": "text/plain"});
+    error(res, status_code, message) {
+        res.writeHead(status_code, {"Content-Type": "text/plain"});
         res.end(message);
     }
 }
