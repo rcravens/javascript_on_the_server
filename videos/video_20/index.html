@@ -279,7 +279,7 @@ export class UserController extends BaseController {
 // route.js (partial)
 
 export default function registerRoutes(router) {
-    router.get("/login", AuthController, "loginForm");
+    router.get("/login", AuthController, "login_form");
     router.post("/login", AuthController, "login");
     router.get("/logout", AuthController, "logout");
 
@@ -289,7 +289,7 @@ export default function registerRoutes(router) {
     </section>
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">AuthController.loginForm</h1>
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">AuthController.login_form</h1>
         <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Authentication Flow</h2>
         <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
 // controllers/AuthController.js (partial)
