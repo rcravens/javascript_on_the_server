@@ -1,7 +1,7 @@
 export default class Router {
     constructor() {
         this.routes = [];
-        this._currentGroupMiddleware = [];
+        this._current_group_middleware = [];
     }
 
     static parseBody(req) {
@@ -69,7 +69,7 @@ export default class Router {
             }
 
             if (!matched) continue;
-            
+
             const controller = new route.controllerClass();
             if (!controller[route.handlerName])
                 throw new Error(`Handler "${route.handlerName}" not found on controller`);

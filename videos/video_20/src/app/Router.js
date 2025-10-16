@@ -1,7 +1,7 @@
 export default class Router {
     constructor() {
         this.routes = [];
-        this._currentGroupMiddleware = [];
+        this._current_group_middleware = [];
     }
 
     static parseBody(req) {
@@ -10,10 +10,10 @@ export default class Router {
             req.on('data', chunk => data += chunk);
             req.on('end', () => {
                 try {
-                    const contentType = req.headers['content-type'] || '';
-                    if (contentType.includes('application/json')) {
+                    const content_type = req.headers['content-type'] || '';
+                    if (content_type.includes('application/json')) {
                         resolve(JSON.parse(data || '{}'));
-                    } else if (contentType.includes('application/x-www-form-urlencoded')) {
+                    } else if (content_type.includes('application/x-www-form-urlencoded')) {
                         const params = new URLSearchParams(data);
                         resolve(Object.fromEntries(params.entries()));
                     } else {
@@ -26,36 +26,36 @@ export default class Router {
         });
     }
 
-    #register(method, path, controllerClass, handlerName) {
+    #register(method, path, controller_class, handler_name) {
         const parts = path.split("/").filter(Boolean);
-        this.routes.push({method, parts, controllerClass, handlerName});
+        this.routes.push({method, parts, controller_class, handler_name});
     }
 
-    get(path, controllerClass, handlerName) {
-        this.#register("GET", path, controllerClass, handlerName);
+    get(path, controller_class, handler_name) {
+        this.#register("GET", path, controller_class, handler_name);
     }
 
-    post(path, controllerClass, handlerName) {
-        this.#register("POST", path, controllerClass, handlerName);
+    post(path, controller_class, handler_name) {
+        this.#register("POST", path, controller_class, handler_name);
     }
 
-    put(path, controllerClass, handlerName) {
-        this.#register("PUT", path, controllerClass, handlerName);
+    put(path, controller_class, handler_name) {
+        this.#register("PUT", path, controller_class, handler_name);
     }
 
-    patch(path, controllerClass, handlerName) {
-        this.#register("PATCH", path, controllerClass, handlerName);
+    patch(path, controller_class, handler_name) {
+        this.#register("PATCH", path, controller_class, handler_name);
     }
 
-    delete(path, controllerClass, handlerName) {
-        this.#register("DELETE", path, controllerClass, handlerName);
+    delete(path, controller_class, handler_name) {
+        this.#register("DELETE", path, controller_class, handler_name);
     }
 
     group(middleware = [], callback) {
-        const previous = this._currentGroupMiddleware;
-        this._currentGroupMiddleware = [...previous, ...middleware];
+        const previous = this._current_group_middleware;
+        this._current_group_middleware = [...previous, ...middleware];
         callback();
-        this._currentGroupMiddleware = previous; // restore
+        this._current_group_middleware = previous; // restore
     }
 
     async handle(req, res, method, urlParts) {
@@ -76,17 +76,17 @@ export default class Router {
             }
 
             if (!matched) continue;
-            
-            const controller = new route.controllerClass();
-            if (!controller[route.handlerName])
-                throw new Error(`Handler "${route.handlerName}" not found on controller`);
+
+            const controller = new route.controller_class();
+            if (!controller[route.handler_name])
+                throw new Error(`Handler "${route.handler_name}" not found on controller`);
 
             let body = {};
             if (["POST", "PUT", "PATCH"].includes(method)) {
                 body = await Router.parseBody(req);
             }
 
-            return controller[route.handlerName](req, res, params, body);
+            return controller[route.handler_name](req, res, params, body);
         }
 
         res.writeHead(404, {"Content-Type": "text/plain"});

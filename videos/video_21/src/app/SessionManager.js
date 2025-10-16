@@ -192,3 +192,10 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const storage_dir = path.join(__dirname, "../data/sessions");
 export const sessionManager = new SessionManager({storage_dir: storage_dir});
+
+
+sessionManager.cleanUpSessions();
+
+setInterval(() => {
+    sessionManager.cleanUpSessions();
+}, 60 * 1000);  // every 1 minute

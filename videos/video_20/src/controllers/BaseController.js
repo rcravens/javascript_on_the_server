@@ -25,23 +25,23 @@ export class BaseController {
     async view(res, shortPath, data = {}, req = null) {
         if (req) {
             // Add helpers
-            const flashErrors = req.flash.get("errors") || {};
-            const flashBody = req.flash.get("body") || {};
-            const flashSuccess = req.flash.get("success") || null;
-            const flashAlert = req.alert.get();
+            const flash_errors = req.flash.get("errors") || {};
+            const flash_body = req.flash.get("body") || {};
+            const flash_success = req.flash.get("success") || null;
+            const flash_alert = req.alert.get();
 
-            data.old = (field, defaultValue = '') => flashBody[field] || defaultValue;
-            data.error = (field) => flashErrors[field] || '';
-            data.success = flashSuccess;
+            data.old = (field, defaultValue = '') => flash_body[field] || defaultValue;
+            data.error = (field) => flash_errors[field] || '';
+            data.success = flash_success;
             data.auth = {
                 user: req.auth.user ? req.auth.user.get() : null
             }
-            data.alert = flashAlert;
+            data.alert = flash_alert;
         }
 
         // Convert "person/index" → /views/person/index.ejs
-        const viewPath = join(views_root, `${shortPath}.ejs`);
-        return this.render(res, viewPath, data);
+        const view_path = join(views_root, `${shortPath}.ejs`);
+        return this.render(res, view_path, data);
     }
 
     redirect(res, route) {
@@ -58,8 +58,8 @@ export class BaseController {
         }
 
         // Redirect to referer if present, else fallback to root
-        const redirectUrl = req.headers?.referer || "/";
-        res.writeHead(302, {Location: redirectUrl});
+        const redirect_url = req.headers?.referer || "/";
+        res.writeHead(302, {Location: redirect_url});
         res.end();
     }
 

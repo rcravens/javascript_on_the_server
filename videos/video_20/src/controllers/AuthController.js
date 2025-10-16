@@ -14,7 +14,6 @@ export class AuthController extends BaseController {
         // Lookup user by email
         const user = await User.find(email);
         if (!user) {
-            console.log('yyyy');
             const errors = {auth: "Authorization failed"};
             return this.back(req, res, {errors, body});
         }

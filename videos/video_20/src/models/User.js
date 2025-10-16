@@ -16,12 +16,12 @@ export default class User extends BaseModel {
         }
     };
 
-    constructor(first_name, last_name, email, passwordHash, is_admin = false) {
+    constructor(first_name, last_name, email, password_hash, is_admin = false) {
         super();
         this.first_name = first_name;
         this.last_name = last_name;
         this.email = email;
-        this.password = passwordHash; // store only bcrypt hash
+        this.password = password_hash; // store only bcrypt hash
         this.is_admin = is_admin;
     }
 

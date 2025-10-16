@@ -1,7 +1,7 @@
 export default class Router {
     constructor() {
         this.routes = [];
-        this._currentGroupMiddleware = [];
+        this._current_group_middleware = [];
     }
 
     static parseBody(req) {
@@ -27,7 +27,7 @@ export default class Router {
     }
 
     #register(method, path, controllerClass, handlerName, middlewares = []) {
-        const combinedMiddleware = [...this._currentGroupMiddleware, ...middlewares];
+        const combinedMiddleware = [...this._current_group_middleware, ...middlewares];
 
         const parts = path.split("/").filter(Boolean);
         this.routes.push({method, parts, controllerClass, handlerName, middlewares: combinedMiddleware});
@@ -54,10 +54,10 @@ export default class Router {
     }
 
     group(middleware = [], callback) {
-        const previous = this._currentGroupMiddleware;
-        this._currentGroupMiddleware = [...previous, ...middleware];
+        const previous = this._current_group_middleware;
+        this._current_group_middleware = [...previous, ...middleware];
         callback();
-        this._currentGroupMiddleware = previous; // restore
+        this._current_group_middleware = previous; // restore
     }
 
     async handle(req, res, method, urlParts) {

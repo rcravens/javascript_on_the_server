@@ -12,14 +12,14 @@ export default class UserSeeder {
         console.log(`Seeding ${count} people...`);
 
         for (let i = 0; i < count; i++) {
-            const firstName = faker.person.firstName();
-            const lastName = faker.person.lastName();
-            const email = faker.internet.email({firstName, lastName}).toLowerCase();
+            const first_name = faker.person.firstName();
+            const last_name = faker.person.lastName();
+            const email = faker.internet.email({firstName: first_name, lastName: last_name}).toLowerCase();
             const password = faker.internet.password(8);
-            const passwordHash = await User.hash_password(password);
+            const password_hash = await User.hash_password(password);
             const is_admin = false;
 
-            const user = new User(firstName, lastName, email, passwordHash, is_admin);
+            const user = new User(first_name, last_name, email, password_hash, is_admin);
 
             // Save to people.json
             await User.create(user);

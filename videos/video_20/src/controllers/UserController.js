@@ -42,23 +42,23 @@ export class UserController extends BaseController {
         }
 
         // Hash the password
-        const hashedPassword = await User.hash_password(body.password);
+        const hashed_password = await User.hash_password(body.password);
 
         // Create the person
-        const personData = {
+        const user_data = {
             first_name: body.first_name,
             last_name: body.last_name,
             email: body.email,
-            password: hashedPassword,
+            password: hashed_password,
             is_admin: false
         };
 
-        const person = await User.create(personData);
-        if (person) {
+        const user = await User.create(user_data);
+        if (user) {
             req.alert.success("User added.");
 
             // Automatically log in the new user
-            req.session.user = person;
+            req.session.user = user;
         }
 
         return this.redirect(res, "/users");
@@ -84,13 +84,13 @@ export class UserController extends BaseController {
         }
 
         // Prepare update data
-        const updateData = {
+        const update_data = {
             first_name: body.first_name,
             last_name: body.last_name,
             email: body.email
         };
 
-        const user = await User.update(params.email, updateData);
+        const user = await User.update(params.email, update_data);
 
         // Refresh session if the updated user is the currently logged-in user
         if (req.auth.user.get() && req.auth.user.get().email === params.email) {
@@ -112,9 +112,9 @@ export class UserController extends BaseController {
         }
 
         // Hash the new password
-        const hashedPassword = await User.hash_password(body.password);
+        const hashed_password = await User.hash_password(body.password);
 
-        await User.update(params.email, {password: hashedPassword});
+        await User.update(params.email, {password: hashed_password});
 
         req.alert.success("Password updated.");
 
