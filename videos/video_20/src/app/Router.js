@@ -4,7 +4,7 @@ export default class Router {
         this._current_group_middleware = [];
     }
 
-    static parseBody(req) {
+    static #parse_body(req) {
         return new Promise((resolve, reject) => {
             let data = '';
             req.on('data', chunk => data += chunk);
@@ -83,7 +83,7 @@ export default class Router {
 
             let body = {};
             if (["POST", "PUT", "PATCH"].includes(method)) {
-                body = await Router.parseBody(req);
+                body = await Router.#parse_body(req);
             }
 
             return controller[route.handler_name](req, res, params, body);
