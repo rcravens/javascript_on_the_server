@@ -25,13 +25,13 @@ export default class User extends BaseModel {
         this.is_admin = is_admin;
     }
 
-    static async hashPassword(plainPassword) {
-        const saltRounds = 10;
-        return await bcrypt.hash(plainPassword, saltRounds);
+    static async hash_password(plain_text) {
+        const salt_rounds = 10;
+        return await bcrypt.hash(plain_text, salt_rounds);
     }
 
-    async checkPassword(plainPassword) {
+    async check_password(plain_text) {
         if (!this.password) return false;
-        return bcrypt.compare(plainPassword, this.password);
+        return bcrypt.compare(plain_text, this.password);
     }
 }

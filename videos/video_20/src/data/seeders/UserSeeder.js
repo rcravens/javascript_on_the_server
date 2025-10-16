@@ -16,7 +16,7 @@ export default class UserSeeder {
             const lastName = faker.person.lastName();
             const email = faker.internet.email({firstName, lastName}).toLowerCase();
             const password = faker.internet.password(8);
-            const passwordHash = await User.hashPassword(password);
+            const passwordHash = await User.hash_password(password);
             const is_admin = false;
 
             const user = new User(firstName, lastName, email, passwordHash, is_admin);

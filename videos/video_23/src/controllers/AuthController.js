@@ -4,7 +4,7 @@ import User from "../models/User.js";
 
 export class AuthController extends BaseController {
 
-    async loginForm(req, res) {
+    async login_form(req, res) {
         return this.view(res, "auth/login", {}, req);
     }
 

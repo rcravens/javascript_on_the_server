@@ -42,7 +42,7 @@ export class UserController extends BaseController {
         }
 
         // Hash the password
-        const hashedPassword = await User.hashPassword(body.password);
+        const hashedPassword = await User.hash_password(body.password);
 
         // Create the person
         const personData = {
@@ -102,7 +102,7 @@ export class UserController extends BaseController {
         return this.redirect(res, `/users/${body.email}/edit`);
     }
 
-    async updatePassword(req, res, params, body) {
+    async update_password(req, res, params, body) {
         const rules = Validator.pick_rules(User.rules, ["password"]);
         const {valid, errors} = Validator.validate(rules, body);
 
@@ -112,7 +112,7 @@ export class UserController extends BaseController {
         }
 
         // Hash the new password
-        const hashedPassword = await User.hashPassword(body.password);
+        const hashedPassword = await User.hash_password(body.password);
 
         await User.update(params.email, {password: hashedPassword});
 

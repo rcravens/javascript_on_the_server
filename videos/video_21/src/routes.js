@@ -10,7 +10,7 @@ export default function registerRoutes(router) {
     router.get("/users", UserController, "index");
     router.get("/register", UserController, "new");
     router.post("/users", UserController, "create");
-    router.get("/login", AuthController, "loginForm");
+    router.get("/login", AuthController, "login_form");
     router.post("/login", AuthController, "login");
 
     // authenticated routes
@@ -19,7 +19,7 @@ export default function registerRoutes(router) {
         router.get("/users/:email/edit", UserController, "edit", [CanEdit]);
         router.get("/users/:email/delete", UserController, "delete", [CanEdit]);
         router.put("/users/:email", UserController, "update", [CanEdit]);
-        router.put("/users/:email/password", UserController, "updatePassword", [CanEdit]);
+        router.put("/users/:email/password", UserController, "update_password", [CanEdit]);
         router.delete("/users/:email", UserController, "destroy", [CanEdit]);
 
         router.get("/logout", AuthController, "logout");

@@ -48,6 +48,48 @@
     </section>
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">User Model Updates</h1>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// models/User.js (partial)
+
+export default class User extends BaseModel {
+    static fileName = "users.json"; // JSON file inside /data
+    static keyField = "email";       // unique identifier
+
+    static rules = {
+        first_name: {required: true, type: "string", min: 2, max: 50},
+        last_name: {required: true, type: "string", min: 2, max: 50},
+        email: {required: true, type: "string", pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/},
+        password: {
+            required: true, type: "string", min: 8, max: 100,
+            pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/, // At least 1 lowercase, 1 uppercase, 1 digit, min 8 chars
+            confirm: "confirm_password"
+        }
+    };
+
+    constructor(first_name, last_name, email, passwordHash, is_admin = false) {
+        super();
+        this.first_name = first_name;
+        this.last_name = last_name;
+        this.email = email;
+        this.password = passwordHash; // store only bcrypt hash
+        this.is_admin = is_admin;
+    }
+
+    static async hashPassword(plain_text) {
+        const salt_rounds = 10;
+        return await bcrypt.hash(plain_text, salt_rounds);
+    }
+
+    async checkPassword(plain_text) {
+        if (!this.password) return false;
+        return bcrypt.compare(plain_text, this.password);
+    }
+}
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
         <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Login Routes</h1>
         <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
 // route.js (partial)
