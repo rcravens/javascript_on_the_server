@@ -38,16 +38,16 @@ class SessionManager {
     }
 
     #destroy_session(req, res) {
-        const cookies = this.parseCookies(req);
-        const sessionId = cookies["SID"];
-        if (!sessionId) return;
+        const cookies = this.#parse_cookies(req);
+        const session_id = cookies["SID"];
+        if (!session_id) return;
 
         // Remove from in-memory store
-        delete this.sessions[sessionId];
+        delete this.sessions[session_id];
 
         // Remove from disk if using storageDir
         if (this.storage_dir) {
-            const file_path = path.join(this.storage_dir, `${sessionId}.json`);
+            const file_path = path.join(this.storage_dir, `${session_id}.json`);
             if (fs.existsSync(file_path)) {
                 fs.unlinkSync(file_path);
             }
@@ -62,6 +62,7 @@ class SessionManager {
         if (req.flash) delete req.flash;
         if (req.alert) delete req.alert;
     }
+
 
     #save_session_to_file(id) {
         if (!this.storage_dir || !this.sessions[id]) return;
@@ -101,7 +102,7 @@ class SessionManager {
     }
 
     attach(req, res) {
-        const cookies = this.parseCookies(req);
+        const cookies = this.#parse_cookies(req);
         let session_id = cookies["SID"];
 
         if (!session_id || !this.#get_session(session_id)) {
@@ -158,8 +159,8 @@ class SessionManager {
         req.auth = {
             user: {
                 get: () => req.session.user || null,
-                set: (userObj) => {
-                    req.session.user = userObj;
+                set: (user_obj) => {
+                    req.session.user = user_obj;
                     if (this.storage_dir) this.#save_session_to_file(session_id);
                 },
                 clear: () => {
@@ -172,15 +173,10 @@ class SessionManager {
         res.setHeader("Set-Cookie", `SID=${session_id}; HttpOnly; Path=/`);
     }
 
-    user(session_id) {
-        const session = this.#get_session(session_id);
-        return session ? session.user : null;
-    }
-
-    parseCookies(req) {
+    #parse_cookies(req) {
         const list = {};
-        const cookieHeader = req.headers.cookie || "";
-        cookieHeader.split(";").forEach(cookie => {
+        const cookie_header = req.headers.cookie || "";
+        cookie_header.split(";").forEach(cookie => {
             const parts = cookie.split("=");
             if (parts.length === 2) list[parts[0].trim()] = decodeURIComponent(parts[1].trim());
         });

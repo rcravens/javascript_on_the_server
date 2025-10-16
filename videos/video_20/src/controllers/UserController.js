@@ -58,7 +58,7 @@ export class UserController extends BaseController {
             req.alert.success("User added.");
 
             // Automatically log in the new user
-            req.session.user = user;
+            req.auth.user.set(user);
         }
 
         return this.redirect(res, "/users");

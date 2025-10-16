@@ -36,9 +36,9 @@ export default class Validator {
 
             // Confirm (match another field)
             if (rule.confirm) {
-                const confirmField = rule.confirm;
-                if (value !== data[confirmField]) {
-                    errors[field] = `${field} does not match ${confirmField}`;
+                const confirm_field = rule.confirm;
+                if (value !== data[confirm_field]) {
+                    errors[field] = `${field} does not match ${confirm_field}`;
                 }
             }
         }

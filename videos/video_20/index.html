@@ -67,23 +67,207 @@ export default class User extends BaseModel {
         }
     };
 
-    constructor(first_name, last_name, email, passwordHash, is_admin = false) {
+    constructor(first_name, last_name, email, password_hash, is_admin = false) {
         super();
         this.first_name = first_name;
         this.last_name = last_name;
         this.email = email;
-        this.password = passwordHash; // store only bcrypt hash
+        this.password = password_hash; // store only bcrypt hash
         this.is_admin = is_admin;
     }
 
-    static async hashPassword(plain_text) {
+    static async hash_password(plain_text) {
         const salt_rounds = 10;
         return await bcrypt.hash(plain_text, salt_rounds);
     }
 
-    async checkPassword(plain_text) {
+    async check_password(plain_text) {
         if (!this.password) return false;
         return bcrypt.compare(plain_text, this.password);
+    }
+}
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">User Views</h1>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// views/user/new.ejs
+// views/user/edit.ejs
+
+&lt;div&gt;
+    &lt;label for=&quot;password&quot;&gt;Password:&lt;/label&gt;
+    &lt;input type=&quot;password&quot; name=&quot;password&quot; required&gt;
+    &lt;% if (error(&#39;password&#39;)) { %&gt;
+        &lt;div &gt;&lt;%= error(&#39;password&#39;) %&gt;&lt;/div&gt;
+    &lt;% } %&gt;
+&lt;/div&gt;
+
+&lt;div&gt;
+    &lt;label for=&quot;confirm_password&quot;&gt;Confirm Password:&lt;/label&gt;
+    &lt;input type=&quot;password&quot; name=&quot;confirm_password&quot; required&gt;
+    &lt;% if (error(&#39;confirm_password&#39;)) { %&gt;
+        &lt;div &gt;&lt;%= error(&#39;confirm_password&#39;) %&gt;&lt;/div&gt;
+    &lt;% } %&gt;
+&lt;/div&gt;
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Validator Update</h1>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// app/Validator.js
+
+export default class Validator {
+    static validate(rules, data) {
+        const errors = {};
+
+        for (const [field, rule] of Object.entries(rules)) {
+            const value = data[field];
+
+            ... OTHER RULES ...
+
+            // Confirm (match another field)
+            if (rule.confirm) {
+                const confirm_field = rule.confirm;
+                if (value !== data[confirm_field]) {
+                    errors[field] = `${field} does not match ${confirm_field}`;
+                }
+            }
+        }
+
+        return {
+            valid: Object.keys(errors).length === 0,
+            errors,
+        };
+    }
+
+    static pick_rules(rules, fields) {
+        const subset = {};
+        fields.forEach(field => {
+            if (rules[field]) subset[field] = rules[field];
+        });
+        return subset;
+    }
+}
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Session Updates</h1>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// app/SessionManager.js (partial)
+
+class SessionManager {
+
+    attach(req, res) {
+        ... OTHER HELPERS ...
+
+        // Helper for logged-in user
+        req.auth = {
+            user: {
+                get: () => req.session.user || null,
+                set: (user_obj) => {
+                    req.session.user = user_obj;
+                    if (this.storage_dir) this.#save_session_to_file(session_id);
+                },
+                clear: () => {
+                    this.#destroy_session(req, res);  // destroy current session
+                    this.attach(req, res);            // start a fresh session
+                }
+            }
+        };
+    }
+}
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Session Updates</h1>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// app/SessionManager.js (partial)
+
+class SessionManager {
+
+    #destroy_session(req, res) {
+        const cookies = this.#parse_cookies(req);
+        const session_id = cookies["SID"];
+        if (!session_id) return;
+
+        // Remove from in-memory store
+        delete this.sessions[session_id];
+
+        // Remove from disk if using storageDir
+        if (this.storage_dir) {
+            const file_path = path.join(this.storage_dir, `${session_id}.json`);
+            if (fs.existsSync(file_path)) {
+                fs.unlinkSync(file_path);
+            }
+        }
+
+        // Clear the cookie (set expiry in the past)
+        res.setHeader("Set-Cookie", "SID=; HttpOnly; Path=/; Max-Age=0");
+
+        // Clean up req
+        if (req.session) delete req.session;
+        if (req.user) delete req.user;
+        if (req.flash) delete req.flash;
+        if (req.alert) delete req.alert;
+    }
+}
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">UserController Updates</h1>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// controllers/UserController.js (partial)
+
+export class UserController extends BaseController {
+
+    async create(req, res, params, body) {
+        ... VALIDATION CHECKS ...
+
+        // Hash the password
+        const hashed_password = await User.hash_password(body.password);
+
+        // Create the person
+        const user_data = {
+            first_name: body.first_name,
+            last_name: body.last_name,
+            email: body.email,
+            password: hashed_password,
+            is_admin: false
+        };
+
+        const user = await User.create(user_data);
+
+        ... EXISING CODE ...
+    }
+
+    async update_password(req, res, params, body) {
+        const rules = Validator.pick_rules(User.rules, ["password"]);
+        const {valid, errors} = Validator.validate(rules, body);
+
+        if (!valid) {
+            req.alert.error("Please fix the form errors.", "Validation Failed");
+            return this.back(req, res, {errors, body});
+        }
+
+        // Hash the new password
+        const hashed_password = await User.hash_password(body.password);
+
+        await User.update(params.email, {password: hashed_password});
+
+        req.alert.success("Password updated.");
+
+        return this.redirect(res, `/users/${params.email}/edit`);
+    }
+
+    async destroy(req, res, params) {
+        req.auth.user.clear();
+
+        ... EXISTING CODE ...
     }
 }
         </code></pre>
@@ -130,18 +314,16 @@ export class AuthController extends BaseController {
     &lt;div&gt;
         &lt;label for=&quot;email&quot;&gt;Email:&lt;/label&gt;
         &lt;input type=&quot;email&quot; name=&quot;email&quot; value=&quot;&lt;%= old(&#39;email&#39;) %&gt;&quot; required&gt;
-        &lt;% if (error(&#39;email&#39;)) { %&gt;
-            &lt;div&gt;&lt;%= error(&#39;email&#39;) %&gt;&lt;/div&gt;
-        &lt;% } %&gt;
     &lt;/div&gt;
 
     &lt;div&gt;
         &lt;label for=&quot;password&quot;&gt;Password:&lt;/label&gt;
         &lt;input type=&quot;password&quot; name=&quot;password&quot; required&gt;
-        &lt;% if (error(&#39;password&#39;)) { %&gt;
-            &lt;div&gt;&lt;%= error(&#39;password&#39;) %&gt;&lt;/div&gt;
-        &lt;% } %&gt;
     &lt;/div&gt;
+
+    &lt;% if (error('auth')) { %&gt;
+        &lt;div&gt;&lt;%= error('auth') %&gt;&lt;/div&gt;
+    &lt;% } %&gt;
 
     &lt;button type=&quot;submit&quot;&gt;Login&lt;/button&gt;
 &lt;/form&gt;
@@ -162,21 +344,19 @@ export class AuthController extends BaseController {
         // Lookup user by email
         const user = await User.find(email);
         if (!user) {
-            req.flash.set("errors", {email: "No account found with that email"});
-            req.flash.set("body", body);
-            return this.back(req, res);
+            const errors = {auth: "Authorization failed"};
+            return this.back(req, res, {errors, body});
         }
 
         // Verify password with bcrypt
-        const match = await bcrypt.compare(password, user.password);
+        const match = await user.check_password(password);
         if (!match) {
-            req.flash.set("errors", {password: "Invalid password"});
-            req.flash.set("body", body);
-            return this.back(req, res);
+            const errors = {auth: "Authorization failed."};
+            return this.back(req, res, {errors, body});
         }
 
         // Store user in session
-        req.auth.user.set( user );
+        req.auth.user.set(user);
 
         // Redirect to people index after login
         return this.redirect(res, "/users");
@@ -184,43 +364,6 @@ export class AuthController extends BaseController {
 }
         </code></pre>
     </section>
-
-    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Session Manager</h1>
-        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Authentication Flow</h2>
-        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
-// app/SessionManager.js (partial)
-
-class SessionManager {
-
-    destroySession(req, res) {
-        ...
-    }
-
-    attach(req, res) {
-        ...
-
-        // Helper for logged-in user
-        req.auth = {
-            user: {
-                get: () => req.session.user || null,
-                set: (userObj) => {
-                    req.session.user = userObj;
-                    if (this.storageDir) this.saveSessionToFile(sessionId);
-                },
-                clear: () => {
-                    this.destroySession(req, res);  // destroy current session
-                    this.attach(req, res);          // start a fresh session
-                }
-            }
-        };
-
-        ...
-    }
-}
-        </code></pre>
-    </section>
-
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
         <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">AuthController.logout</h1>
@@ -243,45 +386,6 @@ export class AuthController extends BaseController {
     </section>
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Session Manager</h1>
-        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Authentication Flow</h2>
-        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
-// app/SessionManager.js (partial)
-
-class SessionManager {
-
-    destroySession(req, res) {
-        const cookies = this.parseCookies(req);
-        const sessionId = cookies["SID"];
-        if (!sessionId) return;
-
-        // Remove from in-memory store
-        delete this.sessions[sessionId];
-
-        // Remove from disk if using storageDir
-        if (this.storageDir) {
-            const filePath = path.join(this.storageDir, `${sessionId}.json`);
-            if (fs.existsSync(filePath)) {
-                fs.unlinkSync(filePath);
-            }
-        }
-
-        // Clear the cookie (set expiry in the past)
-        res.setHeader("Set-Cookie", "SID=; HttpOnly; Path=/; Max-Age=0");
-
-        // Clean up req
-        if (req.session) delete req.session;
-        if (req.user) delete req.user;
-        if (req.flash) delete req.flash;
-        if (req.alert) delete req.alert;
-    }
-
-    ...
-}
-        </code></pre>
-    </section>
-
-    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
         <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Add Auth User To View Data</h1>
         <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">View Updates</h2>
         <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
@@ -292,23 +396,23 @@ export class BaseController {
     async view(res, shortPath, data = {}, req = null) {
         if (req) {
             // Add helpers
-            const flashErrors = req.flash.get("errors") || {};
-            const flashBody = req.flash.get("body") || {};
-            const flashSuccess = req.flash.get("success") || null;
-            const flashAlert = req.alert.get();
+            const flash_errors = req.flash.get("errors") || {};
+            const flash_body = req.flash.get("body") || {};
+            const flash_success = req.flash.get("success") || null;
+            const flash_alert = req.alert.get();
 
-            data.old = (field, defaultValue = '') => flashBody[field] || defaultValue;
-            data.error = (field) => flashErrors[field] || '';
-            data.success = flashSuccess;
+            data.old = (field, defaultValue = '') => flash_body[field] || defaultValue;
+            data.error = (field) => flash_errors[field] || '';
+            data.success = flash_success;
             data.auth = {
                 user: req.auth.user ? req.auth.user.get() : null
             }
-            data.alert = flashAlert;
+            data.alert = flash_alert;
         }
 
         // Convert "person/index" → /views/person/index.ejs
-        const viewPath = join(views_root, `${shortPath}.ejs`);
-        return this.render(res, viewPath, data);
+        const view_path = join(views_root, `${shortPath}.ejs`);
+        return this.render(res, view_path, data);
     }
 }
         </code></pre>
