@@ -49,15 +49,25 @@ export class BaseModel {
         return data;
     }
 
+    // ------ Helper: instantiate record into subclass instance
+    static instantiate(record) {
+        if (!record) return null;
+        const instance = Object.create(this.prototype);
+        Object.assign(instance, record);
+        return instance;
+    }
+
     // ------ All: fetch all records
     static async all() {
-        return await read_json(this.filePath);
+        const records = await read_json(this.filePath);
+        return records.map(r => this.instantiate(r));
     }
 
     // ------ Find: by key
     static async find(key) {
         const records = await read_json(this.filePath);
-        return records.find((r) => r[this.keyField] === key) || null;
+        const found = records.find(r => r[this.keyField] === key);
+        return this.instantiate(found);
     }
 
     // ------ Create: fail if exists
@@ -68,7 +78,7 @@ export class BaseModel {
 
         records.push(attrs);
         await write_json(this.filePath, records);
-        return attrs;
+        return this.instantiate(attrs);
     }
 
     // ------ Update: overwrite existing record
@@ -79,7 +89,7 @@ export class BaseModel {
 
         records[index] = {...records[index], ...attrs};
         await write_json(this.filePath, records);
-        return records[index];
+        return this.instantiate(records[index]);
     }
 
     // ------ Delete: by key
@@ -90,6 +100,6 @@ export class BaseModel {
 
         const [removed] = records.splice(index, 1);
         await write_json(this.filePath, records);
-        return removed;
+        return this.instantiate(removed);
     }
 }
