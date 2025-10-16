@@ -172,11 +172,6 @@ class SessionManager {
         res.setHeader("Set-Cookie", `SID=${session_id}; HttpOnly; Path=/`);
     }
 
-    user(session_id) {
-        const session = this.#get_session(session_id);
-        return session ? session.user : null;
-    }
-
     #parse_cookies(req) {
         const list = {};
         const cookieHeader = req.headers.cookie || "";

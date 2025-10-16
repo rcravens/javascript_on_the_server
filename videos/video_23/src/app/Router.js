@@ -80,8 +80,8 @@ export default class Router {
             if (!matched) continue;
 
             // Run middlewares in order
-            for (const MiddlewareClass of route.middlewares) {
-                const middleware = new MiddlewareClass();
+            for (const middleware_class of route.middlewares) {
+                const middleware = new middleware_class();
                 const result = await middleware.handle(req, res, params);
                 if (result === false) return; // stop chain if middleware blocks
             }

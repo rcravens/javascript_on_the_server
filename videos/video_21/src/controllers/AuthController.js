@@ -14,17 +14,15 @@ export class AuthController extends BaseController {
         // Lookup user by email
         const user = await User.find(email);
         if (!user) {
-            req.flash.set("errors", {email: "No account found with that email"});
-            req.flash.set("body", body);
-            return this.back(req, res);
+            const errors = {auth: "Authorization failed"};
+            return this.back(req, res, {errors, body});
         }
 
         // Verify password with bcrypt
         const match = await bcrypt.compare(password, user.password);
         if (!match) {
-            req.flash.set("errors", {password: "Invalid password"});
-            req.flash.set("body", body);
-            return this.back(req, res);
+            const errors = {auth: "Authorization failed."};
+            return this.back(req, res, {errors, body});
         }
 
         // Store user in session
