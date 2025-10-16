@@ -76,7 +76,7 @@ export class UserController extends BaseController {
         }
 
         // Validate the fields
-        const rules = this.pickRules(User.rules, ["first_name", "last_name", "email"]);
+        const rules = Validator.pick_rules(User.rules, ["first_name", "last_name", "email"]);
         const {valid, errors} = Validator.validate(rules, body);
         if (!valid) {
             req.alert.error("Please fix the form errors.", "Validation Failed");
@@ -103,7 +103,7 @@ export class UserController extends BaseController {
     }
 
     async updatePassword(req, res, params, body) {
-        const rules = this.pickRules(User.rules, ["password"]);
+        const rules = Validator.pick_rules(User.rules, ["password"]);
         const {valid, errors} = Validator.validate(rules, body);
 
         if (!valid) {
@@ -122,6 +122,8 @@ export class UserController extends BaseController {
     }
 
     async destroy(req, res, params) {
+        req.auth.user.clear();
+
         await User.delete(params.email);
 
         req.alert.success("User deleted.");

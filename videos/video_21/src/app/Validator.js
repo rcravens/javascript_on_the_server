@@ -33,7 +33,7 @@ export default class Validator {
             if (rule.pattern && typeof value === "string" && !rule.pattern.test(value)) {
                 errors[field] = `${field} is not in a valid format`;
             }
-            
+
             // Confirm (match another field)
             if (rule.confirm) {
                 const confirmField = rule.confirm;
@@ -47,5 +47,13 @@ export default class Validator {
             valid: Object.keys(errors).length === 0,
             errors,
         };
+    }
+
+    static pick_rules(rules, fields) {
+        const subset = {};
+        fields.forEach(field => {
+            if (rules[field]) subset[field] = rules[field];
+        });
+        return subset;
     }
 }

@@ -67,12 +67,4 @@ export class BaseController {
         res.writeHead(statusCode, {"Content-Type": "text/plain"});
         res.end(message);
     }
-
-    pickRules(rules, fields) {
-        const subset = {};
-        fields.forEach(field => {
-            if (rules[field]) subset[field] = rules[field];
-        });
-        return subset;
-    }
 }
