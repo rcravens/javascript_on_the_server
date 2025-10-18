@@ -2,6 +2,7 @@ import {randomBytes} from "crypto";
 import {fileURLToPath} from "url";
 import fs from "fs";
 import path from "path";
+import {JsonStorage} from "./helpers/JsonStorage.js";
 
 class SessionManager {
     constructor({storage_dir: storage_dir = null, max_age_seconds: max_age_seconds = 3600} = {}) {
@@ -27,8 +28,9 @@ class SessionManager {
         if (this.sessions[id]) return this.sessions[id];
         if (this.storage_dir) {
             const file_path = path.join(this.storage_dir, `${id}.json`);
-            if (fs.existsSync(file_path)) {
-                const data = JSON.parse(fs.readFileSync(file_path));
+            const data = JsonStorage.read(file_path, null);
+            console.log('get_session', data);
+            if (data) {
                 this.sessions[id] = data;
                 if (!this.sessions[id].flash) this.sessions[id].flash = {};
                 return data;
@@ -66,7 +68,7 @@ class SessionManager {
     #save_session_to_file(id) {
         if (!this.storage_dir || !this.sessions[id]) return;
         const filePath = path.join(this.storage_dir, `${id}.json`);
-        fs.writeFileSync(filePath, JSON.stringify(this.sessions[id], null, 2));
+        JsonStorage.write(filePath, this.sessions[id]);
     }
 
     #parse_cookies(req) {
