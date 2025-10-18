@@ -29,7 +29,6 @@ class SessionManager {
         if (this.storage_dir) {
             const file_path = path.join(this.storage_dir, `${id}.json`);
             const data = JsonStorage.read(file_path, null);
-            console.log('get_session', data);
             if (data) {
                 this.sessions[id] = data;
                 if (!this.sessions[id].flash) this.sessions[id].flash = {};
@@ -41,15 +40,15 @@ class SessionManager {
 
     #destroy_session(req, res) {
         const cookies = this.#parse_cookies(req);
-        const sessionId = cookies["SID"];
-        if (!sessionId) return;
+        const session_id = cookies["SID"];
+        if (!session_id) return;
 
         // Remove from in-memory store
-        delete this.sessions[sessionId];
+        delete this.sessions[session_id];
 
         // Remove from disk if using storageDir
         if (this.storage_dir) {
-            const file_path = path.join(this.storage_dir, `${sessionId}.json`);
+            const file_path = path.join(this.storage_dir, `${session_id}.json`);
             if (fs.existsSync(file_path)) {
                 fs.unlinkSync(file_path);
             }
@@ -67,8 +66,8 @@ class SessionManager {
 
     #save_session_to_file(id) {
         if (!this.storage_dir || !this.sessions[id]) return;
-        const filePath = path.join(this.storage_dir, `${id}.json`);
-        JsonStorage.write(filePath, this.sessions[id]);
+        const file_path = path.join(this.storage_dir, `${id}.json`);
+        JsonStorage.write(file_path, this.sessions[id]);
     }
 
     #parse_cookies(req) {

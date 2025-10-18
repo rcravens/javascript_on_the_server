@@ -37,7 +37,6 @@ export class BaseModel {
 
     // ------ All: fetch all records
     static async all() {
-        console.log(this.file_path);
         const records = JsonStorage.read(this.file_path);
         return records.map(r => this.instantiate(r));
     }
