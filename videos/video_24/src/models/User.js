@@ -1,4 +1,4 @@
-import {BaseModel} from "./BaseModel.js";
+import {BaseModel} from "../app/BaseModel.js";
 import bcrypt from "bcrypt";
 
 export default class User extends BaseModel {

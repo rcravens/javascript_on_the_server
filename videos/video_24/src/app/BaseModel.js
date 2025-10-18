@@ -32,21 +32,8 @@ export class BaseModel {
     static fileName = null; // e.g. "people.json"
     static keyField = "id"; // default key field
 
-    static get filePath() {
+    static get file_path() {
         return path.join(dataDir, this.fileName);
-    }
-
-    // ------ Overwrite the existing records
-    static async overwrite(records) {
-        const filePath = this.filePath;
-
-        // Ensure it's always an array
-        const data = Array.isArray(records) ? records : [];
-
-        // Write pretty JSON
-        await write_json(filePath, data);
-
-        return data;
     }
 
     // ------ Helper: instantiate record into subclass instance
@@ -57,49 +44,63 @@ export class BaseModel {
         return instance;
     }
 
+    // ------ Overwrite the existing records
+    static async overwrite(records) {
+        const filePath = this.file_path;
+
+        // Ensure it's always an array
+        const data = Array.isArray(records) ? records : [];
+
+        // Write pretty JSON
+        await write_json(filePath, data);
+
+        return data;
+    }
+
     // ------ All: fetch all records
     static async all() {
-        const records = await read_json(this.filePath);
+        console.log(this.file_path);
+        const records = await read_json(this.file_path);
         return records.map(r => this.instantiate(r));
     }
 
     // ------ Find: by key
     static async find(key) {
-        const records = await read_json(this.filePath);
+        const records = await read_json(this.file_path);
         const found = records.find(r => r[this.keyField] === key);
         return this.instantiate(found);
     }
 
     // ------ Create: fail if exists
     static async create(attrs) {
-        const records = await read_json(this.filePath);
+        const records = await read_json(this.file_path);
         const exists = records.find((r) => r[this.keyField] === attrs[this.keyField]);
         if (exists) return null;
 
         records.push(attrs);
-        await write_json(this.filePath, records);
+        await write_json(this.file_path, records);
         return this.instantiate(attrs);
     }
 
     // ------ Update: overwrite existing record
     static async update(key, attrs) {
-        const records = await read_json(this.filePath);
+        const records = await read_json(this.file_path);
         const index = records.findIndex((r) => r[this.keyField] === key);
         if (index === -1) return null;
 
         records[index] = {...records[index], ...attrs};
-        await write_json(this.filePath, records);
+        await write_json(this.file_path, records);
         return this.instantiate(records[index]);
     }
 
     // ------ Delete: by key
     static async delete(key) {
-        const records = await read_json(this.filePath);
+        const records = await read_json(this.file_path);
         const index = records.findIndex((r) => r[this.keyField] === key);
         if (index === -1) return null;
 
         const [removed] = records.splice(index, 1);
-        await write_json(this.filePath, records);
+        await write_json(this.file_path, records);
         return this.instantiate(removed);
     }
 }

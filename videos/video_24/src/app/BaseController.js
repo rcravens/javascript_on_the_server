@@ -9,7 +9,7 @@ const layout_template = join(__dirname, "../views/layouts/layout.ejs");
 const views_root = join(__dirname, "../views");
 
 export class BaseController {
-    async render(res, view_path, data = {}) {
+    async #render(res, view_path, data = {}) {
         try {
             const content = await ejs.renderFile(view_path, data);
             const html = await ejs.renderFile(layout_template, {...data, body: content});
@@ -30,7 +30,7 @@ export class BaseController {
             const flash_success = req.flash.get("success") || null;
             const flash_alert = req.alert.get();
 
-            data.old = (field, default_value = '') => flash_body[field] || default_value;
+            data.old = (field, defaultValue = '') => flash_body[field] || defaultValue;
             data.error = (field) => flash_errors[field] || '';
             data.success = flash_success;
             data.auth = {
@@ -41,7 +41,7 @@ export class BaseController {
 
         // Convert "person/index" → /views/person/index.ejs
         const view_path = join(views_root, `${short_path}.ejs`);
-        return this.render(res, view_path, data);
+        return this.#render(res, view_path, data);
     }
 
     redirect(res, route) {

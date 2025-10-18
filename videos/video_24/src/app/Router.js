@@ -1,7 +1,13 @@
+import fs from "fs";
+import mime from "mime-types";
+import path from "path";
+
+
 export default class Router {
-    constructor() {
+    constructor(static_folder = null) {
         this.routes = [];
         this._current_group_middleware = [];
+        this._static_folder = static_folder;
     }
 
     static #parse_body(req) {
@@ -60,18 +66,20 @@ export default class Router {
         this._current_group_middleware = previous; // restore
     }
 
-    async handle(req, res, method, urlParts) {
+    async handle(req, res, method, url_parts) {
+
+        // --- Registered Routes
         for (const route of this.routes) {
             if (route.method !== method) continue;
-            if (route.parts.length !== urlParts.length) continue;
+            if (route.parts.length !== url_parts.length) continue;
 
             const params = {};
             let matched = true;
 
             for (let i = 0; i < route.parts.length; i++) {
                 if (route.parts[i].startsWith(":")) {
-                    params[route.parts[i].substring(1)] = urlParts[i];
-                } else if (route.parts[i] !== urlParts[i]) {
+                    params[route.parts[i].substring(1)] = url_parts[i];
+                } else if (route.parts[i] !== url_parts[i]) {
                     matched = false;
                     break;
                 }
@@ -79,10 +87,15 @@ export default class Router {
 
             if (!matched) continue;
 
+            let body = {};
+            if (["POST", "PUT", "PATCH"].includes(method)) {
+                body = await Router.#parse_body(req);
+            }
+
             // Run middlewares in order
             for (const middleware_class of route.middlewares) {
                 const middleware = new middleware_class();
-                const result = await middleware.handle(req, res, params);
+                const result = await middleware.handle(req, res, params, body);
                 if (result === false) return; // stop chain if middleware blocks
             }
 
@@ -90,14 +103,35 @@ export default class Router {
             if (!controller[route.handler_name])
                 throw new Error(`Handler "${route.handler_name}" not found on controller`);
 
-            let body = {};
-            if (["POST", "PUT", "PATCH"].includes(method)) {
-                body = await Router.#parse_body(req);
-            }
-
             return controller[route.handler_name](req, res, params, body);
         }
 
+        // --- Fallback to Static Files
+        if (this._static_folder) {
+            let file_path = path.join(this._static_folder, ...url_parts);
+            try {
+                let stat = fs.statSync(file_path);
+
+                if (stat.isDirectory()) {
+                    const index_path = path.join(file_path, 'index.html');
+                    if (fs.existsSync(index_path)) {
+                        file_path = index_path;
+                        stat = fs.statSync(file_path);
+                    }
+                }
+
+                if (stat.isFile()) {
+                    const mime_type = mime.lookup(file_path) || 'application/octet-stream';
+                    res.writeHead(200, {'Content-Type': mime_type});
+                    fs.createReadStream(file_path).pipe(res);
+                    return;
+                }
+            } catch (err) {
+                // ignore, will fall through to 404
+            }
+        }
+
+        // --- 404 Response
         res.writeHead(404, {"Content-Type": "text/plain"});
         res.end("Not Found");
     }

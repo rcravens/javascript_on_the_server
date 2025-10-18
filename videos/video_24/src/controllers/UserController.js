@@ -1,6 +1,6 @@
 // controllers/PersonController.js
 import User from "../models/User.js";
-import {BaseController} from "./BaseController.js";
+import {BaseController} from "../app/BaseController.js";
 import Validator from "../app/Validator.js";
 
 export class UserController extends BaseController {
@@ -68,7 +68,7 @@ export class UserController extends BaseController {
 
         // If changing email, ensure it does not already exist
         if (body.email !== params.email) {
-            const other_user = User.find(body.email);
+            const other_user = await User.find(body.email);
             if (other_user) {
                 req.alert.error("Email is already taken.", "Validation Failed");
                 return this.back(req, res, {body});

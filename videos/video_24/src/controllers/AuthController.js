@@ -1,4 +1,5 @@
-import {BaseController} from "./BaseController.js";
+import bcrypt from "bcrypt";
+import {BaseController} from "../app/BaseController.js";
 import User from "../models/User.js";
 
 export class AuthController extends BaseController {
@@ -18,7 +19,7 @@ export class AuthController extends BaseController {
         }
 
         // Verify password with bcrypt
-        const match = await user.check_password(password);
+        const match = await bcrypt.compare(password, user.password);
         if (!match) {
             const errors = {auth: "Authorization failed."};
             return this.back(req, res, {errors, body});

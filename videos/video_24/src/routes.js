@@ -1,12 +1,14 @@
 // routes.js
 import {UserController} from "./controllers/UserController.js";
 import {AuthController} from "./controllers/AuthController.js";
+import {CatController} from "./controllers/CatController.js";
 import HasAuthenticated from "./middleware/HasAuthenticated.js";
 import CanEdit from "./middleware/CanEdit.js";
 
 export default function registerRoutes(router) {
 
     // public routes
+    router.get("/cats", CatController, "index");
     router.get("/users", UserController, "index");
     router.get("/register", UserController, "new");
     router.post("/users", UserController, "create");
