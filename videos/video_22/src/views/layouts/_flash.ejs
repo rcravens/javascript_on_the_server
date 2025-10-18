@@ -1,0 +1,17 @@
+<% if (alert) { %>
+    <div id="flash-alert" class="fixed bottom-4 right-4 max-w-sm w-full p-4 rounded shadow-md
+        <%= alert.type === 'success' ? 'bg-green-600' : alert.type === 'error' ? 'bg-red-600' : 'bg-yellow-500' %>
+        text-white">
+        <% if (alert.title) { %>
+            <strong class="block mb-1"><%= alert.title %></strong>
+        <% } %>
+        <span><%= alert.message %></span>
+    </div>
+    <script>
+        setTimeout(() => {
+            const el = document.getElementById('flash-alert');
+            if (el) el.style.transition = 'opacity 0.5s ease-out';
+            if (el) el.style.opacity = '0';
+        }, 3000); // fade after 3 seconds
+    </script>
+<% } %>

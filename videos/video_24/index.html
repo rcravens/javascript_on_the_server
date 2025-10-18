@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <title>Series Recap & Next Steps | Wrapping Up & Next Steps</title>
+    <title>Deployment Basics | Wrapping Up & Next Steps</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/themes/prism-tomorrow.css" rel="stylesheet"/>
     <script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/prism.min.js"></script>
@@ -23,7 +23,7 @@
       <span class="bg-yellow-400 text-gray-900 text-xs md:text-sm font-semibold px-2 py-1 rounded-full uppercase tracking-wide">
         Video
       </span>
-        <h3 class="mt-1 text-lg md:text-2xl font-bold text-yellow-400">Series Recap & Next Steps</h3>
+        <h3 class="mt-1 text-lg md:text-2xl font-bold text-yellow-400">Deployment Basics</h3>
     </div>
 
     <!-- Module Title -->
@@ -39,122 +39,240 @@
 <main class="bg-gradient-to-b from-gray-900 via-gray-800 to-gray-700" id="slides">
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Series Recap</h1>
-        <ul class="text-xl max-w-6xl mb-8 list-none list-inside space-y-2 columns-2 gap-12">
-            <li class="break-inside-avoid">
-                Module 1: Introduction to Server-Side JavaScript
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Basic Consideration</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-6 text-center">Node in Production</h2>
+        <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
+            <li><code>node server.js</code> is fine for development, but not robust for production.</li>
+            <li>
+                Risks:
                 <ul class="ml-6 text-xl md:text-2xl max-w-6xl mb-8 list-none list-inside space-y-2">
-                    <li>▶️ Video 1: Why JavaScript on the Server?</li>
-                    <li>️️️️▶️ Video 2: Setting Up Node & First Script</li>
-                </ul>
-            </li>
-            <li class="break-inside-avoid">
-                Module 2: Node Fundamentals
-                <ul class="ml-6 text-xl md:text-2xl max-w-6xl mb-8 list-none list-inside space-y-2">
-                    <li>▶️ Video 3: Modules & NPM</li>
-                    <li>▶️ Video 4: Event Loop & Async Basics</li>
-                </ul>
-            </li>
-            <li class="break-inside-avoid">
-                Module 3: Building a Basic Web Server
-                <ul class="ml-6 text-xl md:text-2xl max-w-6xl mb-8 list-none list-inside space-y-2">
-                    <li>▶️ Video 5: The HTTP Module</li>
-                    <li>▶️ Video 6: Routing Basics</li>
-                    <li>▶️ Video 7: Serving HTML & Static Files</li>
-                </ul>
-            </li>
-            <li class="break-inside-avoid">
-                Module 4: Working with Data
-                <ul class="ml-6 text-xl md:text-2xl max-w-6xl mb-8 list-none list-inside space-y-2">
-                    <li>▶️ Video 8: Handling JSON APIs</li>
-                    <li>▶️ Video 9: File-Based Storage</li>
-                    <li>▶️ Video 10. Intro to Databases</li>
-                </ul>
-            </li>
-            <li class="break-inside-avoid">
-                Module 5: Dynamic Web Pages (SSR with Templates)
-                <ul class="ml-6 text-xl md:text-2xl max-w-6xl mb-8 list-none list-inside space-y-2">
-                    <li>▶️ Video 11. Why Templates?</li>
-                    <li>▶️ Video 12. Using EJS Templates</li>
-                    <li>▶️ Video 13. Building a Minimal MVC Structure</li>
-                </ul>
-            </li>
-            <li class="break-inside-avoid">
-                Module 6: Forms & Validation
-                <ul class="ml-6 text-xl md:text-2xl max-w-6xl mb-8 list-none list-inside space-y-2">
-                    <li>▶️ Video 14: MVC Page LifeCycle</li>
-                    <li>▶️ Video 15. Forms & Validation</li>
-                </ul>
-            </li>
-            <li class="break-inside-avoid">
-                Module 7: State Management
-                <ul class="ml-6 text-xl md:text-2xl max-w-6xl mb-8 list-none list-inside space-y-2">
-                    <li>▶️ Video 16. Cookies</li>
-                    <li>▶️ Video 17. Sessions</li>
-                </ul>
-            </li>
-            <li class="break-inside-avoid">
-                Module 8: Adding Interactivity
-                <ul class="ml-6 text-xl md:text-2xl max-w-6xl mb-8 list-none list-inside space-y-2">
-                    <li>▶️ Video 18. Validation Improvements</li>
-                    <li>▶️ Video 19. Flash Messages</li>
-                    <li>▶️ Video 20. Authentication Basics</li>
-                </ul>
-            </li>
-            <li class="break-inside-avoid">
-                Module 9: Beyond the Basics
-                <ul class="ml-6 text-xl md:text-2xl max-w-6xl mb-8 list-none list-inside space-y-2">
-                    <li>▶️ Video 21. Introduction to Middleware</li>
-                    <li>▶️ Video 22. Exploring Popular Frameworks</li>
-                </ul>
-            </li>
-            <li class="break-inside-avoid">
-                Module 10: Wrapping Up & Next Steps
-                <ul class="ml-6 text-xl md:text-2xl max-w-6xl mb-8 list-none list-inside space-y-2">
-                    <li>▶️ Video 23. Deployment Basics</li>
-                    <li>▶️ Video 24. Series Recap & What's Next</li>
+                    <li>👉 App crashes stop the server.</li>
+                    <li>👉 No automatic restarts on errors or system reboot.</li>
+                    <li>👉 Logs and process monitoring are manual.</li>
                 </ul>
             </li>
         </ul>
     </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Process Managers</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-6 text-center">Node in Production</h2>
+        <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
+            <li>Process managers monitor app and restarts if issues occur.</li>
+            <li>PM2 is a popular Node process manager.</li>
+            <li>
+                Features:
+                <ul class="ml-6 text-xl md:text-2xl max-w-6xl mb-8 list-none list-inside space-y-2">
+                    <li>👉 Automatic restarts on crashes.</li>
+                    <li>👉 Load balancing across multiple CPU cores.</li>
+                    <li>👉 Easy log management.</li>
+                    <li>👉 Startup scripts for server reboot.</li>
+                </ul>
+            </li>
+        </ul>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">PM2 Installation</h1>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// terminal
+npm install -g pm2          // installed globally
+
+pm2 --version               // get installed version
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">PM2 In Development</h1>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// terminal
+pm2-dev app/server.js        // similar to node app/server.js
+
+--- PM2 development mode ------------------------------------------------------
+Apps started         : server
+Processes started    : 1
+Watch and Restart    : Enabled
+Ignored folder       : node_modules
+===============================================================================
+server-0  | Server running at http://localhost:3000/users
+        </code></pre>
+        <p class="text-xl md:text-2xl max-w-6xl text-center mb-8">Change any file and save...</p>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+[rundev] App server restarted
+server-0  | Server running at http://localhost:3000/users
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">PM2 Production - Basics</h1>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// terminal
+
+// start the application
+pm2 start --name='user_manager' app/server.js
+
+[PM2] Starting /x/video_20/src/app/server.js in fork_mode (1 instance)
+(node:90846) [DEP0176] DeprecationWarning: fs.R_OK is deprecated, use fs.constants.R_OK instead
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[PM2] Done.
+┌────┬─────────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name            │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼─────────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ user_manager    │ default     │ 1.0.0   │ fork    │ 90847    │ 0s     │ 0    │ online    │ 0%       │ 32.0kb   │ rcravens │ disabled │
+└────┴─────────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+        </code></pre>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// terminal
+
+// stop the application
+pm2 delete user_manager
+
+[PM2] Applying action deleteProcessId on app [user_manager](ids: [ 0 ])
+[PM2] [user_manager](0) ✓
+┌────┬───────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name      │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+└────┴───────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">PM2 Production - Other Commands</h1>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// terminal
+
+pm2 list                    // shows list of running apps
+
+pm2 show user_manager       // process details for app
+
+pm2 monit                   // live monitor dashboard (like htop)
+
+pm2 restart user_manager    // restart app
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">PM2 Production - Auto Restart</h1>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// app/server.js (partial)
+
+const server = http.createServer(async (req, res) => {
+    sessionManager.attach(req, res);
+
+    const url = new URL(req.url, `http://${req.headers.host}`);
+
+    // --- Special crash route ---
+    if (url.pathname === "/crash") {
+        console.log("Crashing the server intentionally...");
+        // This will crash the Node process
+        process.nextTick(() => {
+            throw new Error("Intentional crash for PM2 testing");
+        });
+        res.writeHead(500, {"Content-Type": "text/plain"});
+        res.end("Server is crashing...");
+        return;
+    }
+
+    ...
+});
+        </code></pre>
+        <a href="http://localhost:3000/crash" target="_blank">http://localhost:3000/crash</a>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// terminal
+
+pm2 list
+┌────┬─────────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name            │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼─────────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ user_manager    │ default     │ 1.0.0   │ fork    │ 10404    │ 11s    │ 4    │ online    │ 0%       │ 82.5mb   │ rcravens │ disabled │
+└────┴─────────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">PM2 Production - Fine Tuning</h1>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// terminal
+
+pm2 init simple             // generates a ecosystem.config.js file
+        </code></pre>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// ecosystem.config.js  ==> renamed to ecosystem.config.cjs
+
+module.exports = {
+    apps : [{
+        name   : "user_manager",
+        script : "./app/server.js"
+    }]
+}
+        </code></pre>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// terminal
+
+pm2 start ecosystem.config.cjs
+
+[PM2] App [user_manager] launched (1 instances)
+┌────┬─────────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name            │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼─────────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ user_manager    │ default     │ 1.0.0   │ fork    │ 11328    │ 0s     │ 0    │ online    │ 0%       │ 32.0kb   │ rcravens │ disabled │
+└────┴─────────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+        </code></pre>
+        <div class="mt-6 flex flex-wrap justify-center gap-6">
+            <a class="px-6 py-3 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition" href="https://pm2.keymetrics.io/docs/usage/application-declaration/" target="_blank">Config File Options</a>
+            <a class="px-6 py-3 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition" href="https://pm2.keymetrics.io/docs/usage/startup/" target="_blank">Server Reboots</a>
+        </div>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Environment Variables</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-6 text-center">Node in Production</h2>
+        <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
+            <li>Use <code>.env</code> or system environment variables to avoid hardcoding secrets or ports.</li>
+        </ul>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// terminal
+npm install dotenv
+        </code></pre>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// .env
+PORT=3001
+NODE_ENV=production
+SESSION_SECRET=mySecretKey
+        </code></pre>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// app/server.js (partial)
+
+import dotenv from "dotenv";
+
+dotenv.config();
+const PORT = process.env.PORT || 3000;
+
+            ...
+
+server.listen(PORT, () => {
+    console.log(`Server running at http://localhost:${PORT}/users`);
+});
+        </code></pre>
+    </section>
+
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
         <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Key Takeaways</h1>
         <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
-            <li>Node allows JavaScript to run on the server, unifying frontend and backend.</li>
-            <li>The HTTP module is powerful for building minimal servers.</li>
-            <li>Routing, templates, and MVC structure help organize projects.</li>
-            <li>Conventions help with structure and allow generic code (base classes).</li>
-            <li>Sessions, cookies, and authentication are essential for dynamic, user-focused apps.</li>
-            <li>Middleware and error handling keep code maintainable and DRY.</li>
-            <li>Frameworks accelerate development while providing structure and best practices.</li>
-            <li>Deployment requires environment configuration and process management for production stability.</li>
-        </ul>
-    </section>
-
-    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Where to Go Next</h1>
-        <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
-            <li>Approach: Take a shallow survey, then go deep.
-                <ul class="ml-6 text-xl md:text-2xl max-w-6xl mb-8 list-none list-inside space-y-2">
-                    <li>👉 Frameworks</li>
-                    <li>👉 Databases</li>
-                    <li>👉 Security - Authentication / Authorization</li>
-                    <li>👉 Performance - Caching, Clustering, and Profiling Node Applications</li>
-                    <li>👉 Deployment - DevOps, Docker, CI/CD Pipelines, Cloud</li>
-                </ul>
-            </li>
+            <li>Never hardcode secrets or configuration; use environment variables.</li>
+            <li>User PM2 or similar process managers for production stability.</li>
+            <li>Monitor logs and app regularly.</li>
+            <li>Environment specific configuration helps in development, staging, and production.</li>
         </ul>
     </section>
 
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Final Thoughts</h1>
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Up Next</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-6 text-center">Wrapping Up The Series</h2>
         <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
-            <li>Practice building small full-stack apps.</li>
-            <li>Experiment with EJS templates, sessions, and routing.</li>
-            <li>Gradually explore frameworks to see how they simplify complex tasks.</li>
-            <li>Always be learning!</li>
+            <li>Looking back.</li>
+            <li>Looking forward.</li>
         </ul>
     </section>
 
