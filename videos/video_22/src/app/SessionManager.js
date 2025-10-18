@@ -69,6 +69,16 @@ class SessionManager {
         fs.writeFileSync(filePath, JSON.stringify(this.sessions[id], null, 2));
     }
 
+    #parse_cookies(req) {
+        const list = {};
+        const cookie_header = req.headers.cookie || "";
+        cookie_header.split(";").forEach(cookie => {
+            const parts = cookie.split("=");
+            if (parts.length === 2) list[parts[0].trim()] = decodeURIComponent(parts[1].trim());
+        });
+        return list;
+    }
+
     clean_up_sessions() {
         console.log('cleaning old sessions');
         const now = Date.now();
@@ -171,23 +181,12 @@ class SessionManager {
 
         res.setHeader("Set-Cookie", `SID=${session_id}; HttpOnly; Path=/`);
     }
-
-    #parse_cookies(req) {
-        const list = {};
-        const cookie_header = req.headers.cookie || "";
-        cookie_header.split(";").forEach(cookie => {
-            const parts = cookie.split("=");
-            if (parts.length === 2) list[parts[0].trim()] = decodeURIComponent(parts[1].trim());
-        });
-        return list;
-    }
 }
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const storage_dir = path.join(__dirname, "../data/sessions");
 export const sessionManager = new SessionManager({storage_dir: storage_dir});
-
 
 sessionManager.clean_up_sessions();
 
