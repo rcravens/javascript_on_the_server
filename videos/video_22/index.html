@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <title>Introducing Middleware | Scaling Up – Beyond the Basics</title>
+    <title>Framework Final Refactor | Beyond the Basics</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/themes/prism-tomorrow.css" rel="stylesheet"/>
     <script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/prism.min.js"></script>
@@ -23,7 +23,7 @@
       <span class="bg-yellow-400 text-gray-900 text-xs md:text-sm font-semibold px-2 py-1 rounded-full uppercase tracking-wide">
         Video
       </span>
-        <h3 class="mt-1 text-lg md:text-2xl font-bold text-yellow-400">Introducing Middleware</h3>
+        <h3 class="mt-1 text-lg md:text-2xl font-bold text-yellow-400">Framework Final Refactor</h3>
     </div>
 
     <!-- Module Title -->
@@ -31,7 +31,7 @@
       <span class="bg-indigo-400 text-gray-900 text-xs md:text-sm font-semibold px-2 py-1 rounded-full uppercase tracking-wide">
         Module
       </span>
-        <h3 class="mt-1 text-lg md:text-2xl font-bold text-indigo-400">Scaling Up – Beyond the Basics</h3>
+        <h3 class="mt-1 text-lg md:text-2xl font-bold text-indigo-400">Beyond the Basics</h3>
     </div>
 </header>
 
@@ -39,264 +39,37 @@
 <main class="bg-gradient-to-b from-gray-900 via-gray-800 to-gray-700" id="slides">
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">What Is Middleware?</h1>
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Our Framework</h1>
         <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
-            <li>Middleware is code that sits between the request and response.</li>
-            <li>Can modify <code>req</code> or <code>res</code>, perform tasks, or control flow.</li>
-            <li>Common pattern in many frameworks, but can be implemented in vanilla Node.</li>
+            <li><code>Router</code> provides semantic / developer friendly registration options.</li>
+            <li><code>Middleware</code> system provides a clean way to interject logic on any request / response.</li>
+            <li><code>MVC</code> creates architectural organization and encourages separation of concerns.</li>
+            <li><code>BaseController</code> enables writing "slim" controllers with common responses.</li>
+            <li><code>BaseModel</code> provides "out-of-the-box" CRUD methods to any model class.</li>
+            <li><code>Validator</code> allows for easy validation of user provided data.</li>
+            <li><code>SessionManager</code> enhances request/responses by adding state to HTTP.</li>
+            <li><code>View Helpers</code> empower dynamic views based on session data.</li>
         </ul>
     </section>
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Our First Middleware</h1>
-        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Auth Middleware</h2>
-        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
-// middleware/HasAuthenticated.js
-
-export default class HasAuthenticated {
-    async handle(req, res) {
-        if (!req.session.user) {
-            req.alert.warn("Login to access this feature.");
-
-            res.writeHead(302, {Location: "/login"});
-            res.end();
-            return false; // stop further processing
-        }
-        return true; // continue
-    }
-}
-        </code></pre>
-    </section>
-
-    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Registering - Updating Routes</h1>
-        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Auth Middleware</h2>
-        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
-// routes.js (partial)
-
-export default function registerRoutes(router) {
-
-    // public routes
-    router.get("/users", UserController, "index");
-    router.get("/register", UserController, "new");
-    router.post("/users", UserController, "create");
-    router.get("/login", AuthController, "loginForm");
-    router.post("/login", AuthController, "login");
-
-    // authenticated routes
-    router.group([HasAuthenticated], () => {
-        router.get("/users/:email", UserController, "show");
-        router.get("/users/:email/edit", UserController, "edit");
-        router.get("/users/:email/delete", UserController, "delete");
-        router.put("/users/:email", UserController, "update");
-        router.put("/users/:email/password", UserController, "updatePassword");
-        router.delete("/users/:email", UserController, "destroy");
-
-        router.get("/logout", AuthController, "logout");
-    });
-}
-        </code></pre>
-    </section>
-
-    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Registering - Update Router</h1>
-        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Auth Middleware</h2>
-        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
-// app/Router.js (partial)
-
-export default class Router {
-    constructor() {
-        this.routes = [];
-        this._current_group_middleware = [];
-    }
-
-    #register(method, path, controller_class, handler_name, middlewares = []) {
-        const combined_middleware = [...this._current_group_middleware, ...middlewares];
-
-        const parts = path.split("/").filter(Boolean);
-        this.routes.push({method, parts, controller_class, handler_name, middlewares: combined_middleware});
-    }
-
-    get(path, controller_class, handler_name, middlewares = []) {
-        this.#register("GET", path, controller_class, handler_name, middlewares);
-    }
-
-    ... POST, PUT, PATCH, DELETE METHODS ...
-
-    group(middleware = [], callback) {
-        const previous = this._current_group_middleware;
-        this._current_group_middleware = [...previous, ...middleware];
-        callback();
-        this._current_group_middleware = previous; // restore
-    }
-}
-        </code></pre>
-    </section>
-
-    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Running Middleware</h1>
-        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Auth Middleware</h2>
-        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
-// app/server.js (partial)
-
-const router = new Router();
-registerRoutes(router);
-
-const server = http.createServer(async (req, res) => {
-    sessionManager.attach(req, res);
-
-    const url = new URL(req.url, `http://${req.headers.host}`);
-    const parts = url.pathname.split("/").filter(Boolean);
-
-    // Handle _method override
-    const method = req.method === "POST" && url.searchParams.get("_method")
-            ? url.searchParams.get("_method").toUpperCase()
-            : req.method;
-
-    try {
-        await router.handle(req, res, method, parts);
-    } catch (err) {
-        console.error("Error handling request:", err);
-        res.writeHead(500, {"Content-Type": "text/plain"});
-        res.end("Internal Server Error");
-    }
-});
-        </code></pre>
-    </section>
-
-    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Running Middleware</h1>
-        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Auth Middleware</h2>
-        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
-// app/Router.js (partial)
-
-export default class Router {
-
-    async handle(req, res, method, urlParts) {
-        for (const route of this.routes) {
-            ... MATCHING LOGIC ...
-
-            if (!matched) continue;
-
-            // Run middlewares in order
-            for (const MiddlewareClass of route.middlewares) {
-                const middleware = new MiddlewareClass();
-                const result = await middleware.handle(req, res, params);
-                if (result === false) return; // stop chain if middleware blocks
-            }
-
-            const controller = new route.controller_class();
-            if (!controller[route.handler_name])
-                throw new Error(`Handler "${route.handler_name}" not found on controller`);
-
-            let body = {};
-            if (["POST", "PUT", "PATCH"].includes(method)) {
-                body = await Router.parseBody(req);
-            }
-
-            return controller[route.handler_name](req, res, params, body);
-        }
-
-        res.writeHead(404, {"Content-Type": "text/plain"});
-        res.end("Not Found");
-    }
-}
-        </code></pre>
-    </section>
-
-    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Try It Out</h1>
-        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Auth Middleware</h2>
-        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
-// terminal
-npm start
-
-/*
-1. logout
-2. http://localhost:3000/users/bob.cravens@gmail.com/edit       --> access denied
-3. login
-4. http://localhost:3000/users/bob.cravens@gmail.com/edit       --> access granted
-5. http://localhost:3000/users/jed.stracke8@hotmail.com/edit    --> oops...access granted
-*/
-        </code></pre>
-    </section>
-
-    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">CanEdit Middleware</h1>
-        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">More Middleware</h2>
-        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
-// middleware/CanEdit.js
-
-export default class CanEdit {
-    async handle(req, res, params) {
-        const email = params.email;
-        if (req.session.user?.email !== email && !req.session.user?.is_admin) {
-            req.alert.warn("You can only modify your own profile.");
-
-            res.writeHead(302, {"Location": "/users"});
-            res.end();
-            return false;
-        }
-        return true;
-    }
-}
-        </code></pre>
-    </section>
-
-    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Update Routes</h1>
-        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">More Middleware</h2>
-        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
-// routes.js
-
-export default function registerRoutes(router) {
-
-    // public routes
-    router.get("/users", UserController, "index");
-    router.get("/register", UserController, "new");
-    router.post("/users", UserController, "create");
-    router.get("/login", AuthController, "loginForm");
-    router.post("/login", AuthController, "login");
-
-    // authenticated routes
-    router.group([HasAuthenticated], () => {
-        router.get("/users/:email", UserController, "show");
-        router.get("/users/:email/edit", UserController, "edit", [CanEdit]);
-        router.get("/users/:email/delete", UserController, "delete", [CanEdit]);
-        router.put("/users/:email", UserController, "update", [CanEdit]);
-        router.put("/users/:email/password", UserController, "updatePassword", [CanEdit]);
-        router.delete("/users/:email", UserController, "destroy", [CanEdit]);
-
-        router.get("/logout", AuthController, "logout");
-    });
-
-}
-        </code></pre>
-    </section>
-
-    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Try It Out</h1>
-        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-10 text-center">Auth Middleware</h2>
-        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
-// terminal
-npm start
-
-/*
-1. logout
-2. http://localhost:3000/users/bob.cravens@gmail.com/edit       --> access denied
-3. login
-4. http://localhost:3000/users/bob.cravens@gmail.com/edit       --> access granted
-5. http://localhost:3000/users/jed.stracke8@hotmail.com/edit    --> access denied
-*/
-        </code></pre>
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Final Refactors</h1>
+        <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
+            <li><code>BaseController</code> - move to app directory.</li>
+            <li><code>BaseModel</code> - move to app directory.</li>
+            <li><code>Router</code> - feed body data to middleware.</li>
+            <li><code>Router</code> - handle static files (images, css, script).</li>
+            <li><code>Encapsulation</code> - minimize public footprint.</li>
+            <li><code>Single Responsibility</code> - refactor files until each has a single responsibility.</li>
+            <li><code>DRY</code> - "dont' repeat yourself" - look for duplicate code.</li>
+        </ul>
     </section>
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
         <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Key Takeaways</h1>
         <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
-            <li>Middleware pattern promotes DRY code and centralizes common tasks.</li>
-            <li>Logging, authentication, and error handling are common middleware uses.</li>
-            <li>Clean separation improves readability and maintainability.</li>
+            <li>We developed a "mini-framework".</li>
+            <li>Refactoring sessions are key to clean / organized code.</li>
         </ul>
     </section>
 
