@@ -3,6 +3,7 @@ import {fileURLToPath} from "url";
 import fs from "fs";
 import path from "path";
 import {JsonStorage} from "./helpers/JsonStorage.js";
+import {logger} from "./helpers/Logger.js";
 
 class SessionManager {
     constructor({storage_dir: storage_dir = null, max_age_seconds: max_age_seconds = 3600} = {}) {
@@ -81,7 +82,7 @@ class SessionManager {
     }
 
     clean_up_sessions() {
-        console.log('cleaning old sessions');
+        logger.info('cleaning old sessions');
         const now = Date.now();
 
         // In-memory sessions

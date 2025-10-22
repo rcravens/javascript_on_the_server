@@ -38,8 +38,144 @@
 <!-- Scrollable Sections -->
 <main class="bg-gradient-to-b from-gray-900 via-gray-800 to-gray-700" id="slides">
 
+
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
         <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Basic Consideration</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-6 text-center">Node in Production</h2>
+        <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
+            <li>👉 Logging - Provides insights into any issues.</li>
+            <li>👉 Error Handling - Gracefully manage unexpected issues.</li>
+            <li>👉 Environment Configuration - System adapts to different environments (e.g., dev, stage, prod).</li>
+            <li>👉 Process Management - Monitoring, automatic restarts and more to create a robust application.</li>
+        </ul>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Logging</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-6 text-center">Node in Production</h2>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// app/helpers/Logger.js
+
+class Logger {
+
+    debug(message, ...args) {
+        this.#log('debug', message, ...args);
+    }
+
+    info(message, ...args) {
+        this.#log('info', message, ...args);
+    }
+
+    warn(message, ...args) {
+        this.#log('warn', message, ...args);
+    }
+
+    error(message, ...args) {
+        this.#log('error', message, ...args);
+    }
+}
+
+// Export a singleton instance
+export const logger = new Logger('./logs', 'info', 7);
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Logging</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-6 text-center">Node in Production</h2>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// app/server.js
+
+import {logger} from "./helpers/Logger.js"
+
+logger.info("Application starting....");
+
+            ...
+
+
+server.listen(PORT, () => {
+    logger.info(`Server running at http://localhost:${PORT}/users`)
+});
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Error Handling</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-6 text-center">Node in Production</h2>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// app/server.js
+
+import {logger} from "./helpers/Logger.js"
+
+const server = http.createServer(async (req, res) => {
+    ...
+
+    try {
+        await router.handle(req, res, method, parts);
+    } catch (err) {
+        logger.error("Error handling request", err);
+        res.writeHead(500, {"Content-Type": "text/plain"});
+        res.end("Internal Server Error");
+    }
+});
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Error Handling</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-6 text-center">Node in Production</h2>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// app/server.js
+
+import {logger} from "./helpers/Logger.js"
+
+process.on('uncaughtException', (err, origin) => {
+    logger.error('Uncaught Exceptions:', err, 'Origin:', origin);
+})
+
+process.on('unhandledRejection', (reason, promise) => {
+    logger.error('Unhandled Rejection at:', promise, 'Reason:', reason);
+})
+        </code></pre>
+        <div class="flex flex-wrap justify-center gap-6">
+            <a class="px-6 py-3 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition" href="https://nodejs.org/api/process.html" target="_blank">Process</a>
+        </div>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Environment Configuration</h1>
+        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-6 text-center">Node in Production</h2>
+        <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
+            <li>Use <code>.env</code> or system environment variables to avoid hardcoding secrets or ports.</li>
+        </ul>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// terminal
+npm install dotenv
+        </code></pre>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// .env
+PORT=3001
+NODE_ENV=production
+SESSION_SECRET=mySecretKey
+        </code></pre>
+        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
+// app/server.js (partial)
+
+import dotenv from "dotenv";
+
+dotenv.config();
+const PORT = process.env.PORT || 3000;
+
+            ...
+
+server.listen(PORT, () => {
+    console.log(`Server running at http://localhost:${PORT}/users`);
+});
+        </code></pre>
+    </section>
+
+    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Process Management</h1>
         <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-6 text-center">Node in Production</h2>
         <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
             <li><code>node server.js</code> is fine for development, but not robust for production.</li>
@@ -55,7 +191,7 @@
     </section>
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Process Managers</h1>
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Process Management</h1>
         <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-6 text-center">Node in Production</h2>
         <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
             <li>Process managers monitor app and restarts if issues occur.</li>
@@ -224,45 +360,14 @@ pm2 start ecosystem.config.cjs
     </section>
 
     <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
-        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 text-center">Environment Variables</h1>
-        <h2 class="text-3xl md:text-4xl font-semibold text-indigo-300 mb-6 text-center">Node in Production</h2>
-        <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
-            <li>Use <code>.env</code> or system environment variables to avoid hardcoding secrets or ports.</li>
-        </ul>
-        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
-// terminal
-npm install dotenv
-        </code></pre>
-        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
-// .env
-PORT=3001
-NODE_ENV=production
-SESSION_SECRET=mySecretKey
-        </code></pre>
-        <pre class="rounded-lg shadow-lg max-w-3xl w-full overflow-x-auto"><code class="language-javascript">
-// app/server.js (partial)
-
-import dotenv from "dotenv";
-
-dotenv.config();
-const PORT = process.env.PORT || 3000;
-
-            ...
-
-server.listen(PORT, () => {
-    console.log(`Server running at http://localhost:${PORT}/users`);
-});
-        </code></pre>
-    </section>
-
-
-    <section class="w-screen h-screen flex flex-col justify-center items-center p-10 snap-start bg-transparent">
         <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-4 text-center">Key Takeaways</h1>
         <ul class="text-xl md:text-2xl max-w-6xl mb-8 list-disc list-inside space-y-2">
+            <li>Logging provides insights into any production issues.</li>
+            <li>Error handling gracefully manages unexpected issues.</li>
             <li>Never hardcode secrets or configuration; use environment variables.</li>
+            <li>Environment specific configuration helps in development, staging, and production.</li>
             <li>User PM2 or similar process managers for production stability.</li>
             <li>Monitor logs and app regularly.</li>
-            <li>Environment specific configuration helps in development, staging, and production.</li>
         </ul>
     </section>
 

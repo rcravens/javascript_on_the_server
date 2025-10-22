@@ -1,15 +1,16 @@
 import {faker} from '@faker-js/faker';
 import User from '../../models/User.js';
+import {logger} from "../../app/helpers/Logger.js";
 
 export default class UserSeeder {
 
     static async clear() {
         await User.overwrite([]); // assuming BaseModel supports overwriting file
-        console.log("All existing people deleted.");
+        logger.info("All existing people deleted.");
     }
 
     static async run(count = 10) {
-        console.log(`Seeding ${count} people...`);
+        logger.info(`Seeding ${count} people...`);
 
         for (let i = 0; i < count; i++) {
             const firstName = faker.person.firstName();
@@ -25,9 +26,9 @@ export default class UserSeeder {
             await User.create(user);
 
             // Log credentials
-            console.log(`Created user: ${email} | Password: ${password}`);
+            logger.info(`Created user: ${email} | Password: ${password}`);
         }
 
-        console.log("Seeding complete.");
+        logger.info("Seeding complete.");
     }
 }

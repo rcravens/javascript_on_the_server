@@ -10,6 +10,7 @@ javascript-on-the-server.txt
 /final
 /imgs
 node_modules/
+**/logs/
 **/data/sessions/
 slides.key
 .env

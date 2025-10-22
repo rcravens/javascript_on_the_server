@@ -3,10 +3,14 @@ import {URL} from "url";
 import Router from "./Router.js";
 import registerRoutes from "../routes.js";
 import {sessionManager} from "./SessionManager.js";
+import {logger} from "./helpers/Logger.js"
 import dotenv from "dotenv";
+
+logger.info("Application starting....");
 
 dotenv.config();
 const PORT = process.env.PORT || 3000;
+logger.info(`PORT: ${PORT}`);
 
 
 // Register all routes
@@ -27,7 +31,7 @@ const server = http.createServer(async (req, res) => {
 
     // --- Special crash route ---
     if (url.pathname === "/crash") {
-        console.log("Crashing the server intentionally...");
+        logger.info("Crashing the server intentionally...");
         // This will crash the Node process
         process.nextTick(() => {
             throw new Error("Intentional crash for PM2 testing");
@@ -40,12 +44,24 @@ const server = http.createServer(async (req, res) => {
     try {
         await router.handle(req, res, method, parts);
     } catch (err) {
-        console.error("Error handling request:", err);
+        logger.error("Error handling request", err);
         res.writeHead(500, {"Content-Type": "text/plain"});
         res.end("Internal Server Error");
     }
 });
 
 server.listen(PORT, () => {
-    console.log(`Server running at http://localhost:${PORT}/users`);
+    logger.info(`Server running at http://localhost:${PORT}/users`)
 });
+
+process.on('uncaughtException', (err, origin) => {
+    logger.error('Uncaught Exceptions:', err, 'Origin:', origin);
+})
+
+process.on('unhandledRejection', (reason, promise) => {
+    logger.error('Unhandled Rejection at:', promise, 'Reason:', reason);
+})
+
+setTimeout(() => {
+    throw new Error('Unexpected Error!');
+}, 2000);
