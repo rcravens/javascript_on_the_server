@@ -1,32 +1,10 @@
 import path from "path";
 import {fileURLToPath} from "url";
-import fs from "fs/promises";
+import {JsonStorage} from "./helpers/JsonStorage.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const dataDir = path.join(__dirname, "../data");
-
-async function read_json(filePath) {
-    try {
-        const data = await fs.readFile(filePath, "utf-8");
-        return JSON.parse(data);
-    } catch (err) {
-        if (err.code === "ENOENT") {
-            return []; // File not found → return empty array
-        }
-        console.error("Error reading file:", err);
-        throw err;
-    }
-}
-
-async function write_json(filePath, data) {
-    try {
-        await fs.writeFile(filePath, JSON.stringify(data, null, 2));
-    } catch (err) {
-        console.error("Error writing file:", err);
-        throw err;
-    }
-}
 
 export class BaseModel {
     static fileName = null; // e.g. "people.json"
@@ -52,55 +30,54 @@ export class BaseModel {
         const data = Array.isArray(records) ? records : [];
 
         // Write pretty JSON
-        await write_json(filePath, data);
+        JsonStorage.write(filePath, data);
 
         return data;
     }
 
     // ------ All: fetch all records
     static async all() {
-        console.log(this.file_path);
-        const records = await read_json(this.file_path);
+        const records = JsonStorage.read(this.file_path);
         return records.map(r => this.instantiate(r));
     }
 
     // ------ Find: by key
     static async find(key) {
-        const records = await read_json(this.file_path);
+        const records = JsonStorage.read(this.file_path);
         const found = records.find(r => r[this.keyField] === key);
         return this.instantiate(found);
     }
 
     // ------ Create: fail if exists
     static async create(attrs) {
-        const records = await read_json(this.file_path);
+        const records = JsonStorage.read(this.file_path);
         const exists = records.find((r) => r[this.keyField] === attrs[this.keyField]);
         if (exists) return null;
 
         records.push(attrs);
-        await write_json(this.file_path, records);
+        JsonStorage.write(this.file_path, records);
         return this.instantiate(attrs);
     }
 
     // ------ Update: overwrite existing record
     static async update(key, attrs) {
-        const records = await read_json(this.file_path);
+        const records = JsonStorage.read(this.file_path);
         const index = records.findIndex((r) => r[this.keyField] === key);
         if (index === -1) return null;
 
         records[index] = {...records[index], ...attrs};
-        await write_json(this.file_path, records);
+        JsonStorage.write(this.file_path, records);
         return this.instantiate(records[index]);
     }
 
     // ------ Delete: by key
     static async delete(key) {
-        const records = await read_json(this.file_path);
+        const records = JsonStorage.read(this.file_path);
         const index = records.findIndex((r) => r[this.keyField] === key);
         if (index === -1) return null;
 
         const [removed] = records.splice(index, 1);
-        await write_json(this.file_path, records);
+        JsonStorage.write(this.file_path, records);
         return this.instantiate(removed);
     }
 }

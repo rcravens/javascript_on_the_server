@@ -3,10 +3,14 @@ import {URL} from "url";
 import Router from "./Router.js";
 import registerRoutes from "../routes.js";
 import {sessionManager} from "./SessionManager.js";
+import dotenv from "dotenv";
 
-const router = new Router('public');
+dotenv.config();
+const PORT = process.env.PORT || 3000;
+
 
 // Register all routes
+const router = new Router('public');
 registerRoutes(router);
 
 const server = http.createServer(async (req, res) => {
@@ -42,6 +46,6 @@ const server = http.createServer(async (req, res) => {
     }
 });
 
-server.listen(3000, () => {
-    console.log("Server running at http://localhost:3000/users");
+server.listen(PORT, () => {
+    console.log(`Server running at http://localhost:${PORT}/users`);
 });
