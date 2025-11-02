@@ -2,6 +2,8 @@
 
 This code supplements the JavaScript course that is available on [TekCasts](https://tekcasts.com).
 
+[![IMAGE ALT TEXT HERE](https://i.vimeocdn.com/filter/overlay?src0=https%3A%2F%2Fi.vimeocdn.com%2Fvideo%2F2065447259-10d4e9ee14fbb7e8f30968c6281bb6a3412702b22dc22b794908191a7fbd4253-d_640x360%3F%26region%3Dus&src1=http%3A%2F%2Ff.vimeocdn.com%2Fp%2Fimages%2Fcrawler_play.png)](https://tekcasts.com/play/javascript-on-the-server-intro-to-node)
+
 Ever wondered how JavaScript escaped the browser and took over the backend? In this hands-on TekCasts series, we’ll explore server-side JavaScript step by step — from spinning up your very first Node.js script to deploying a production-ready web app.
 
 🚀 What you’ll learn:
